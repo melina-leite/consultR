@@ -5,14 +5,16 @@ date: "Departamento de Ecologia IB-USP"
 output:
   ioslides_presentation:
     widescreen: yes
-mode: selfcontained
 subtitle: Aula 1
+mode: selfcontained
 logo: Rlogo-1.png
 ---
 
-<!--
-agradecer o convite!
-EU:
+<div class="notes">
+Primeiras palavras:
+
+-agradecer o convite!
+-apresentação
   graduação e mestrado ecologia ufrj
   trabalho curto em consultoria ambiental
   Especialista em Lab Ecologia USP
@@ -21,11 +23,14 @@ EU:
   pacote Ecovirtual, 
   ajudar alunos em análises,
   planos doutorado em estatística ecológica
-  -->
+</div>
+
 
 ## Objetivos do curso
-
-<!-- como pensei o curso? camilla e a demanda da empresa, problemas com softwares pagos, refazer análises, conhecimento estatística-->
+<div class="notes">
+como pensei o curso? 
+camilla e a demanda da empresa, problemas com softwares pagos, refazer análises, conhecimento estatística
+</div>
 
 - Introduzir o R como linguagem para análises de dados voltados para consultoria ambiental. 
  
@@ -38,32 +43,34 @@ EU:
     + substituir uma disciplina de estatística básica
     + aprofundar-se na programação em R ou outras ferramentas computacionais.
 
-## Programação do curso
 
-<div class="columns-2">
+## Programação do curso 
+
+
 ### **Aula 1**  
-*	Introdução ao R
+*	Introdução ao R  
 *	Leitura e manipulação de dados  
 
-
 ### **Aula 2**  
-*	Análises exploratórias
-*	Criação e edição de gráfico
-*	Índices de diversidade
+*	Análises exploratórias  
+*	Criação e edição de gráfico  
+*	Índices de diversidade  
 *	Curvas de rarefação  
 
+***
 
-### **Aula 3**
-*	Inferência estatística
-*	Modelos lineares
-    - Regressão linear simples e múltipla
-    - Análise de variância e covariância
+### **Aula 3**  
+*	Inferência estatística  
+*	Modelos lineares  
+    + Regressão linear simples e múltipla  
+    + Análise de variância e covariância  
+
 
 ### **Aula 4**  
-*   Modelos lineares generalizados
-*	Análises multivariadas:
-    +	PCA
-    +	NMDS
+*   Modelos lineares generalizados  
+*	Análises multivariadas:  
+    +	PCA  
+    +	NMDS  
 </div>
 
 ## Organização do curso
@@ -74,15 +81,21 @@ EU:
 
 - todo material feito no próprio R, disponível em: 
 
-    + http://melinatarituba.github.io/consultR_curso/
+    + http://melinatarituba.github.io/consultR/
 
 <div align="center">
 ![]( ./images/github.png)      
 </div>
 
-## Módulo 1
+<div class="note">
+roteiros mais extensos e com conteúdo mais denso, PRECISAM ser feitos!
+</div>
 
-1. Motivações para aprender R, filosofia do R
+
+
+## Aula 1
+
+1. O que é o R? Motivações e filosofia
 
 2. Estrutura básica do R:
   + Sintaxe dos comandos
@@ -98,16 +111,22 @@ EU:
 
 Aprender a programar é como aprender outro idioma: exige tempo e treinamento, e não há resultados práticos imediatos...
 
+<div align="center">
 <div class="columns-2">
 ![]( ./images/ingles.png)  
 ![](./images/keep-book.png)
 </div>
+</div?
 
-<!-- lembrar que vamos errar bastante, e que vamos começar do mais básico -->
+<div class="note"
+quem já conhece/domina alguma linguagem de programação?  
+lembrar que vamos errar bastante, e que vamos começar do mais básico  
+</div>
 
-## Apresentação
+## Apresentação 
 
-... mas se você supera essa primeira subida íngreme da curva de aprendizado, os ganhos como profissional são enormes.  
+... mas se você supera essa primeira subida íngreme da curva de aprendizado, os ganhos são enormes.  
+
 <div align="center">
 <div class="columns-2">
 ![](./images/curva-aprend2.jpg)
@@ -118,18 +137,22 @@ Aprender a programar é como aprender outro idioma: exige tempo e treinamento, e
 </div>
 Programar não vai apenas livrar você da camisa de força dos pacotes estatísticos, mas também irá aguçar suas habilidades analíticas e ampliar os horizontes de modelagem ecológica e estatística.”
 
+<div align="center">
 Gotelli & Ellison, 2004. A Primer of Ecological Statistics. Sunderland, Sinauer.
+</div>
 
 ## O que é o R?
 
-- ambiente de programação
-
-- linguagem de programação voltada para manipulação, análise e edição gráfica de dados
+- ambiente e linguagem de programação
 
 "A chave para entender o R é que trata-se de uma linguagem. Uma linguagem para manipular objetos." Bill Venables  
 
-"A pergunta certa sobre uma análise em R não é se é possível fazê-la, e sim como fazê-la."Paulo Justiniano Ribeiro
+"A pergunta certa sobre uma análise em R não é se é possível fazê-la, e sim como fazê-la." Paulo Justiniano Ribeiro
 
+<div class="note">
+- linguagem de programação voltada para manipulação, análise e edição gráfica de dados
+- também chamado de programa
+</div>
 
 ## Filosofia do R: O código é tudo!
 
@@ -143,19 +166,29 @@ Gotelli & Ellison, 2004. A Primer of Ecological Statistics. Sunderland, Sinauer.
 ## Uma questão de costume
 
 <div class="columns-2">
-![](./images/rexemplo.tiff)
+![](./images/rexemplo.jpg)
+
 ![](./images/statistica.jpg)
 </div>
 
+<div class="note">
+assim com é com outros programas, usar o R requer costume
+vantagem do R é que você mantém o caminho de tudo que fez - refazer análises!
+</div>
 
 ## Let´s ![](./images/Rblue.jpeg)!
 <div align="center">
 ![](./images/xkcd_im.jpeg)
 </div>
 
+<div class="note">
+cada vez mais, mais pessoas usam e buscam aprender o R  
+comunidade muito ativa, grande documentação online
+</div>
+
 ## Instalação
 
-![](./images/CRAN.tiff)
+![](./images/CRAN.jpg)
 
 https://cran.r-project.org/
 
@@ -175,12 +208,19 @@ https://cran.r-project.org/
 
 ## Rstudio IDE 
 <div align="center">
-![ ]( ./images/rstudio.tiff )
+![ ]( ./images/rstudio.jpg)
+</div>
+
+<div class="note">
+precisa intalar o R e depois usar o Rstudio, clicando no icone
+tornar esse programa como padrão para arquivos .R
 </div>
 
 ## Configurações Rstudio {.bigger}
 
-<!-- abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar um novo script -->
+<div class="note">
+abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar um novo script
+</div>
 
 - Interface mais amigável 
 
@@ -280,7 +320,7 @@ install.packages("vegan")
 library(vegan)
 ```
 
-![](./images/Rstudio_installpkg.tiff)
+![](./images/Rstudio_installpkg.jpg)
 
 </div>
 
@@ -361,7 +401,7 @@ ls()
 
 No Rstudio...
 
-![](./images/Rstudio_rm.tiff)
+![](./images/Rstudio_rm.jpg)
 
 </div>
 
