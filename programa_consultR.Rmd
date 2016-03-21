@@ -2,9 +2,9 @@
 title: "Introdução ao R para Análises de Dados em Consultoria Ambiental"
 author: "Melina Leite"
 output:
-  pdf_document: null
   html_document: default
   fontsize: 16pt
+  pdf_document: null
   word_document: default
 ---
 
@@ -14,16 +14,10 @@ output:
 **Objetivo**: Introduzir o R como linguagem para análises de dados voltados para consultoria ambiental. Exemplos utilizando dados mais comuns coletados. Análises estatísticas aplicadas em consultoria ambiental. Ao final, espera-se que o participante seja capaz de ler e executar um código pronto e criar o próprio código para análisar de seus dados.
 
 
-**Forma de execução**: 4 aulas de 3h cada. Ao final de cada módulo serão passados roteiros de fixação e estudo do conteúdo abordado, assim como informações (pdfs, linques) adicionais para aprofundamento. Todo o material do curso (apresentações e roteiros) será disponibilizado aos participantes. Este material estará disponível no site http://melinatarituba.github.io/consultR_curso em formato pdf e também em código (.R e .Rmd).
+**Forma de execução**: 4 aulas de 3h cada. Ao final de cada módulo serão passados roteiros de fixação e estudo do conteúdo abordado, assim como informações (pdfs, linques) adicionais para aprofundamento. Todo o material do curso (apresentações e roteiros) será disponibilizado aos participantes. Este material estará disponível no site http://melinatarituba.github.io/consultR em formato pdf, html e também em código (.R e .Rmd).
 
 
-**Material necessário**: uma sala com projetor de tela. Cada participante deverá trazer o computador próprio (qualquer sistema operacional).
-
-
-**Datas sugeridas**: 24 e 31 de março, 7 e 14 de abril. Das 18h às 20:30h.
-
-
-**Valor total**: R$ 3000,00
+**Datas**: 24 e 31 de março, 7 e 14 de abril. Das 18h às 20:30h.
 
 
 ### Programação:  
