@@ -1,0 +1,549 @@
+---
+title: "Introdução ao R para Análises de Dados em Consultoria Ambiental"
+author: "Melina Leite"
+date: "Departamento de Ecologia IB-USP"
+output:
+  ioslides_presentation:
+    widescreen: yes
+mode: selfcontained
+subtitle: Aula 1
+logo: Rlogo-1.png
+---
+
+<!--
+agradecer o convite!
+EU:
+  graduação e mestrado ecologia ufrj
+  trabalho curto em consultoria ambiental
+  Especialista em Lab Ecologia USP
+  interesse pelo R desde 2011, 
+  tutorias disciplina, 
+  pacote Ecovirtual, 
+  ajudar alunos em análises,
+  planos doutorado em estatística ecológica
+  -->
+
+## Objetivos do curso
+
+<!-- como pensei o curso? camilla e a demanda da empresa, problemas com softwares pagos, refazer análises, conhecimento estatística-->
+
+- Introduzir o R como linguagem para análises de dados voltados para consultoria ambiental. 
+ 
+- Revisar conceitos de estatística e as análises mais comuns na área ambiental.
+
+- Ao final, cada um deverá ser capaz de criar o próprio código para análises de seus dados. 
+    <!-- Código base para as análises mais comuns realizadas pelo participante.-->
+
+- Esse curso **NÃO** pretende:
+    + substituir uma disciplina de estatística básica
+    + aprofundar-se na programação em R ou outras ferramentas computacionais.
+
+## Programação do curso
+
+<div class="columns-2">
+### **Aula 1**  
+*	Introdução ao R
+*	Leitura e manipulação de dados  
+
+
+### **Aula 2**  
+*	Análises exploratórias
+*	Criação e edição de gráfico
+*	Índices de diversidade
+*	Curvas de rarefação  
+
+
+### **Aula 3**
+*	Inferência estatística
+*	Modelos lineares
+    - Regressão linear simples e múltipla
+    - Análise de variância e covariância
+
+### **Aula 4**  
+*   Modelos lineares generalizados
+*	Análises multivariadas:
+    +	PCA
+    +	NMDS
+</div>
+
+## Organização do curso
+
+- Apresentações + roteiro de aula
+
+- Roteiros de exercícios "para casa"
+
+- todo material feito no próprio R, disponível em: 
+
+    + http://melinatarituba.github.io/consultR_curso/
+
+<div align="center">
+![]( ./images/github.png)      
+</div>
+
+## Módulo 1
+
+1. Motivações para aprender R, filosofia do R
+
+2. Estrutura básica do R:
+  + Sintaxe dos comandos
+  + Obtendo ajuda
+  + Orientação a objeto
+  + Organizando e gravando seu trabalho no R
+  + Manipulações básicas de objetos
+  + Criação de objetos simples e suas classes
+
+## Apresentação
+
+“Uma das coisas mais importantes que você pode fazer é dedicar um tempo para aprender uma **linguagem de programação** de verdade.  
+
+Aprender a programar é como aprender outro idioma: exige tempo e treinamento, e não há resultados práticos imediatos...
+
+<div class="columns-2">
+![]( ./images/ingles.png)  
+![](./images/keep-book.png)
+</div>
+
+<!-- lembrar que vamos errar bastante, e que vamos começar do mais básico -->
+
+## Apresentação
+
+... mas se você supera essa primeira subida íngreme da curva de aprendizado, os ganhos como profissional são enormes.  
+<div align="center">
+<div class="columns-2">
+![](./images/curva-aprend2.jpg)
+
+![](./images/curva-aprend.png)
+
+</div>
+</div>
+Programar não vai apenas livrar você da camisa de força dos pacotes estatísticos, mas também irá aguçar suas habilidades analíticas e ampliar os horizontes de modelagem ecológica e estatística.”
+
+Gotelli & Ellison, 2004. A Primer of Ecological Statistics. Sunderland, Sinauer.
+
+## O que é o R?
+
+- ambiente de programação
+
+- linguagem de programação voltada para manipulação, análise e edição gráfica de dados
+
+"A chave para entender o R é que trata-se de uma linguagem. Uma linguagem para manipular objetos." Bill Venables  
+
+"A pergunta certa sobre uma análise em R não é se é possível fazê-la, e sim como fazê-la."Paulo Justiniano Ribeiro
+
+
+## Filosofia do R: O código é tudo!
+
+- Programar com dados, os SEUS dados!  
+
+- Reprodutibilidade 
+
+- _Software_ livre
+
+
+## Uma questão de costume
+
+<div class="columns-2">
+![](./images/rexemplo.tiff)
+![](./images/statistica.jpg)
+</div>
+
+
+## Let´s ![](./images/Rblue.jpeg)!
+<div align="center">
+![](./images/xkcd_im.jpeg)
+</div>
+
+## Instalação
+
+![](./images/CRAN.tiff)
+
+https://cran.r-project.org/
+
+<!-- falar que no CRAN tem um monte de manuais e fontes para buscar ajuda -->
+
+## R no Windows
+
+<div class="columns-2">
+- Interface gráfica Rgui  
+    + editor de texto  
+    + console  
+    
+- Simples, porém pouco prática 
+
+![](./images/rgui.png)
+</div>
+
+## Rstudio IDE 
+<div align="center">
+![ ]( ./images/rstudio.tiff )
+</div>
+
+## Configurações Rstudio {.bigger}
+
+<!-- abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar um novo script -->
+
+- Interface mais amigável 
+
+- Visão geral: os 4 painéis
+
+- Global Options: 
+    - encoding: UTF-8
+    - soft-wrap code
+
+## Estrutura básica da linguagem R
+<div align="center">
+![](./images/dontpanic.png)
+</div>
+
+## O R como calculadora {.columns-2}
+
+```{r}
+2+5           #Soma
+30*7          #Multiplicação
+10/2          #Divisão
+10^2          #Potência
+sqrt(4)       #Raiz quadrada
+log(100,10)   #Log na base 10
+```
+
+## Precedência de operações e parênteses {.columns-2}
+
+```{r}
+2*4^3-1
+2*4^(3-1)
+(2*4)^3-1
+(2*4)^(3-1)
+```
+<!-- mostrar que a posição do parênteses importa! -->
+
+## Outras funções matemáticas {.columns-2}
+
+```{r}
+factorial(12)
+exp(1)
+round(1.987645,2)
+abs(-1)
+```
+
+## Sintaxe básica
+
+função(argumento1=valor1, argumento2=valor2, ...)
+
+```{r, eval=FALSE}
+plot(x=area, y=riqueza, log='xy')
+
+plot(area, riqueza)
+
+log(x=100, base=10)
+log(100,10)
+```
+
+## Obtendo ajuda!
+<div class="columns-2">
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+#Abrindo página geral
+help.start()
+
+#Busca de termos no help
+help.search("linear regression")
+??"linear regression"
+
+#Ajuda para funções específicas
+help(mean)
+?mean
+
+#Argumentos da função
+args(mean)
+
+#Exemplo da função
+example(mean)
+```
+
+![](./images/helpmean.png)
+</div>
+
+<!-- mostrar no Rstudio onde fica o help, os locais de busca... também que quando se dá tab ele tenta completar a funcao e ja mostra o basico do help e argumentos -->
+
+## Instalando pacotes
+
+<div class="columns-2">
+- Diretamente pelo console:
+```{r, eval=FALSE}
+install.packages("vegan")
+
+```
+
+- Pelo Rstudio ->
+
+- Carregando o pacote instalado*
+```{r, eval=FALSE}
+library(vegan)
+```
+
+![](./images/Rstudio_installpkg.tiff)
+
+</div>
+
+<!-- uma vez instalado o pacote não precisa mais instalar. mas toda vez que você abrir seu script novamente, terá de fazer o carregamento do pacote. geralmente library() fina no inicio do script, com todos os pacotes usados-->
+
+## Como criar um objeto:
+
+Objeto <- expressão
+```{r, eval=FALSE}
+objeto <- 10+2        #Criando
+objeto              #"Chamando" o objeto no R
+objeto*10           #Multiplica por 10, mas não salva o resultado
+objeto              #Veja como ele continua igual
+objeto <- objeto*10   #Agora sim, salva o resultado da operação
+objeto              #Agora sim ele salvou a modificação
+
+```
+
+## Outra forma de criar objetos
+
+Objeto = Expressão
+```{r}
+objeto = 10+2
+objeto
+area = c(100,235,449, 98, 147)
+area
+```
+<!-- explicar o que é concatenar  -->
+
+## Fazendo operações com objetos {.columns-2}
+
+```{r}
+a <- sqrt(4)
+a
+b <- 5
+a*b
+c <- c(2,4,6)
+c*b
+
+```
+
+## Um erro comum
+Funções também são objetos, se você digita uma função sem os parênteses, o R vai exibir o conteúdo da função
+
+```{r}
+help
+```
+
+## Linguagem orientada a objeto
+
+```{r}
+area = c(100,235,449, 98, 147, 214, 346, 89)
+riqueza <- c(56,62,70,33,49,67,71,45)
+
+summary(area)
+summary(riqueza)
+```
+
+## Linguagem orientada a objeto
+```{r}
+modelo1 <- lm(area~riqueza)
+summary(modelo1)
+```
+
+## ls e rm: listar e remover objetos
+
+<div class="columns-2">
+```{r,eval=FALSE}
+ls()
+```
+[1]  "area" "objeto"  "riqueza"
+```{r, eval=FALSE}
+rm(objeto)
+
+ls()
+```
+[1]  "area" "riqueza"
+
+No Rstudio...
+
+![](./images/Rstudio_rm.tiff)
+
+</div>
+
+## Como o R funciona?
+
+Os objetos criados são mantidos na memória, até que sejam salvos.
+
+Por default, todos os objetos são salvos em um único arquivo oculto no diretório de trabalho, chamado **.RData**.
+
+Ao sair do programa, o R perguntas se deve salvar as alterações.
+
+## Como trabalhar com o R?
+
+Separe cada projeto em um diretório (pasta)  
+- coloque os arquivos de dados  
+- inicie o R daquele diretório  
+
+Salve seus comandos em um arquivo  
+- salve o código (scritp) das análises no mesmo diretório.  
+- o arquivo será um arquivo texto com extensão **.R** ou **.r**  
+
+## Qual o diretório de trabalho atual?
+
+```{r, eval=FALSE}
+getwd()
+```
+
+Mudando o diretório de trabalho
+```{r, eval=FALSE}
+setwd( "/Users/melinatarituba/git-meme/consultR_curso")
+
+```
+
+No Rstudio*...
+
+<!-- ir pro rstudio e mostrar como faz pra mudar o diretorio pelo menu e pela aba de files (more), como faz pra mandar um script pro console, ctrl+r-->
+
+## Classes de objetos
+
+```{r}
+class(area)
+
+x <- c("TRUE","FALSE","TRUE","TRUE")
+class(x)
+
+x<- as.logical(x)
+class(x)
+```
+
+## Classes de objetos
+
+```{r}
+class(modelo1)
+
+names(modelo1)
+```
+A classe 'lm' contém outros objetos, como os vetores de valores previstos e de resíduos, a fórmula do modelo ajustado e muito mais.
+
+
+## Verificação e coerção de classes {.columns-2}
+
+is.[classe] e as.[classe]
+```{r}
+is.character(area)
+
+is.logical(x)
+
+y<- as.factor(x)
+
+is.factor(y)
+```
+
+## Classe de datas
+```{r}
+copa.70 <- "21/06/70"
+copa.94 <- "17/07/94"
+class(copa.70); class(copa.94)
+copa.70 <- as.Date(copa.70,format="%d/%m/%y")
+copa.94 <- as.Date(copa.94,format="%d/%m/%y")
+copa.94 - copa.70
+```
+
+## Classe de fatores
+
+```{r}
+sexo <- rep(c("F","M"),each=9)
+sexo
+class(sexo)
+sexo <- as.factor(sexo)
+sexo
+```
+
+## Níveis de um fator
+
+```{r}
+levels(sexo)
+```
+Contagem de observações
+```{r}
+table(sexo)
+```
+
+## Operações com um vetor
+
+Todas as operações aplicadas a um vetor são aplicadas a cada um de seus elementos
+
+```{r}
+a <- seq(from=0,to=8,by=2)
+a
+2*a
+sqrt(a)
+```
+
+
+## Operações entre vetores
+<div class="columns-2">
+Pareando os elementos
+```{r,echo=FALSE}
+a = seq(0,8,2)
+b = c(1,15,18,3,6)
+```
+
+```{r}
+a
+b
+a+b
+a^(1/b)
+```
+</div>
+
+## A regra da ciclagem
+
+Os elementos do vetor mais curto são repetidos sequencialmente até que a operação seja aplicada a todos os elementos do vetor mais longo
+```{r}
+b <- c(0,0,0,0,1,1,1,1)
+c <- c(1,2,3)
+b*c
+
+```
+
+## Comprimento de vetores
+
+```{r}
+length(a)
+length(b)
+
+length(a)/length(b)
+```
+
+## Funções estatísticas
+
+<div class="columns-2">
+```{r}
+sum(a)
+mean(a)
+var(a)
+min(a)
+max(a)
+```
+Estas funções operam sobre TODO o vetor, e não elemento a elemento.
+</div>
+
+## Funções estatísticas
+
+```{r}
+summary(a)
+```
+
+
+## Outra funções que operam sobre todo o vetor
+
+<div class="columns-2">
+```{r}
+a
+cumsum(a)
+
+d <- c(23,10,56,33,8)
+sort(d)
+
+sort(cumsum(a), decreasing=T)
+
+```
+</div>
+
+
