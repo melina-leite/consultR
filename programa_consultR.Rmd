@@ -2,8 +2,19 @@
 title: "Introdução ao R para Análises de Dados em Consultoria Ambiental"
 author: "Melina Leite"
 output:
+<<<<<<< HEAD
   html_document: default
   fontsize: 16pt
+<<<<<<< Updated upstream
+=======
+  pdf_document: null
+=======
+  pdf_document: null
+  html_document: default
+  fontsize: 16pt
+>>>>>>> gh-pages
+  word_document: default
+>>>>>>> Stashed changes
 ---
 
 **Público-alvo**: Consultores ambientais sem conhecimento de R e com conhecimento básico em estatística.  
@@ -20,10 +31,27 @@ output:
 **Datas sugeridas**: 24 e 31 de março, 7 e 14 de abril. Das 18h às 20:30h.
 
 
+<<<<<<< HEAD
 **Forma de execução**: 4 aulas de 3h cada. Ao final de cada módulo serão passados roteiros de fixação e estudo do conteúdo abordado, assim como informações (pdfs, linques) adicionais para aprofundamento. Todo o material do curso (apresentações e roteiros) será disponibilizado aos participantes. Este material estará disponível no site http://melinatarituba.github.io/consultR em formato pdf, html e também em código (.R e .Rmd).
 
 
+<<<<<<< Updated upstream
 **Datas**: 24 e 31 de março, 7 e 14 de abril. Das 18h às 21h.
+=======
+**Datas**: 24 e 31 de março, 7 e 14 de abril. Das 18h às 20:30h.
+=======
+**Forma de execução**: 4 aulas de 3h cada. Ao final de cada módulo serão passados roteiros de fixação e estudo do conteúdo abordado, assim como informações (pdfs, linques) adicionais para aprofundamento. Todo o material do curso (apresentações e roteiros) será disponibilizado aos participantes. Este material estará disponível no site http://melinatarituba.github.io/consultR_curso em formato pdf e também em código (.R e .Rmd).
+
+
+**Material necessário**: uma sala com projetor de tela. Cada participante deverá trazer o computador próprio (qualquer sistema operacional).
+
+
+**Datas sugeridas**: 24 e 31 de março, 7 e 14 de abril. Das 18h às 20:30h.
+
+
+**Valor total**: R$ 3000,00
+>>>>>>> gh-pages
+>>>>>>> Stashed changes
 
 
 ### Programação:  
