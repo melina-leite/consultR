@@ -5,13 +5,17 @@ date: "22 de março de 2016"
 output:
   rmdformats::readthedown:
     highlight: kate
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
   pdf_document:
-    highlight: zenburn
+    highlight: tango
     toc: yes
 ---
 
 
-```{r setup, echo = F, message = F, cache = F}
+```{r setup, warning=F, echo = F, message = F, cache = F}
 knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALSE, cache=FALSE, warning=FALSE)
 
 #global options que vieram no rmdformats de html
