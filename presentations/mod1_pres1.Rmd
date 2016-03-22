@@ -15,14 +15,10 @@ Primeiras palavras:
 
 -agradecer o convite!
 -apresentação
-  graduação e mestrado ecologia ufrj
-  trabalho curto em consultoria ambiental
-  Especialista em Lab Ecologia USP
-  interesse pelo R desde 2011, 
-  tutorias disciplina, 
-  pacote Ecovirtual, 
-  ajudar alunos em análises,
-  planos doutorado em estatística ecológica
+  graduação e mestrado ecologia ufrj,
+  interesse pelo R desde 2011, antes disso era o Caos  
+  tutorias disciplina, desenv. pacotes  
+  ajudar alunos em análises
 </div>
 
 
@@ -83,27 +79,23 @@ camilla e a demanda da empresa, problemas com softwares pagos, refazer análises
 
     + http://melinatarituba.github.io/consultR/
 
+
 <div align="center">
 ![]( ./images/github.png)      
 </div>
 
 <div class="note">
-roteiros mais extensos e com conteúdo mais denso, PRECISAM ser feitos!
+Tempo, o maior problema!!  
+
+roteiros mais extensos e com conteúdo mais denso, PRECISAM ser feitos!  
+não desistir! prestar atenção ao código, deixar ele limpo.  
+fazendo as aulas e resolvendo problemas na hora  
 </div>
 
 
 
-## Aula 1
+# Aula 1
 
-1. O que é o R? Motivações e filosofia
-
-2. Estrutura básica do R:
-  + Sintaxe dos comandos
-  + Obtendo ajuda
-  + Orientação a objeto
-  + Organizando e gravando seu trabalho no R
-  + Manipulações básicas de objetos
-  + Criação de objetos simples e suas classes
 
 ## Apresentação
 
