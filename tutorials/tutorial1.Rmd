@@ -1,60 +1,24 @@
 ---
-title: 'Roteiro 1'
+title: "Roteiro 1"
 author: "Melina Leite"
 date: "Departamento de Ecologia IB-USP"
 output:
+  rmdformats::readthedown:
+    highlight: kate
   pdf_document:
     highlight: zenburn
-    toc: yes
-  html_document:
-    theme: united
     toc: yes
 ---
 
 ```{r setup, echo = F, message = F, cache = F}
 knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALSE, cache=FALSE, warning=FALSE)
+
+#global options que vieram no rmdformats de html
+library(knitr)
+library(rmdformats)
+options(max.print="75")
+opts_knit$set(width=75)
 ```
-
-# O R e sua filosofia de trabalho
-
-“Uma das coisas mais importantes que você pode fazer é dedicar um tempo para aprender uma linguagem de programação de verdade. Aprender a programar é como aprender outro idioma: exige tempo e treinamento, e não há resultados práticos imediatos. Mas se você supera essa primeira subida íngreme da curva de aprendizado, os ganhos como cientista são enormes. Programar não vai apenas livrar você da camisa de força dos pacotes estatísticos, mas também irá aguçar suas habilidades analíticas e ampliar os horizontes de modelagem ecológica e estatística.”  
-Gotelli & Ellison, 2004. A Primer of Ecological Statistics. Sunderland, Sinauer.  
-
-O R não é um software do tipo _aplicativo_, é um __ambiente de programação__ com um conjunto integrado de ferramentas de software para manipulação de dados, cálculo e apresentação gráfica. A **linguagem R** foi elaborada inicialmente com o objetivo específico de análises de dados, na qual muitas técnicas estatísticas, clássicas e modernas, podem ser implementadas, entre outras coisas. Algumas dessas técnicas estão implementadas no ambiente báscio do R (**R base**), mas muitas estão implementadas em pacotes adicionas (**packages**).  
-
-O ambiente R foi desenvolvido baseado na linguagem S, no final da década de 90 início dos anos 2000. A sua estrutura de código aberto (que vem da linguagem S) e de software público e gratuito atraiu um grande número de desenvolvedores, sendo que há hoje inúmeros pacotes para o R.  
-
-
-## Instalando o R
-
-Vá para a [página de download](http://www.vps.fmvz.usp.br/CRAN/) do R para o CRAN mais próximo (BRAZIL SP - FMVZ-USP) e baixe o pacote de instalação para o seu sistema operacional. O R já vem com uma interface gráfica para utilização. O tipo de interface depende do sistema operacional, se for o Windows será o RGUI. Esta interface distribuída ainda carece de muitos recursos que estão disponíveis em interfaces desenvolvidas para facilitar o trabalho e ser mais amigável com aqueles que não entendem muito de linha de comando e programação. Para isso usaremo o Rstudio, veja como instalar abaixo.
-
-## Instalando o Rstudio
-
-O Rstudio é um IDE (Integrated Development Environment) de distribuição livre para o R. Ou seja, é um interface gráfica que permite que utilizemos o R de maneira mais amigável, simples e eficiente. É muito útil para aqueles que não estão familiarizados com ambientes de programação através de linha de comando. 
- 
-## Instalando pacotes no R  
-
-Pacotes nada mais são do que conjuntos de funcionalidades (funções e dados) distribuídos em conjunto para realizar tarefas específicas. Como já foi dito, o R vem com os pacotes base (R base) que possui grande parte das funções mais básicas em leitura, manipulação de dados e estatítica. Porém, uma imensa quantidade de funções muito úteis estão em pacotes adicionais (add-on packages), que podem ser baixados e instalados no R rapidamente através dos comandos dentro do console do R.
-
-Como exemplo, o pacotes vegan carrega na sua área de trabalho (deixa disponível para uso) um conjunto de ferramentas para análises de dados de ecologia de comunidade. Para usar os pacotes disponíveis é necessário entender as diferenças entre baixar (download) o pacote do repositório e carregar em sua área de trabalho. Para baixar algum pacote disponível no repositório CRAN do R é necessário utilizar o comando `install.packages()` com o nome do pacote entre ”” dentro do parenteses. Se não houver nenhuma mensagem de erro, significa que o download do pacote foi realizado com sucesso.
-
-Se você quiser usar uma função que está implementada dentro do pacote instalado, você precisa carregá-lo para fazer parte do seu workspace. Para cada projeto, precisamos carregar aqueles pacotes que vamos necessitar (normalmente colocamos a função `library` nas primeiras linhas de comando do nosso código):
-
-```{r}
-install.packages("vegan") #instalando o pacote vegan
-library(vegan) # chamando o pacote para que você utilize suas funções
-```
-
-**OBS:** No Rstudio existe uma aba no painel direito inferior chamada `Packages` onde você pode ver os pacotes que já vem com o R base e os que você isntalou. Clique no botão de marcação do pacote se você quer ativá-lo para usar suas funções (é o mesmo que a função `library()`). Também, para instalar um pacote você pode clicar no botão `Install` que será o mesmo que dar o comando `install.packages`.
-
-## O código é tudo!
-
-Um dos primeiros hábitos que você deve adquirir para trabalhar com o R é não digitar os comandos diretamente na linha de comando (Console), e sim em um arquivo texto, que chamamos de *script* ou código. Este novo _script_, com extensão .R ou .r, conterá todos os comandos que você vai usar para analisar seus dados e pode ser lido facilmente por qualquer editor de texto (bloco de notas do windows por exemplo). Os _scripts_ são sequências de comandos que podem ser armazenados e usados de novo quantas vezes quisermos. No cotidiano do uso do R, é bem comum que precisemos fazer o mesmo procedimento diversas vezes com diferentes conjuntos de dados. Isto pode se tornar bem trabalhoso, o que torna muito prático armazenar linhas prontas para que possam ser usadas novamente. 
-
-Uma coisa muito importante é a possibilidade de inserir comentários nos scripts para você não se perder em suas análises. Para inserir cabeçalho, dicas, comentários ou até mesmo "desligar" um comando você colocará o símbolo de # antes de qualquer linha. É recomendável que os comentários sejam usados durante o processo de aprendizado, na forma de lembretes sobre o uso das funções. Eles também são bastante úteis durante a interpretação de resultados de análises, pois permitem que o usuário anote as suas primeiras conclusões e interpretações diretamente com os resultados. Nos exemplos deste tutorial existem vários comentários como exemplo. 
-
-Na interface do Rstudio você pode criar um novo editor de texto indo em FILE > NEW FILE > R SCRIPT, ou clicando no íncone (+) no canto esquerdo superior. Assim, você terá seu novo script aberto logo em cima do *console* do R. Para enviar comandos do script para o console, aperte CTRL+R ou CTRL+Enter (para usuários do Mac use Comand+Enter) em cima da linha do comando.
 
 # Primeiros passos
 
@@ -671,17 +635,12 @@ Abaixo listo as referências usadas para criação desse roteiro, assim como sit
 
 - [R reference card](https://cran.r-project.org/doc/contrib/Short-refcard.pdf). Cartão com as funções mais básicas no R. Muito importante ter sempre contigo!
 
-- [Página oficial do R](http://www.r-project.org/). 
-
 - Apostila online do [Curso Relâmpago de R](http://cmq.esalq.usp.br/wiki/doku.php?id=publico:tutoriais:r-relampago:start) 
-
-- Apostila online [Introdução ao R](https://cantinhodor.files.wordpress.com/2015/03/introduc3a7c3a3o-ao-software-r-para-biologia-marcos-vital-ufal-marc3a7o-2015.pdf)  
 
 - Material diponível da disciplina de [Introdução ao R](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:start) do Programa de Pós-Graduação em Ecologia da USP.  
 
 - Livro-texto de R, escrito por um ecólogo [Crawley 2012 The R book](http://gen.lib.rus.ec/book/index.php?md5=e09db860b99f0710ec5746796c101d59).  
 
-- Página oficial do [Rstudio](https://www.rstudio.com/)
 
 # Exercícios!
 
