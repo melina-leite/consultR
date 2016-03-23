@@ -1,5 +1,5 @@
-"","codinome","nascimento","estado","vivo"
-"1","didi",2015,"CE","TRUE"
-"2","dede",2014,"RJ","TRUE"
-"3","mussum",1941,"RJ","FALSE"
-"4","zacarias",1934,"MG","FALSE"
+"","codinome","nascimento","estado","vivo","altura","idade","log.alt"
+"1","didi",1936,"CE","TRUE",1.68,80,0.518793793415168
+"2","dede",1936,"RJ","TRUE",1.79,80,0.582215619852664
+"3","mussum",1941,"RJ","FALSE",1.81,75,0.593326845277734
+"4","zacarias",1934,"MG","FALSE",1.61,82,0.476234178996372

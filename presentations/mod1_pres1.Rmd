@@ -96,7 +96,6 @@ fazendo as aulas e resolvendo problemas na hora
 
 # Aula 1
 
-
 ## Apresentação
 
 “Uma das coisas mais importantes que você pode fazer é dedicar um tempo para aprender uma **linguagem de programação** de verdade.  
@@ -108,9 +107,9 @@ Aprender a programar é como aprender outro idioma: exige tempo e treinamento, e
 ![]( ./images/ingles.png)  
 ![](./images/keep-book.png)
 </div>
-</div?
+</div>
 
-<div class="note"
+<div class="note">
 quem já conhece/domina alguma linguagem de programação?  
 lembrar que vamos errar bastante, e que vamos começar do mais básico  
 </div>
@@ -130,7 +129,11 @@ lembrar que vamos errar bastante, e que vamos começar do mais básico
 Programar não vai apenas livrar você da camisa de força dos pacotes estatísticos, mas também irá aguçar suas habilidades analíticas e ampliar os horizontes de modelagem ecológica e estatística.”
 
 <div align="center">
-Gotelli & Ellison, 2004. A Primer of Ecological Statistics. Sunderland, Sinauer.
+Gotelli & Ellison, 2004. Principios de Estatística em Ecologia. Sunderland, Sinauer.
+</div>
+
+<div class="note">
+falar da minha experiência, dificuldade de aprendizado, e as coisas que faço até hoje, como sempre olhar o help e coódigos dos scripts antigos
 </div>
 
 ## O que é o R?
@@ -154,6 +157,9 @@ Gotelli & Ellison, 2004. A Primer of Ecological Statistics. Sunderland, Sinauer.
 
 - _Software_ livre
 
+<div class="note">
+há diferentes maneira de fazer a mesma coisa no R
+</div>
 
 ## Uma questão de costume
 
@@ -184,8 +190,14 @@ comunidade muito ativa, grande documentação online
 
 https://cran.r-project.org/
 
-<!-- falar que no CRAN tem um monte de manuais e fontes para buscar ajuda -->
+<div class="note">
+falar que no CRAN tem um monte de manuais e fontes para buscar ajuda -->
+</div>
 
+## Estrutura básica da linguagem R
+<div align="center">
+![](./images/dontpanic.png)
+</div>
 ## R no Windows
 
 <div class="columns-2">
@@ -222,11 +234,6 @@ abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar
     - encoding: UTF-8
     - soft-wrap code
 
-## Estrutura básica da linguagem R
-<div align="center">
-![](./images/dontpanic.png)
-</div>
-
 ## O R como calculadora {.columns-2}
 
 ```{r}
@@ -236,6 +243,10 @@ abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar
 10^2          #Potência
 sqrt(4)       #Raiz quadrada
 log(100,10)   #Log na base 10
+exp(1)        # n. euler elevado a 1
+round(1.987645,2) #arredondamento
+abs(-1)       #número absoluto
+pi            #3,141618...
 ```
 
 ## Precedência de operações e parênteses {.columns-2}
@@ -246,18 +257,38 @@ log(100,10)   #Log na base 10
 (2*4)^3-1
 (2*4)^(3-1)
 ```
-<!-- mostrar que a posição do parênteses importa! -->
+<div class="note">
+  lembrar da importância do parênteses!
+  sempre haverá uma hora que nos esqueceremos dele!
+</div>
 
-## Outras funções matemáticas {.columns-2}
+## Como criar um objeto {.columns-2}
 
+Objeto <- expressão
 ```{r}
-factorial(12)
-exp(1)
-round(1.987645,2)
-abs(-1)
+objeto <- 10+2  # Criando
+objeto          # "Chamando"
+objeto*10   # x 10
+objeto      # ?
+objeto2 <- objeto*10   # novo
+objeto2   #Agora sim salvou a operação
 ```
 
-## Sintaxe básica
+## Fazendo operações com objetos {.columns-2}
+
+```{r}
+a <- sqrt(4)
+a
+b <- 5
+a*b
+d <- c(2,4,6)
+d*b
+```
+<div class="note">
+  explicar o qué é concatenar
+</div>
+
+## Funções!
 
 função(argumento1=valor1, argumento2=valor2, ...)
 
@@ -294,7 +325,9 @@ example(mean)
 ![](./images/helpmean.png)
 </div>
 
-<!-- mostrar no Rstudio onde fica o help, os locais de busca... também que quando se dá tab ele tenta completar a funcao e ja mostra o basico do help e argumentos -->
+<div class="note">
+  mostrar no Rstudio onde fica o help, os locais de busca...      também que quando se dá tab ele tenta completar a funcao e ja mostra o basico do help e argumentos -->
+</div>
 
 ## Instalando pacotes
 
@@ -316,43 +349,9 @@ library(vegan)
 
 </div>
 
-<!-- uma vez instalado o pacote não precisa mais instalar. mas toda vez que você abrir seu script novamente, terá de fazer o carregamento do pacote. geralmente library() fina no inicio do script, com todos os pacotes usados-->
-
-## Como criar um objeto:
-
-Objeto <- expressão
-```{r, eval=FALSE}
-objeto <- 10+2        #Criando
-objeto              #"Chamando" o objeto no R
-objeto*10           #Multiplica por 10, mas não salva o resultado
-objeto              #Veja como ele continua igual
-objeto <- objeto*10   #Agora sim, salva o resultado da operação
-objeto              #Agora sim ele salvou a modificação
-
-```
-
-## Outra forma de criar objetos
-
-Objeto = Expressão
-```{r}
-objeto = 10+2
-objeto
-area = c(100,235,449, 98, 147)
-area
-```
-<!-- explicar o que é concatenar  -->
-
-## Fazendo operações com objetos {.columns-2}
-
-```{r}
-a <- sqrt(4)
-a
-b <- 5
-a*b
-c <- c(2,4,6)
-c*b
-
-```
+<div class="note">
+  uma vez instalado o pacote não precisa mais instalar. mas toda vez que você abrir seu script novamente, terá de fazer o carregamento do pacote. geralmente library() fina no inicio do script, com todos os pacotes usados-->
+</div>
 
 ## Um erro comum
 Funções também são objetos, se você digita uma função sem os parênteses, o R vai exibir o conteúdo da função
@@ -364,18 +363,52 @@ help
 ## Linguagem orientada a objeto
 
 ```{r}
-area = c(100,235,449, 98, 147, 214, 346, 89)
+area <- c(100,235,449, 98, 147, 214, 346, 89)
 riqueza <- c(56,62,70,33,49,67,71,45)
 
 summary(area)
 summary(riqueza)
 ```
 
-## Linguagem orientada a objeto
-```{r}
-modelo1 <- lm(area~riqueza)
-summary(modelo1)
+## Como o R funciona?
+
+Os objetos criados são mantidos na memória, até que sejam salvos.
+
+Por default, todos os objetos são salvos em um único arquivo oculto no diretório de trabalho, chamado **.RData**.
+
+Ao sair do programa, o R perguntas se deve salvar as alterações.
+
+## Como trabalhar com o R?
+
+Separe cada projeto em um diretório (pasta)  
+- coloque os arquivos de dados  
+- inicie o R daquele diretório  
+
+Salve seus comandos em um arquivo  
+- salve o código (scritp) das análises no mesmo diretório.  
+- o arquivo será um arquivo texto com extensão **.R** ou **.r** 
+
+<div class="note">
+  fazer um exemplo de criar uma pasta e um projeto dentro dela
+</div>
+
+## Qual o diretório de trabalho atual?
+
+```{r, eval=FALSE}
+getwd()
 ```
+
+Mudando o diretório de trabalho
+```{r, eval=FALSE}
+setwd( "/Users/melinatarituba/git-meme/consultR_curso")
+
+```
+
+No Rstudio*...
+
+<div class="note">
+  ir pro rstudio e mostrar como faz pra mudar o diretorio pelo menu e pela aba de files (more), como faz pra mandar um script pro console, ctrl+r
+</div>
 
 ## ls e rm: listar e remover objetos
 
@@ -394,42 +427,7 @@ ls()
 No Rstudio...
 
 ![](./images/Rstudio_rm.jpg)
-
 </div>
-
-## Como o R funciona?
-
-Os objetos criados são mantidos na memória, até que sejam salvos.
-
-Por default, todos os objetos são salvos em um único arquivo oculto no diretório de trabalho, chamado **.RData**.
-
-Ao sair do programa, o R perguntas se deve salvar as alterações.
-
-## Como trabalhar com o R?
-
-Separe cada projeto em um diretório (pasta)  
-- coloque os arquivos de dados  
-- inicie o R daquele diretório  
-
-Salve seus comandos em um arquivo  
-- salve o código (scritp) das análises no mesmo diretório.  
-- o arquivo será um arquivo texto com extensão **.R** ou **.r**  
-
-## Qual o diretório de trabalho atual?
-
-```{r, eval=FALSE}
-getwd()
-```
-
-Mudando o diretório de trabalho
-```{r, eval=FALSE}
-setwd( "/Users/melinatarituba/git-meme/consultR_curso")
-
-```
-
-No Rstudio*...
-
-<!-- ir pro rstudio e mostrar como faz pra mudar o diretorio pelo menu e pela aba de files (more), como faz pra mandar um script pro console, ctrl+r-->
 
 ## Classes de objetos
 
@@ -443,46 +441,13 @@ x<- as.logical(x)
 class(x)
 ```
 
-## Classes de objetos
-
-```{r}
-class(modelo1)
-
-names(modelo1)
-```
-A classe 'lm' contém outros objetos, como os vetores de valores previstos e de resíduos, a fórmula do modelo ajustado e muito mais.
-
-
-## Verificação e coerção de classes {.columns-2}
-
-is.[classe] e as.[classe]
-```{r}
-is.character(area)
-
-is.logical(x)
-
-y<- as.factor(x)
-
-is.factor(y)
-```
-
-## Classe de datas
-```{r}
-copa.70 <- "21/06/70"
-copa.94 <- "17/07/94"
-class(copa.70); class(copa.94)
-copa.70 <- as.Date(copa.70,format="%d/%m/%y")
-copa.94 <- as.Date(copa.94,format="%d/%m/%y")
-copa.94 - copa.70
-```
-
-## Classe de fatores
+## Classe fatores
 
 ```{r}
 sexo <- rep(c("F","M"),each=9)
 sexo
 class(sexo)
-sexo <- as.factor(sexo)
+sexo <- as.factor(sexo) # mudando a classe
 sexo
 ```
 
@@ -512,8 +477,8 @@ sqrt(a)
 <div class="columns-2">
 Pareando os elementos
 ```{r,echo=FALSE}
-a = seq(0,8,2)
-b = c(1,15,18,3,6)
+a <- seq(0,8,2)
+b <- c(1,15,18,3,6)
 ```
 
 ```{r}
@@ -523,16 +488,6 @@ a+b
 a^(1/b)
 ```
 </div>
-
-## A regra da ciclagem
-
-Os elementos do vetor mais curto são repetidos sequencialmente até que a operação seja aplicada a todos os elementos do vetor mais longo
-```{r}
-b <- c(0,0,0,0,1,1,1,1)
-c <- c(1,2,3)
-b*c
-
-```
 
 ## Comprimento de vetores
 
@@ -562,20 +517,292 @@ Estas funções operam sobre TODO o vetor, e não elemento a elemento.
 summary(a)
 ```
 
+#Leitura e Manipulação de Dados
 
-## Outra funções que operam sobre todo o vetor
+## Importando dados
+
+Salvar planilha excel como arquivos **.txt** ou **.csv**
+<div align="center">
+![](./images/excel.png)
+</div>
+
+<div class="note">
+ avisar que existem alguns pacotes que importam xls xlsx
+</div>
+
+## Leitura de arquivos texto
+
+```{r}
+# arquivo txt com separação tabular
+trapa <- read.table(file="trapalhoes.txt", header=T, sep="\n")
+
+#arquivo csv com separação por , ou ;
+trapa <- read.table(file="trapalhoes.csv", header=T, sep=";")
+trapa
+
+class(trapa); dim(trapa)
+```
+
+## Leitura de dados
+
+Cuidado com separador decimal!
+```{r, eval=FALSE}
+read.table(..., dec = ".") 
+read.table(..., dec=",")
+```
+
+Tipos de separador de colunas
+```{r, eval=FALSE}
+read.table(..., sep=";") #csv Brasil
+read.table(..., sep="\n") #tabulação
+read.table(..., sep=",") #csv internacional
+```
+
+<div class="note">
+  falar da vantagem em modificar o separador de decimal no computador
+
+ lembrar de sempre usar o HELP da função read.table, há vários argumentos importantes
+ </div>
+
+## SEMPRE verifique sua tabela depois de importar
+
+Onde está o erro?
+```{r}
+trapa2<-  read.table(file="trapalhoes.csv", header=T, sep=",")
+trapa2
+dim(trapa2)
+```
+
+## Vendo a estrutura dos dados importados
+
+<div class="columns-2">
+```{r}
+dim(trapa)
+colnames(trapa)
+rownames(trapa)
+
+str(trapa)
+```
+Colunas com caracteres foram convertidas para **factor**
+</div>
+
+## Vendo a estrutura dos dados importados
+
+```{r}
+summary(trapa)
+```
+
+## Olhando a tabela de dados
+
+```{r}
+head(trapa, n=2L)
+
+tail(trapa, n=2L)
+```
+
+## Olhando a tabela de dados no Rstudio
+<div align="center">
+![](./images/Rstudio_datatable.jpg)
+</div>
+
+## Selecionando colunas no data frame $
+
+```{r}
+trapa$codinome
+trapa$altura
+trapa$estado
+```
+
+## Criando nova coluna
+Uso do $ para criar nova coluna
+```{r}
+trapa$idade <- 2016 - trapa$nas
+trapa
+```
+Cuidado para não escolher um nome de coluna já existente!
+
+## Criando uma nova coluna a partir de outra
+
+Criando uma coluna do logarítmo de uma variável
+```{r}
+trapa$log.alt <- log(trapa$alt)
+trapa
+```
+
+## Substituindo valores nas colunas
+
+```{r}
+trapa$vivo
+trapa$vivo <- c("TRUE","TRUE", "FALSE", "FALSE")
+trapa
+```
+
+
+# Operações com vetores lógicos e indexação
+
+## Operações com vetores lógicos {.flexbox .vcenter}
+
+">" maior que   
+
+"<" menor que  
+
+"==" igual a  
+
+"!=" diferente de  
+
+"&" e  
+
+"|" ou 
+
+## Operações com vetores lógicos
+
+```{r, echo=FALSE}
+altura <- c(1.85,1.78,1.92,1.63,1.81,1.55)
+sexo <- c(rep("M",3),rep("F",3))
+```
+```{r}
+altura; sexo
+altura > 1.80
+machos.altos <- altura > 1.80 & sexo =="M"
+machos.altos
+```
+
+<div class="note">
+  lembrar que o == são 2 e não 1
+  </div>
+
+## Operações com vetores lógicos
+
+```{r, echo=FALSE}
+notas <- c(6,5.1,6.8,2.8,6.1,9.0,4.3,10.4,6.0,7.9,8.9,6.8,9.8,4.6,11.3,8.0,6.7,4.5)
+```
+
+```{r}
+notas
+```
+Quantos aprovados?
+```{r}
+notas >= 5
+sum(notas >= 5)
+```
+
+## Vetores lógicos em matrizes
+```{r,echo=FALSE}
+ilhas= matrix(round(sample(c(runif(36,0,6),rep(0,4)))),ncol=8)
+colnames(ilhas)<- paste("ilha",1:8)
+rownames(ilhas)<- paste("sp",1:5)
+```
+
+```{r}
+ilhas
+ilhas.vf = ilhas > 0  ; ilhas.vf
+```
+
+## Extraindo informação da matriz
+
+```{r}
+ilhas.vf
+```
+
+Quantas espécies por ilha?
+```{r}
+apply(X=ilhas.vf, MARGIN=2,FUN=sum )
+```
+
+## Extraindo informação da matriz
+
+<div class="columns-2">
+Quantas ilhas por espécie?
+```{r}
+apply(X=ilhas.vf, MARGIN=1,FUN=sum )
+```
+
+![](./images/help_apply.jpg)
+</div>
+
+## Indexação de vetores usando [ ] para isolar elementos
 
 <div class="columns-2">
 ```{r}
 a
-cumsum(a)
-
-d <- c(23,10,56,33,8)
-sort(d)
-
-sort(cumsum(a), decreasing=T)
-
+a[1]
+a[5]
+a[1:2]
+a[c(1,3,5)]
 ```
 </div>
 
 
+## Indexação [linha,coluna] em data frames
+
+<div class="columns-2">
+```{r,echo=FALSE}
+altura <- c(1.85,1.78,1.92,1.63,1.81,1.55)
+sexo <- c(rep("M",3),rep("F",3))
+peso<- c(80,100,115,70,65,50)
+dat<-data.frame(sexo,altura,peso)
+```
+
+```{r}
+dat
+
+dat[1,]
+dat[,2]
+dat[1,1]
+dat[3,3]
+```
+</div>
+
+<div align="center">
+  A mesma lógica se aplica em matrizes!
+</div>
+
+## Indexação operações lógicas em data frames
+
+<div class="columns-2">
+
+```{r}
+dat
+dat$peso
+dat$peso[dat$sexo == "M"]
+
+dat$peso[dat$sexo == "M" & dat$altura > 1.80]
+```
+</div>
+
+<div class="note">
+ficar um tempo nessa, mostrar o script e os resultados de novo no R, ter certeza que aprenderam
+</div>
+
+
+## Exportando dados write.table() {.columns-2}
+
+```{r}
+write.table(trapa,"trapa.csv")
+
+write.csv(trapa,"trapa.csv")
+```
+![](./images/help_writetable.jpg)
+
+
+## Os 10 mandamentos do R {.smaller}
+<div class="columns-2">
+![](./images/10mandamentos.jpg)  
+1º Usarás o R em tuas análises e manipulação de teus dados    
+2º Nunca digitarás o código no console;  
+3º Salvarás seus scripts e não se preocuparás com o .RData;  
+4º Sempre concatenarás;  
+5º Jamais esquecerás dos parênteses das funções;  
+6º Conferirás o diretório de trabalho e os dados antes de enlouqueceres;  
+7º Usarás o help antes de perguntares e não culparás o R por teus erros;  
+8º Não esmorecerás e jamais amaldiçoarás o R por tuas faltas de vírgulas;  
+9º Lembrarás das aspas dos caracteres;  
+10º Não cobiçarás e aperfeiçoarás os códigos alheios e nunca ocultarás o código e a autoria original;  
+
+Alexandre Adalardo  
+</div>
+
+<div class="note">
+  mostrar os livros  
+  falar das referências e locais de estudo no tutorial!  
+</div>
