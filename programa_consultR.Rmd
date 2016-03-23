@@ -2,7 +2,8 @@
 title: "Introdução ao R para Análises de Dados em Consultoria Ambiental"
 author: "Melina Leite"
 output:
-  html_document: default
+  html_document: 
+    theme: cerulean
 ---
 
 **Público-alvo**: Consultores ambientais sem conhecimento de R e com conhecimento básico em estatística.  

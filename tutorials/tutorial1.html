@@ -97,7 +97,9 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
       <li><a href="#lidando-com-dados-faltantes-na">Lidando com dados faltantes: NA</a></li>
       <li><a href="#exportando-tabela-de-dados">Exportando tabela de dados</a></li>
       </ul></li>
-      <li><a href="#material-de-apoio">Material de apoio</a></li>
+      <li><a href="#material-de-apoio">Material de apoio</a><ul>
+      <li><a href="#pacotes-interessantes-para-manipulacao-de-dados">Pacotes interessantes para manipulação de dados:</a></li>
+      </ul></li>
       <li><a href="#exercicios">Exercícios!</a></li>
       </ul>  
     </div>
@@ -119,11 +121,13 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">help</span>( <span class="st">&quot;*&quot;</span> )         <span class="co"># auxílio sobre o símbolo &quot;*&quot;</span>
 <span class="kw">help</span>( sin )         <span class="co"># auxílio sobre a função &quot;sin&quot; = seno</span>
 ?sin                <span class="co"># variante da função &quot;help&quot;</span></code></pre></div>
-<p>Se você não sabe o nome da função que você quer usar, tente usar <em>??função</em>. O R abrirá uma página com funções que fazem referência à palavra buscada. Também vale usar a função _help.search()__ para buscar com mais de uma palavra. Experimente:</p>
+<p>Se você não sabe o nome da função que você quer usar, tente usar <code>??função</code>. O R abrirá uma página com funções que fazem referência à palavra buscada. Também vale usar a função `help.search() para buscar com mais de uma palavra. Experimente:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">??variance
 <span class="kw">help.search</span>(<span class="st">&quot;linear regression&quot;</span>)</code></pre></div>
+<p>As páginas de help de qualquer função ou conjunto de dados tem uma estrura fixa e muitas vezes é um tanto árido para que não está acostumado. SEMPRE use o help da função que você quer usar, mesmo pessoas experientes sempre recorrem ao help pelo menos para saber quais os argumentos que aquela função possui.</p>
 <p>Se mesmo lendo o help da função você não entendeu bem como ela funciona, execute um exemplo da função. Os exemplos podem ser vistos no final da página do help, daí você copia e cola o exemplo no console, ou então você executa a função de exemplo:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">example</span>(mean)</code></pre></div>
+<p>Se mesmo explorando o help as coisas continuam confusas, recorra à internet que pode te ajudar com tutoriais, e respostas em listas de discussão. O grupo de ajuda mais influente em linguagem R é o <strong>Stack Overflow</strong> com versão em <a href="http://pt.stackoverflow.com/">português</a> e <a href="http://stackoverflow.com/">inglês</a>.</p>
 <p><strong>OBS:</strong> no Rstudio, existe uma aba no layout do canto direito inferior para você fazer as buscas no Help diretamente, sem precisar dar o comando no Console.</p>
 </div>
 <div id="funcoes-no-r" class="section level2">
@@ -136,15 +140,16 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">log</span>(<span class="dv">100</span>,<span class="dv">10</span>)
 <span class="kw">sin</span>(pi) <span class="co"># pi é a constante 3,141593; um objeto que já &quot;vem no R&quot;,</span>
 <span class="kw">cos</span>(pi)</code></pre></div>
-<p><strong>OBS:</strong> Você pode omitir o nome do argumento na função apenas se os valores estiverem na mesma ordem/posição dos argumentos da função. No exemplo acima fizemos <code>log(100,10)</code> omitindo o nome dos argumentos <code>x=100</code> e <code>base=10</code>, a função funcionou apenas porque os valores 100 e 10 estão na mesma posição dos argumentos. Para evitar se confundir no início, digite sempre o nome dos argumentos!</p>
+<p><strong>OBS:</strong> Você pode omitir o nome do argumento na função apenas se os valores estiverem na mesma ordem/posição dos argumentos da função. No exemplo acima fizemos <code>log(100,10)</code> omitindo o nome dos argumentos <code>x=100</code> e <code>base=10</code>, a função funcionou apenas porque os valores 100 e 10 estão na mesma posição dos argumentos. Para evitar se confundir no início, <strong>digite sempre o nome dos argumentos!</strong></p>
 </div>
 <div id="objetos-no-r" class="section level2">
 <h2>Objetos no R</h2>
 <p>No R tudo é considerad um objeto, até mesmo as funções. O R faz parte de uma categoria de linguagem de programação chamada de <strong>“programação orientada a objetos”</strong>. Um objeto será reconhecido como um nome a ele atribuído<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, e guarda “dentro” dele um conjunto de informações (valores, nomes, funções,etc.). Para ver um objeto no R, basta digitar o seu NOME. Para funções, o nome do objeto é a função sem os parênteses. Experimente os objetos abaixo:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">help
 a &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>) <span class="co">#um objeto vetorial, veja o help da função c(), ela é MUITO útil!</span>
-a <span class="co">#depois de criado o objeto você o &quot;chama&quot;, digitando o nome dele</span></code></pre></div>
-<p>Alguns exemplos de objetos e operações com os objetos:</p>
+a <span class="co">#depois de criado o objeto você o &quot;chama&quot;, digitando seu nome```</span>
+
+Alguns exemplos de objetos e operações com os objetos:</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x =<span class="st"> </span><span class="dv">2</span>
 x
 y =<span class="st"> </span><span class="dv">7</span>
@@ -161,7 +166,7 @@ m =<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>,
 m
 m *<span class="st"> </span>k <span class="co">#qua foi a mensagem do R quando você executou? porque será?</span></code></pre></div>
 <p>Algumas regras para nomes de objetos no R:<br />
-- há diferenças entre palavras maiúsculas e minúscuas: y não é igual à Y<br />
+- há diferenças entre palavras maiúsculas e minúscuas: <code>y</code> não é igual à <code>Y</code><br />
 - nomes de objetos <strong>não</strong> podem começar com números (ex. 1x) ou símbolos (ex. %x)<br />
 - nomes de objetos <strong>não</strong> podem ter espaçõs em branco (use <code>meu_objeto</code> ao invés de <code>meu objeto</code>)</p>
 </div>
@@ -172,20 +177,22 @@ m *<span class="st"> </span>k <span class="co">#qua foi a mensagem do R quando v
 <p>Para apagar objetos indesejados, utilize a função <code>rm()</code>, fornecendo os objetos que você deseja apagar.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(x,y,z)
 <span class="kw">ls</span>()</code></pre></div>
-<p><strong>OBS:</strong> No Rstudio, você pode ver quais são seus objetos na aba superior direita em ‘Environement’. Lá, estarão listados todos os objetos criados, assim com suas classes e outras informações. Se você quiser apagar TODOS os objetos da sua área de trabalho, basta clicar em ‘clear’.</p>
-<div id="onde-esta-sua-area-de-trabalho-no-seu-computador" class="section level3">
-<h3>Onde está sua área de trabalho no seu computador?</h3>
-<p>Afinal, em qual diretório (pasta) você está trabalhando e salvando seus dados (arquivo oculto .Rdata)?. Descubra com a função:</p>
+<p><strong>OBS:</strong> No Rstudio, você pode ver quais são seus objetos na aba superior direita em <strong>Environement</strong>. Lá, estarão listados todos os objetos criados, assim com suas classes e outras informações. Se você quiser apagar TODOS os objetos da sua área de trabalho, basta clicar em <strong>clear</strong> (isso é o mesmo que o comando <code>rm(list=ls())</code>.</p>
+<div id="onde-esta-sua-area-de-trabalho-no-computador" class="section level3">
+<h3>Onde está sua área de trabalho no computador?</h3>
+<p>Afinal, em qual <strong>diretório (pasta)</strong> você está trabalhando e salvando seus dados?. Descubra com a função:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()</code></pre></div>
 <p>Para mudar de diretório:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;caminho do diretório&quot;</span>) <span class="co">#ex: (&quot;/users/meunoem/analises/R&quot;)</span></code></pre></div>
-<p>Você deve salvar nesse diretório o <em>script</em> que você criou e está trabalhando. Também é recomendável você salvar os arquivos de dados (veja abaixo) no mesmo diretório que estiver seu <em>script</em> e o workspace (com o arquivo oculto dos objetos salvos .Rdata).</p>
+<p>Para manter tudo organizado, primeiro você deve criar uma pasta (diretório) para cada “conjunto”&quot; de análises no R.</p>
+<p>Por exemplo, eu quero fazer as análises do projeto X, crio então na pasta do projeto X a pasta <code>análises_R</code>. Dentro desta pasta eu salvo o(s) <strong>script(s)</strong> do R que estou trabalhando e os <strong>arquivos de dados</strong> (veja abaixo). No R,eu uso a função <code>setwd(..&quot;projetoX/analise_R&quot;)</code> e aponto qual pasta estão meus scripts e dados (geralmente é uma das linhas iniciais que você deve colocar no script). Assim, tudo que você estiver criando e fazendo no R vai estar dentro desta pastas. Esse é o chamado <strong>workspace</strong>, que contém os scripts, dados e os arquivos oculto dos objetos criados e salvos <strong>.Rdata</strong> e do histórico dos seus comandos <strong>.Rhistory</strong>.</p>
+<p><strong>OBS:</strong> certifique-se que você entendeu essa parte, pois saber organizar as análises e onde está seu workspace é muito importante para você seguir em frente.</p>
 </div>
 </div>
 <div id="lendo-dados-para-dentro-do-r-formato-csv" class="section level2">
 <h2>Lendo dados para dentro do R: formato csv</h2>
-<p>Para colocar os dados de uma planilha eletrônica (ex: excel), você tem que primeiro salvar os dados em formato CSV ou TXT, aqui vamos falar apenas de CSV, mas para TXT a lógica é muito parecida.<br />
-O formato CSV (comma-separated values) consiste em uma única tabela (spreadsheet) da sual planilha eletrônica, onde os valores são gravados linha-a-linha, sendo que numa mesma linha os valores são separados por vírgula.</p>
+<p>Para colocar os dados de uma planilha eletrônica (ex: excel), você tem que primeiro salvar os dados em formato CSV ou TXT, aqui vamos falar apenas de CSV, mas para TXT a lógica é muito parecida.</p>
+<p>O formato CSV (comma-separated values) consiste em uma única tabela (spreadsheet) da sual planilha eletrônica, onde os valores são gravados linha-a-linha, sendo que numa mesma linha os valores são separados por vírgula.</p>
 <p>O formato UNIVERSAL de tabela de dados para análise estatística é o seguinte:</p>
 <ul>
 <li>cada LINHA é uma observação<br />
@@ -193,7 +200,7 @@ O formato CSV (comma-separated values) consiste em uma única tabela (spreadshee
 <li>cada COLUNA é uma variável ou atributo que foi tomado em cada observação</li>
 </ul>
 <p>No formato CSV, cada linha será uma observação e as colunas serão separadas por vírgulas<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
-<p><strong>DICA:</strong> Na sua planilha de dados, vai ser muito mais fácil trabalhar com nomes de colunas que não possuem espaço (ex. <code>abund_1</code> ou <code>abund.1</code> ao invés de <code>abund 1</code>). O R ao ler espaços vai coloar um ponto (.) no lugar do espaço. E evite, ou melhor <strong>NUNCA coloque acentos e caracteres especiais</strong> na sua planilha, tanto nos nomes de colunas quanto em fatores e caracteres de dados. Ao converter os dados pro R, sempre sarião caracteres muito esquisitos no lugar do acento e isso vai dificultar muito a sua vida na hora de manipular seus dados.</p>
+<p><strong>DICA:</strong> Na sua planilha de dados, vai ser muito mais fácil trabalhar com nomes de colunas que não possuem espaço (ex. <code>abund_1</code> ou <code>abund.1</code> ao invés de <code>abund 1</code>). O R ao ler espaços vai coloar um ponto (.) no lugar do espaço. Evite, ou melhor <strong>NUNCA coloque acentos e caracteres especiais</strong> na sua planilha, tanto nos nomes de colunas quanto em fatores e caracteres de dados. Ao converter os dados pro R, dependendo da <a href="https://pt.wikipedia.org/wiki/Codifica%C3%A7%C3%A3o_de_caracteres">codificação de caracteres</a> do seu computador, no lugar dos acentos aparecerão caracteres muito esquisitos e isso vai dificultar muito a sua vida na hora de manipular seus dados.</p>
 <div id="lendo-um-arquivo-csv" class="section level3">
 <h3>Lendo um Arquivo CSV</h3>
 <p>Como exemplo, usaremos a tabela de dados <code>pratica1.csv</code>, baixados <a href="https://github.com/melinatarituba/consultR_curso/blob/master/tutorials">aqui</a><a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>. Salve o arquivo no diretório que estiver trabalhando com o R: <code>pratica1.csv</code>. Esse arquivo pode ser visualizado em qualquer editor de textos, pois o formato CSV é um formato texto.</p>
@@ -217,11 +224,12 @@ dados &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class
 <li>usar a função <code>read.csv2()</code>, que já entende que seu separador de decimal é vírgula e que o separado de colunas é ponto-vírgula.</li>
 </ul>
 <p>Agora você terá um objeto no R, chamado <code>dados</code>, que contém a tabela de dados de <code>pratica1.csv</code>.</p>
+<p><strong>OBS:</strong> existem também alguns pacotes no R que fazem a leitura/importação de dados diretamente de arquivos do Excel (.xls ou .xlsx). Eu nunca usei, mas se você quiser explorar <a href="https://cran.r-project.org/web/packages/xlsx/xlsx.pdf">aqui está o link do pacote xlsx.</a></p>
 </div>
 <div id="verificando-a-tabela-importada" class="section level3">
 <h3>Verificando a tabela importada</h3>
-<p>Logo após importar a tabela de dados, você precisa verifica se ela foi importada corretamente. Um erro comum é quando não especificamos o cabeçalho ou não colocamos o separador de colunas corretamente.</p>
-<p>Algumas funções úteis:</p>
+<p>Logo após importar a tabela de dados, você precisa verifica se ela foi importada corretamente. Um erro comum é quando não especificamos o <strong>cabeçalho</strong> ou não colocamos o <strong>separador de colunas</strong> corretamente.</p>
+<p>Algumas funções úteis para verificar os dados:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(dados) <span class="co"># retorna as primeiras linhas da tabela</span>
 <span class="kw">tail</span>(dados) <span class="co">#retorna as últimas linhas da tabela</span>
 
@@ -233,47 +241,49 @@ dados &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class
 <span class="kw">str</span>(dados) <span class="co">#estrutura dos dados</span>
 
 <span class="kw">summary</span>(dados) <span class="co">#sumário estatísico das variáveis (colunas)</span></code></pre></div>
-<p><strong>OBS:</strong> no Rstudio você pode olhar a tabela de dados clicando no nome do objeto no paniel <code>Environment</code>(canto direito superior). Ele abrirá uma aba mostrando a tabela de dados.</p>
+<p><strong>OBS:</strong> no Rstudio você pode olhar a tabela de dados clicando no nome do objeto no paniel <strong>Environment</strong> (canto direito superior). Ele abrirá uma aba mostrando a tabela de dados.</p>
 </div>
 </div>
 <div id="classes-dos-objetos" class="section level2">
 <h2>Classes dos objetos</h2>
-<p>No R, cada objeto que você cria ou importa pertence à uma classe. A forma mais simples de saber a qual classe aquele objeto pertence é usando a função <code>class</code>. Abaixo estão alguns exemplos de <strong>vetores</strong>, ou seja, conjuntos de elementos do mesmo tipo. Há várias classes de vetores:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)
+<p>No R, cada objeto que você cria ou importa pertence à uma classe. A forma mais simples de saber a qual classe aquele objeto pertence é usando a função <code>class()</code>. Abaixo estão alguns exemplos de <strong>vetores</strong>, que são conjuntos de elementos do mesmo tipo. Há várias classes de vetores:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)
 <span class="kw">class</span>(a)
 
-b &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;arroz&quot;</span>,<span class="st">&quot;feijão&quot;</span>,<span class="st">&quot;farofa&quot;</span>)
+b &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;arroz&quot;</span>, <span class="st">&quot;feijão&quot;</span>, <span class="st">&quot;farofa&quot;</span>)
 <span class="kw">class</span>(b)
 
-c &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;femea&quot;</span>,<span class="st">&quot;macho&quot;</span>)) <span class="co">#generate levels - níveis de um fator</span>
+c &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;femea&quot;</span>, <span class="st">&quot;macho&quot;</span>)) <span class="co">#generate levels - níveis de um fator</span>
 <span class="kw">class</span>(c)
 
-d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">FALSE</span>)
+d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>)
 <span class="kw">class</span>(d)</code></pre></div>
 <div id="matrizes" class="section level3">
 <h3>Matrizes</h3>
-<p>Matrizes são vetores cujos valores são referenciados por dois índices, o número da linha e o número da coluna. A função <code>matrix</code> cria uma matriz com os valores do argumento data. O números de linhas e colunas são definidos pelos argumentos nrow e ncol:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">data=</span><span class="dv">1</span>:<span class="dv">12</span>,<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">4</span>)
+<p>Matrizes são vetores cujos valores são referenciados por dois índices, o número da linha e o número da coluna. A função <code>matrix</code> cria uma matriz com os valores do argumento data. O números de linhas e colunas são definidos pelos argumentos <code>nrow</code> e <code>ncol</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">data=</span><span class="dv">1</span>:<span class="dv">12</span>, <span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">ncol=</span><span class="dv">4</span>)
 minha.matriz</code></pre></div>
 <p>Como o default do argumento <code>data</code> é NA, se ele é omitido o resultado é uma matriz vazia:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matriz.vazia &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">4</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matriz.vazia &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">ncol=</span><span class="dv">4</span>)
 matriz.vazia</code></pre></div>
-<p>Também por default, os valores são preenchidos por coluna. Para preencher por linha basta o alterar o argumento <code>byrow</code> para TRUE:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">data=</span><span class="dv">1</span>:<span class="dv">12</span>,<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">4</span>,<span class="dt">byrow=</span>T)
+<p>Também por default, os valores são preenchidos por coluna. Para preencher por linha basta o alterar o argumento <code>byrow</code> para <code>TRUE</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">data=</span><span class="dv">1</span>:<span class="dv">12</span>, <span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">byrow=</span>T)
 minha.matriz</code></pre></div>
 <p>Se o argumento data tem menos elementos do que a matriz, eles são repetidos até preenchê-la:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">elementos &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="st">&quot;ar&quot;</span>,<span class="st">&quot;água&quot;</span>,<span class="st">&quot;terra&quot;</span>,<span class="st">&quot;fogo&quot;</span>,<span class="st">&quot;Leeloo&quot;</span>),<span class="dt">ncol=</span><span class="dv">4</span>,<span class="dt">nrow=</span><span class="dv">4</span>) 
-<span class="co"># alguma mensagem aqui?</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">elementos &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="st">&quot;ar&quot;</span>, <span class="st">&quot;água&quot;</span>, <span class="st">&quot;terra&quot;</span>, <span class="st">&quot;fogo&quot;</span>, <span class="st">&quot;Leeloo&quot;</span>), <span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">nrow=</span><span class="dv">4</span>) 
+<span class="co"># alguma mensagem aqui? o que quer dizer?</span>
+
 elementos</code></pre></div>
 <p>Duas maneiras de modificar os nomes de linhas e colunas em uma matriz:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colmanes</span>(matriz.vazia) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;c1&quot;</span>,<span class="st">&quot;c2&quot;</span>,<span class="st">&quot;c3&quot;</span>,<span class="st">&quot;c4&quot;</span>)
-<span class="kw">rownames</span>(matriz.vazia) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;l1&quot;</span>,<span class="st">&quot;l2&quot;</span>,<span class="st">&quot;l3&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colmanes</span>(matriz.vazia) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;c1&quot;</span>, <span class="st">&quot;c2&quot;</span>, <span class="st">&quot;c3&quot;</span>, <span class="st">&quot;c4&quot;</span>)
+<span class="kw">rownames</span>(matriz.vazia) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;l1&quot;</span>, <span class="st">&quot;l2&quot;</span>, <span class="st">&quot;l3&quot;</span>)
 
-matriz.vazia &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;l1&quot;</span>,<span class="st">&quot;l2&quot;</span>,<span class="st">&quot;l3&quot;</span>),
-                                                      <span class="kw">c</span>(<span class="st">&quot;c1&quot;</span>,<span class="st">&quot;c2&quot;</span>,<span class="st">&quot;c3&quot;</span>,<span class="st">&quot;c4&quot;</span>)))
+matriz.vazia &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;l1&quot;</span>, <span class="st">&quot;l2&quot;</span>, <span class="st">&quot;l3&quot;</span>),
+                                                    <span class="kw">c</span>(<span class="st">&quot;c1&quot;</span>, <span class="st">&quot;c2&quot;</span>, <span class="st">&quot;c3&quot;</span>, <span class="st">&quot;c4&quot;</span>)))
 <span class="co">#veja o argumento dimnames da função!</span>
 
-<span class="kw">dimnames</span>(matriz.vazia) <span class="co">#não confundir a função com o argumento de matrix()</span></code></pre></div>
+<span class="kw">dimnames</span>(matriz.vazia) 
+<span class="co">#não confundir a função dimnames com o argumento dimnames da função matrix()</span></code></pre></div>
 </div>
 <div id="arrays" class="section level3">
 <h3>Arrays</h3>
@@ -284,22 +294,23 @@ matriz.vazia &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span 
 <p>Todas as operações aplicáveis a matrizes também o são para arrays:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adultos.por.sexo &lt;-<span class="st"> </span><span class="kw">apply</span>(Titanic, <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), sum)
 adultos.por.sexo
+
 <span class="co">#Vendo a porcentagem de mortos/sobreviventes por sexo</span>
 adultos.por.sexo/<span class="kw">apply</span>(adultos.por.sexo,<span class="dv">1</span>,sum)</code></pre></div>
 </div>
 <div id="data-frame" class="section level3">
 <h3>Data frame</h3>
-<p>Com a função <code>data.frame</code> reunimos vetores de mesmo comprimento em um só objeto:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nome &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Didi&quot;</span>,<span class="st">&quot;Dedé&quot;</span>,<span class="st">&quot;Mussum&quot;</span>,<span class="st">&quot;Zacarias&quot;</span>)
-ano.nasc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1936</span>,<span class="dv">1936</span>,<span class="dv">1941</span>,<span class="dv">1934</span>) 
-vive &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;V&quot;</span>,<span class="st">&quot;V&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>)
-trapalhoes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(nomes,ano.nasc,vive)
+<p>Com a função <code>data.frame</code> reunimos vetores de mesmo comprimento em um só objeto. Geralmente as tabelas de dados que importamos para análises são data frames ou matrizes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nome &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Didi&quot;</span>, <span class="st">&quot;Dedé&quot;</span>, <span class="st">&quot;Mussum&quot;</span>, <span class="st">&quot;Zacarias&quot;</span>)
+ano.nasc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1936</span>, <span class="dv">1936</span>, <span class="dv">1941</span>, <span class="dv">1934</span>) 
+vive &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;V&quot;</span>, <span class="st">&quot;V&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;F&quot;</span>)
+trapalhoes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(nomes, ano.nasc, vive)
 trapalhoes
 
 <span class="co"># O mesmo, em um só comando:</span>
-trapalhoes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">nomes=</span><span class="kw">c</span>(<span class="st">&quot;Didi&quot;</span>,<span class="st">&quot;Dedé&quot;</span>,<span class="st">&quot;Mussum&quot;</span>,<span class="st">&quot;Zacarias&quot;</span>),
-                           <span class="dt">ano.nasc=</span><span class="kw">c</span>(<span class="dv">1936</span>,<span class="dv">1936</span>,<span class="dv">1941</span>,<span class="dv">1934</span>), 
-                           <span class="dt">vive=</span><span class="kw">c</span>(<span class="st">&quot;V&quot;</span>,<span class="st">&quot;V&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>))</code></pre></div>
+trapalhoes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">nomes =</span> <span class="kw">c</span>(<span class="st">&quot;Didi&quot;</span>, <span class="st">&quot;Dedé&quot;</span>, <span class="st">&quot;Mussum&quot;</span>, <span class="st">&quot;Zacarias&quot;</span>),
+                           <span class="dt">ano.nasc =</span> <span class="kw">c</span>(<span class="dv">1936</span>, <span class="dv">1936</span>, <span class="dv">1941</span>, <span class="dv">1934</span>), 
+                           <span class="dt">vive =</span> <span class="kw">c</span>(<span class="st">&quot;V&quot;</span>, <span class="st">&quot;V&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;F&quot;</span>))</code></pre></div>
 <p>Para mudar nomes de linhas e colunas em um data frame, usamos as mesmas funções <code>colnames</code> e <code>rownames</code> usadas anteriormente para matrizes.</p>
 </div>
 <div id="classes-de-colunas-em-data-frame" class="section level3">
@@ -312,7 +323,7 @@ trapalhoes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<spa
 mat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>,<span class="dt">ncol =</span> <span class="dv">2</span>,<span class="dt">nrow =</span> <span class="dv">2</span>)
 mat
 <span class="kw">class</span>(mat)
-<span class="kw">mode</span>(mat) <span class="co"># outra forma de ver o que são as &quot;coisas&quot; dentro da matriz</span>
+
 <span class="kw">class</span>(mat[,<span class="dv">1</span>]) <span class="co"># veja mais adiante como selecionar colunas na matriz [,]</span>
 <span class="kw">class</span>(mat[,<span class="dv">2</span>])
 
@@ -320,12 +331,12 @@ mat
 mat2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="st">&quot;a&quot;</span>,<span class="dt">ncol=</span><span class="dv">2</span>,<span class="dt">nrow=</span><span class="dv">2</span>)
 mat2
 <span class="kw">class</span>(mat2)
-<span class="kw">mode</span>(mat2) 
+
 <span class="kw">class</span>(mat2[,<span class="dv">1</span>])</code></pre></div>
 </div>
 <div id="convertendo-a-classe-de-um-objeto-coercao" class="section level3">
 <h3>Convertendo a classe de um objeto: coerção</h3>
-<p>Algumas classes não podem ser convertidas em outras, por exemplo, caracteres em números. Mas você pode converter números em caracteres:</p>
+<p>Algumas classes não podem ser convertidas em outras, por exemplo, caracteres não se convertem em números. Mas você pode converter números em caracteres:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.numeric</span>(b) 
 <span class="kw">as.numeric</span>(c) <span class="co">#o que aconteceu com os fatores?</span>
 
@@ -351,8 +362,6 @@ area =<span class="st"> </span><span class="kw">c</span>(<span class="dv">100</s
 area
 riqueza &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">56</span>,<span class="dv">62</span>,<span class="dv">70</span>,<span class="dv">33</span>,<span class="dv">49</span>,<span class="dv">67</span>,<span class="dv">71</span>,<span class="dv">45</span>)
 riqueza
-
-
 
 modelo1 &lt;-<span class="st"> </span><span class="kw">lm</span>(area~riqueza) <span class="co"># uma regresão linear entre a área e a riqueza</span>
 <span class="kw">class</span>(modelo1)  <span class="co">#class: linear model</span>
@@ -389,20 +398,20 @@ dados$log.area</code></pre></div>
 <h2>Operações em vetores</h2>
 <p>Nas operações vetoriais o comprimento dos vetores é muito importante, pois o R permite operações entre dois vetores de comprimento diferentes com a seguite regra:</p>
 <p><strong>Regra da ciclagem:</strong> Operações entre vetores de comprimentos diferentes são realizadas pareando-se seus elementos. Os elementos do vetor mais curto são repetidos sequencialmente até que a operação seja aplicada a todos os elementos do vetor mais longo.</p>
-<p>Quando o comprimento do vetor maior não é múltiplo do comprimento do maior, o R retorna o resultado e um aviso:</p>
+<p>Quando o comprimento do vetor maior não é múltiplo do comprimento do menor, o R retorna o resultado e um aviso:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>:<span class="dv">1</span>,<span class="dv">4</span>)
+<span class="kw">length</span>(b) <span class="co"># para saber o comprimento do vetor</span>
+
 c &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="dv">3</span>
+<span class="kw">lenght</span>(c)
 
-b*c <span class="co">#veja a mensagem de erro, é sempre importante ler estas mensagens</span>
-
-<span class="kw">length</span>(b) <span class="co">#para ver o comprimento do vetor</span>
-<span class="kw">length</span>(c) </code></pre></div>
-<p>Mas se o comprimento do vetor maior é um múltiplo do maior, o R retorna apenas o resultado, sem nenhum alerta:</p>
+b*c <span class="co"># veja a mensagem de erro, é sempre importante ler estas mensagens</span></code></pre></div>
+<p>Mas se o comprimento do vetor maior é um múltiplo do menor, o R retorna apenas o resultado, sem nenhum alerta:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="dv">1</span>:<span class="dv">2</span>
 b
 
 a*b <span class="co"># entendeu como o R fez a multiplicação?</span></code></pre></div>
-<p>Portanto muito cuidado com as operações entre vetores de diferentes comprimentos. A regra da ciclagem é um recurso poderoso da linguagem R, mas se você não tiver clareza do que deseja fazer, pode obter resultados indesejados.</p>
+<p>Portanto <strong>muito cuidado com as operações entre vetores de diferentes comprimentos</strong>. A regra da ciclagem é um recurso poderoso da linguagem R, mas se você não tiver clareza do que deseja fazer, pode obter resultados indesejados.</p>
 </div>
 <div id="operacoes-com-vetores-em-matrizes-e-data-frames" class="section level2">
 <h2>Operações com vetores em matrizes e data frames</h2>
@@ -410,8 +419,11 @@ a*b <span class="co"># entendeu como o R fez a multiplicação?</span></code></p
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="dv">8</span>
 
 a &lt;<span class="st"> </span><span class="dv">7</span> <span class="co">#quais valores de a são menores que 7?</span>
+
 a &gt;=<span class="dv">7</span> <span class="co">#quais valores de a são maiores ou iguais a 7?</span></code></pre></div>
-<p>Operadores lógicos no R</p>
+<div id="operadores-logicos-no-r" class="section level3">
+<h3>Operadores lógicos no R:</h3>
+<div align="center">
 <table>
 <thead>
 <tr class="header">
@@ -458,6 +470,8 @@ a &gt;=<span class="dv">7</span> <span class="co">#quais valores de a são maior
 </tr>
 </tbody>
 </table>
+</div>
+</div>
 <div id="uma-maneira-simples-de-quantificar-frequencias" class="section level3">
 <h3>Uma maneira simples de quantificar frequências</h3>
 <p>Para ter frequência de dados que satisfaçam uma certa condição basta somar o vetor lógico resultante:</p>
@@ -470,22 +484,23 @@ a &gt;=<span class="dv">7</span> <span class="co">#quais valores de a são maior
 ##Qual a proporção deste valores em relação ao total?
 <span class="kw">sum</span>(notas.dos.alunos&gt;=<span class="dv">5</span>)/<span class="kw">length</span>(notas.dos.alunos)</code></pre></div>
 <p>Mais exemplos de operações lógicas:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">altura &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">1.85</span>,<span class="fl">1.78</span>,<span class="fl">1.92</span>,<span class="fl">1.63</span>,<span class="fl">1.81</span>,<span class="fl">1.55</span>)
-sexo &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;M&quot;</span>,<span class="dv">3</span>),<span class="kw">rep</span>(<span class="st">&quot;F&quot;</span>,<span class="dv">3</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">altura &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">1.85</span>, <span class="fl">1.78</span>, <span class="fl">1.92</span>, <span class="fl">1.63</span>, <span class="fl">1.81</span>, <span class="fl">1.55</span>)
+sexo &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;M&quot;</span>, <span class="dv">3</span>), <span class="kw">rep</span>(<span class="st">&quot;F&quot;</span> ,<span class="dv">3</span>))
 
 altura
 sexo
 
-altura &gt;<span class="fl">1.80</span> <span class="co">#valoes de altura maiores que 1.80</span>
+altura &gt;<span class="st"> </span><span class="fl">1.80</span> <span class="co">#valoes de altura maiores que 1.80</span>
 sexo ==<span class="st"> &quot;M&quot;</span>
-machos.altos =<span class="st"> </span>altura&gt;<span class="fl">1.80</span> &amp;<span class="st"> </span>sexo==<span class="st">&quot;M&quot;</span> <span class="co">#o  que foi feito auqui?</span>
+
+machos.altos &lt;-<span class="st"> </span>altura&gt;<span class="fl">1.80</span> &amp;<span class="st"> </span>sexo==<span class="st">&quot;M&quot;</span> <span class="co">#o  que foi feito aqui?</span>
 machos.altos</code></pre></div>
 </div>
 </div>
 <div id="subconjuntos-e-indexacao" class="section level2">
 <h2>Subconjuntos e indexação</h2>
-<p>Freqüentemente teremos que trabalhar não com um vetor inteiro, mas com um subconjunto dele. Para obter subconjuntos de um vetor temos que realizar operações de indexação, isto é, associar ao vetor um outro vetor de mesmo tamanho com os índices do elementos selecionados.</p>
-<p>O operador de indexação é o colchetes ‘[]’. Veja o help dos colchetes <code>?&quot;[&quot;</code> para entender melhor.</p>
+<p>Freqüentemente teremos que trabalhar não com um vetor inteiro, mas com um subconjunto dele. Para obter subconjuntos de um vetor temos que realizar operações de <strong>indexação</strong>, isto é, associar ao vetor um outro vetor de mesmo tamanho com os índices do elementos selecionados.</p>
+<p>Os operadores de indexação são os colchetes ‘[ ]’. Veja o help dos colchetes <code>?&quot;[&quot;</code> para entender melhor.</p>
 <p>Para selecionar valores em vetores:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">altura
 altura[<span class="dv">1</span>] <span class="co"># valor da posição 1 do vetor altura</span>
@@ -496,54 +511,56 @@ altura[-<span class="dv">1</span>] <span class="co">#todos os valores menos aque
 <p>Usando vetores lógicos, os elementos do vetor lógico correspondentes a ‘TRUE’ são selecionados, os elementos correspondentes a ‘FALSE’ são excluídos.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="dv">8</span>
 b
-b&gt;<span class="dv">5</span>
+b &gt;<span class="st"> </span><span class="dv">5</span>
 
-b[b&gt;<span class="dv">5</span>] <span class="co">#selecionando os valores de b que sejam maiores que 5</span></code></pre></div>
-<p>Para indexa fatores não esqueca de colocá-los entre “”:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x&lt;-<span class="kw">gl</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">12</span>,<span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;azul&quot;</span>,<span class="st">&quot;vermelho&quot;</span>))
+b[b &gt;<span class="st"> </span><span class="dv">5</span>] <span class="co">#selecionando os valores de b que sejam maiores que 5</span></code></pre></div>
+<p>Para indexa fatores não esqueca de colocá-los entre &quot; “:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;<span class="st"> </span>-<span class="kw">gl</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">12</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;azul&quot;</span>, <span class="st">&quot;vermelho&quot;</span>))
 x
-x[x==<span class="st">&quot;vermelho&quot;</span>] <span class="co"># selecionando vermelhos, veja que o azula ainda é um nível</span>
-y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">9</span>,<span class="dv">20</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">13</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">18</span>,<span class="dv">23</span>,<span class="dv">20</span>)
 
-<span class="co">#selecionando os valores de y que correspondem em posição ao vermleho de x</span>
-y[x==<span class="st">&quot;vermelho&quot;</span>] </code></pre></div>
+x[x ==<span class="st"> &quot;vermelho&quot;</span>] <span class="co"># selecionando vermelhos, veja que o azula ainda é um nível</span>
+y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">20</span>, <span class="dv">19</span>, <span class="dv">20</span>, <span class="dv">13</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">23</span>, <span class="dv">20</span>)
+
+<span class="co">#selecionando os valores de y que correspondem em posição ao vermelho de x</span>
+y[x ==<span class="st"> &quot;vermelho&quot;</span>] </code></pre></div>
 <div id="indexacao-de-matrizes-e-data-frames" class="section level3">
 <h3>Indexação de matrizes e data frames</h3>
-<p>O modo de indexação de matrizes é [linhas,colunas]:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">data=</span><span class="dv">1</span>:<span class="dv">12</span>,<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">4</span>,<span class="dt">byrow=</span>T)
+<p>O modo de indexação de matrizes é [linhas, colunas]:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">data=</span><span class="dv">1</span>:<span class="dv">12</span>, <span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">byrow=</span>T)
 minha.matrix
 
-minha.matriz[<span class="dv">1</span>,<span class="dv">1</span>]
-minha.matriz[<span class="dv">1</span>:<span class="dv">3</span>,<span class="dv">3</span>]</code></pre></div>
+minha.matriz[<span class="dv">1</span>, <span class="dv">1</span>]
+minha.matriz[<span class="dv">1</span>:<span class="dv">3</span>, <span class="dv">3</span>]</code></pre></div>
 <p>A mesma notação é válida para data frames:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dados
-dados[<span class="dv">3</span>,<span class="dv">2</span>]
-dados[<span class="dv">1</span>:<span class="dv">10</span>,<span class="dv">5</span>:<span class="dv">6</span>]
+dados[<span class="dv">3</span>, <span class="dv">2</span>]
+dados[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">5</span>:<span class="dv">6</span>]
 
-dados[dados$local==<span class="st">&quot;borda&quot;</span>,<span class="st">&quot;log.area&quot;</span>]
+dados[dados$local ==<span class="st"> &quot;borda&quot;</span>, <span class="st">&quot;log.area&quot;</span>]
 
-dados[dados$local==<span class="st">&quot;borda&quot;</span>,<span class="dv">5</span>]</code></pre></div>
+dados[dados$local==<span class="st">&quot;borda&quot;</span>, <span class="dv">5</span>]</code></pre></div>
 <p>Para incluir todas as linhas ou colunas, omita o valor (mas mantenha a vírgula!):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz[,<span class="dv">1</span>]
-minha.matriz[<span class="dv">1</span>,]
-dados[,<span class="dv">2</span>]
-dados[<span class="dv">1</span>,]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz[ , <span class="dv">1</span>]
+minha.matriz[<span class="dv">1</span>, ]
+dados[ , <span class="dv">2</span>]
+dados[<span class="dv">1</span>, ]</code></pre></div>
 </div>
 </div>
 <div id="usando-indexacao-para-alterar-valores" class="section level2">
 <h2>Usando indexação para alterar valores</h2>
 <p>Combinando as operações de indexação e de atribuição é possível alterar os valores de qualquer parte de um objeto:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">minha.matriz
-minha.matriz[,<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">0</span> <span class="co">#substituiu os valores da segunda coluna por zero</span>
+minha.matriz[ , <span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">0</span> <span class="co">#substituiu os valores da segunda coluna por zero</span>
 
-minha.matriz[<span class="dv">1</span>,] &lt;-<span class="st"> </span><span class="ot">NA</span>
+minha.matriz[<span class="dv">1</span>, ] &lt;-<span class="st"> </span><span class="ot">NA</span>
 minha.matriz</code></pre></div>
-<p>Quando o objeto é um fator, as coisas são um pouquinho diferentes, isso porque a classe fator, não permite que você mude um valor que não esteja dentro dos níveis daquele fator. Por exemplo, a coluna <code>local</code> do objeto <code>dados</code> é um fator com dois níveis <code>borda</code> e <code>interior</code>. Se quisermos substituir o nível <code>borda</code> por algum outro nome, por exemplo <code>bordinha</code>, eu não vou conseguir e aparecerá uma mensagem de erro. Uma forma de fazer isso é primeiro transformar a coluna em classe <code>character</code>, aplicar a mudança pretendida, e depois transformar a coluna novamente para classe <code>factor</code></p>
+<p>Quando o objeto é um fator, as coisas são um pouquinho diferentes, isso porque a classe fator, não permite que você mude um valor que não esteja dentro dos níveis daquele fator. Por exemplo, a coluna <code>local</code> do objeto <code>dados</code> é um fator com dois níveis <code>borda</code> e <code>interior</code>. Se quisermos substituir o nível <code>borda</code> por algum outro nome, por exemplo <code>bordinha</code>, eu não vou conseguir e aparecerá uma mensagem de erro. Uma forma de fazer isso é primeiro transformar a coluna em classe <code>character</code>, aplicar a mudança pretendida, e depois transformar a coluna novamente para classe <code>factor</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dados$local
 dados$local ==<span class="st"> &quot;borda&quot;</span>
 dados$local &lt;-<span class="st"> </span><span class="kw">as.character</span>(dados$local) <span class="co">#transformando o fator em caracter</span>
+
 <span class="co">#agora sim podemos mudar a palavra borda para qualquer outra coisa</span>
-dados[dados$local ==<span class="st"> &quot;borda&quot;</span>,<span class="dv">5</span>] &lt;-<span class="st"> &quot;bordinha&quot;</span>
+dados[dados$local ==<span class="st"> &quot;borda&quot;</span>, <span class="dv">5</span>] &lt;-<span class="st"> &quot;bordinha&quot;</span>
 dados$local
 
 <span class="co">#e voltamos com a classe fator para a coluna</span>
@@ -552,14 +569,14 @@ dados$local</code></pre></div>
 </div>
 <div id="lidando-com-dados-faltantes-na" class="section level2">
 <h2>Lidando com dados faltantes: NA</h2>
-<p>As vezes nossas planilhas de dados contém dados faltantes, ou seja, que não puderam ser coletados. Estes dados <strong>não</strong> podem ser convetidos em zero, pois isso vai influenciar nas análises estatísticas. Zero é dado! Para identificar os dados faltantes, o R utiliza o termo <code>NA</code>. Quando você importa uma planilha de dados para o R com células em branco, o R vai substituir esse ‘branco’ por NA.</p>
-<p>Dados faltantes são geralmente fonte de irritação, pois eles afetam a forma com que diversas funções operam. Por exemplo a função para cálculo da média <code>mean()</code>, não funciona se houver <code>NA</code> no vetor.</p>
+<p>As vezes nossas planilhas de dados contém dados faltantes, ou seja, que não puderam ser coletados. Estes dados <strong>não podem ser convetidos em zero</strong>, pois isso vai influenciar nas análises estatísticas. Zero é dado! Para identificar os dados faltantes, o R utiliza o termo <code>NA</code>. Quando você importa uma planilha de dados para o R com células em branco, o R vai substituir esse ‘branco’ por NA.</p>
+<p>Dados faltantes são geralmente fonte de irritação, pois eles afetam a forma com que diversas funções operam. Por exemplo a função para cálculo da média <code>mean()</code>, não funciona se houver <code>NA</code> no objeto.</p>
 <p>Para saber se os dados contém <code>NA</code>, usamos a função:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vetor&lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">4</span>,<span class="ot">NA</span>,<span class="dv">5</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vetor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">4</span>, <span class="ot">NA</span>, <span class="dv">5</span>)
 <span class="kw">is.na</span>(vetor) </code></pre></div>
 <p>Como vemos, ela retorna verdadeiro/falso para cada valor no vetor.</p>
 <p>Essa função é muito útil quando estamos querendo excluir os dados faltantes para realizar alguma função. Podemos utilizá-la dentro da indexação:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vetor2&lt;-vetor[!<span class="kw">is.na</span>(vetor)]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vetor2 &lt;-<span class="st"> </span>vetor[!<span class="kw">is.na</span>(vetor)]</code></pre></div>
 <p>Excluindo os <code>NAs</code> do vetor conseguiremos calcular a média, por exemplo:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(vetor) <span class="co"># será que funciona?</span>
 <span class="kw">mean</span>(vetor2) <span class="co"># e agora?</span>
@@ -570,7 +587,7 @@ dados$local</code></pre></div>
 <div id="exportando-tabela-de-dados" class="section level2">
 <h2>Exportando tabela de dados</h2>
 <p>Depois de manipular seus dados e de fazer as análises pertinetes, você pode exportar facilmente as tabelas de resultados para um arquivo texto .csv ou .txt (mais usados) com a função <code>write.table</code>, que vai gravar o objeto de dados especificado na área de trabalho que estiver trabalhando</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.table</span>(dados, <span class="st">&quot;dados_out.csv&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.table</span>(<span class="dt">x =</span> dados, <span class="dt">file =</span> <span class="st">&quot;dados_out.csv&quot;</span>)</code></pre></div>
 </div>
 </div>
 <div id="material-de-apoio" class="section level1">
@@ -578,10 +595,20 @@ dados$local</code></pre></div>
 <p>Abaixo listo as referências usadas para criação desse roteiro, assim como sites e livros interessantes para buscar mais informações:</p>
 <ul>
 <li><p><a href="https://cran.r-project.org/doc/contrib/Short-refcard.pdf">R reference card</a>. Cartão com as funções mais básicas no R. Muito importante ter sempre contigo!</p></li>
-<li><p>Apostila online do <a href="http://cmq.esalq.usp.br/wiki/doku.php?id=publico:tutoriais:r-relampago:start">Curso Relâmpago de R</a></p></li>
 <li><p>Material diponível da disciplina de <a href="http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:start">Introdução ao R</a> do Programa de Pós-Graduação em Ecologia da USP.</p></li>
 <li><p>Livro-texto de R, escrito por um ecólogo <a href="http://gen.lib.rus.ec/book/index.php?md5=e09db860b99f0710ec5746796c101d59">Crawley 2012 The R book</a>.</p></li>
 </ul>
+<div id="pacotes-interessantes-para-manipulacao-de-dados" class="section level2">
+<h2>Pacotes interessantes para manipulação de dados:</h2>
+<ul>
+<li>Os pacotes <code>tidyr</code>, <code>plyr</code> e <code>dplyr</code> são novos pacotes que facilitam a manipulação dos dados como a (re)organização dos dados, filtragem, separação, subgrupos, inclusão de dados de outras fontes, etc. Vale a pena conferir como eles podem te ajudar:</li>
+<li><a href="http://blog.rstudio.org/2014/07/22/introducing-tidyr/">Introdução ao tidyr</a><br />
+</li>
+<li><a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data wrangling with dplyr and tidyr</a><br />
+</li>
+<li><a href="http://www.r-bloggers.com/data-manipulation-with-tidyr/?utm_source=feedburner&amp;utm_medium=email&amp;utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29">Data manipulation with tidyr</a></li>
+</ul>
+</div>
 </div>
 <div id="exercicios" class="section level1">
 <h1>Exercícios!</h1>
@@ -684,6 +711,7 @@ dados$local</code></pre></div>
 <div id="criacao-de-um-data-frame" class="section level3">
 <h3>7. Criação de um data frame</h3>
 <p>Imagine um experimento em que hamsters de dois fenótipos (claros e escuros) recebem três tipos diferentes de dieta, e no qual as diferenças dos pesos (g) entre o fim e o início do experimento sejam:</p>
+<div align="center">
 <table>
 <thead>
 <tr class="header">
@@ -708,6 +736,7 @@ dados$local</code></pre></div>
 </tr>
 </tbody>
 </table>
+</div>
 <p>Crie um data frame com esses dados, na qual cada hamster seja uma linha, e as colunas sejam as variáveis cor, dieta e variação do peso.</p>
 <p>Importante: o nome do objeto deve ser “hamsters”, e o nome das colunas deve ser “dieta”, “cor” e “pesos”, nessa ordem. Dieta deve ser um fator com os níveis “A”, “B” e “C”, em maiúsculas; “cor” deve ser um fator com níveis “claro” e “escuro” em minúsculas.</p>
 <p><strong>DICA:</strong> Use as funções de gerar repetições para criar os vetores dos tratamentos.</p>
