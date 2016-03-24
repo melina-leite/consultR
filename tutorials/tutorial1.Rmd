@@ -651,6 +651,23 @@ write.table(x = dados, file = "dados_out.csv")
 
 Assim como o R tem pacotes que importam dados do formato Excel (.xls ou .xlsx), há também pacotes (ex: [writeXLS](https://cran.r-project.org/web/packages/WriteXLS/WriteXLS.pdf)) que exporta os dados resultantes para um arquivo Excel.  
 
+# Erros mais comuns no R
+
+Grande parte das vezes que recebemos mensagem de erro ao executar um comando é por pura falta de atenção:  
+
+- Escrever o nome de objetos e funções errado.  
+
+- Esquecer de fechar os parênteses das funções. Quando vc esquece de fechar, o console mostra o símbolo de + esperando que você continue. Feche o parênteses ou aperte ESC para sair do comando incompleto. Percebe onde falta o parênteses é mais complicado com funções muito grandes e sem organização. Para evitar, tente quebrar a função em partes onde cada parte fica em uma linha diferente.  
+
+- Esquecer a vírgula entre os argumentos de uma função. O erro aparecerá como "símbolo inesperado".  
+
+- Colocar espaço entre os  nomes de um objeto.  
+
+Para entender onde você errou, leia atentamente a mensagem de erro. No início elas parecem hieroglifos sem sentido, mas aos poucos com a prática você será capaz de captar a mensagem mais rapidamente e resolver os erros mais comuns. Se não entender a mensagem de erro, uma dica é postá-lo no google para ver se alguém já teve erro parecido e como foi resolvido. 
+
+É importante perceber a diferença entre mensagens de erro e mensagens de aviso (warnings). As mensagens de aviso servem pra dizer que o seu comando rodou, mas que há alguma coisa errada ou algo que o R precisa te dizer sobre os resultados da função. Sempre que aparecer a mensagem de aviso, use a função `warnings()` para ver as mensagens de aviso de retorno da função.
+
+
 # Material de apoio
 
 Abaixo listo as referências usadas para criação desse roteiro, assim como sites e livros interessantes para buscar mais informações:
@@ -663,10 +680,13 @@ Abaixo listo as referências usadas para criação desse roteiro, assim como sit
 
 ## Pacotes interessantes para manipulação de dados:
 
-- Os pacotes `tidyr`, `plyr` e `dplyr` são novos pacotes que facilitam a manipulação dos dados como a (re)organização dos dados, filtragem, separação, subgrupos, inclusão de dados de outras fontes, etc. Vale a pena conferir como eles podem te ajudar:
-  + [Introdução ao tidyr](http://blog.rstudio.org/2014/07/22/introducing-tidyr/)  
-  + [Data wrangling with dplyr and tidyr](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)  
-  + [Data manipulation with tidyr](http://www.r-bloggers.com/data-manipulation-with-tidyr/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29)  
+* Os pacotes `tidyr`, `plyr` e `dplyr` são novos pacotes que facilitam a manipulação dos dados como a (re)organização dos dados, filtragem, separação, subgrupos, inclusão de dados de outras fontes, etc. Vale a pena conferir como eles podem te ajudar:
+
+    + [Introdução ao tidyr](http://blog.rstudio.org/2014/07/22/introducing-tidyr/)  
+  
+    + [Data wrangling with dplyr and tidyr](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)  
+  
+    + [Data manipulation with tidyr](http://www.r-bloggers.com/data-manipulation-with-tidyr/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29)  
   
 
 # Exercícios!

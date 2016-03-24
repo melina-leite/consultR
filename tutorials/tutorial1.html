@@ -97,6 +97,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
       <li><a href="#lidando-com-dados-faltantes-na">Lidando com dados faltantes: NA</a></li>
       <li><a href="#exportando-tabela-de-dados">Exportando tabela de dados</a></li>
       </ul></li>
+      <li><a href="#erros-mais-comuns-no-r">Erros mais comuns no R</a></li>
       <li><a href="#material-de-apoio">Material de apoio</a><ul>
       <li><a href="#pacotes-interessantes-para-manipulacao-de-dados">Pacotes interessantes para manipulação de dados:</a></li>
       </ul></li>
@@ -588,7 +589,20 @@ dados$local</code></pre></div>
 <h2>Exportando tabela de dados</h2>
 <p>Depois de manipular seus dados e de fazer as análises pertinetes, você pode exportar facilmente as tabelas de resultados para um arquivo texto .csv ou .txt (mais usados) com a função <code>write.table</code>, que vai gravar o objeto de dados especificado na área de trabalho que estiver trabalhando</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.table</span>(<span class="dt">x =</span> dados, <span class="dt">file =</span> <span class="st">&quot;dados_out.csv&quot;</span>)</code></pre></div>
+<p>Assim como o R tem pacotes que importam dados do formato Excel (.xls ou .xlsx), há também pacotes (ex: <a href="https://cran.r-project.org/web/packages/WriteXLS/WriteXLS.pdf">writeXLS</a>) que exporta os dados resultantes para um arquivo Excel.</p>
 </div>
+</div>
+<div id="erros-mais-comuns-no-r" class="section level1">
+<h1>Erros mais comuns no R</h1>
+<p>Grande parte das vezes que recebemos mensagem de erro ao executar um comando é por pura falta de atenção:</p>
+<ul>
+<li><p>Escrever o nome de objetos e funções errado.</p></li>
+<li><p>Esquecer de fechar os parênteses das funções. Quando vc esquece de fechar, o console mostra o símbolo de + esperando que você continue. Feche o parênteses ou aperte ESC para sair do comando incompleto. Percebe onde falta o parênteses é mais complicado com funções muito grandes e sem organização. Para evitar, tente quebrar a função em partes onde cada parte fica em uma linha diferente.</p></li>
+<li><p>Esquecer a vírgula entre os argumentos de uma função. O erro aparecerá como “símbolo inesperado”.</p></li>
+<li><p>Colocar espaço entre os nomes de um objeto.</p></li>
+</ul>
+<p>Para entender onde você errou, leia atentamente a mensagem de erro. No início elas parecem hieroglifos sem sentido, mas aos poucos com a prática você será capaz de captar a mensagem mais rapidamente e resolver os erros mais comuns. Se não entender a mensagem de erro, uma dica é postá-lo no google para ver se alguém já teve erro parecido e como foi resolvido.</p>
+<p>É importante perceber a diferença entre mensagens de erro e mensagens de aviso (warnings). As mensagens de aviso servem pra dizer que o seu comando rodou, mas que há alguma coisa errada ou algo que o R precisa te dizer sobre os resultados da função. Sempre que aparecer a mensagem de aviso, use a função <code>warnings()</code> para ver as mensagens de aviso de retorno da função.</p>
 </div>
 <div id="material-de-apoio" class="section level1">
 <h1>Material de apoio</h1>
@@ -601,12 +615,12 @@ dados$local</code></pre></div>
 <div id="pacotes-interessantes-para-manipulacao-de-dados" class="section level2">
 <h2>Pacotes interessantes para manipulação de dados:</h2>
 <ul>
-<li>Os pacotes <code>tidyr</code>, <code>plyr</code> e <code>dplyr</code> são novos pacotes que facilitam a manipulação dos dados como a (re)organização dos dados, filtragem, separação, subgrupos, inclusão de dados de outras fontes, etc. Vale a pena conferir como eles podem te ajudar:</li>
-<li><a href="http://blog.rstudio.org/2014/07/22/introducing-tidyr/">Introdução ao tidyr</a><br />
-</li>
-<li><a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data wrangling with dplyr and tidyr</a><br />
-</li>
-<li><a href="http://www.r-bloggers.com/data-manipulation-with-tidyr/?utm_source=feedburner&amp;utm_medium=email&amp;utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29">Data manipulation with tidyr</a></li>
+<li><p>Os pacotes <code>tidyr</code>, <code>plyr</code> e <code>dplyr</code> são novos pacotes que facilitam a manipulação dos dados como a (re)organização dos dados, filtragem, separação, subgrupos, inclusão de dados de outras fontes, etc. Vale a pena conferir como eles podem te ajudar:</p>
+<ul>
+<li><p><a href="http://blog.rstudio.org/2014/07/22/introducing-tidyr/">Introdução ao tidyr</a></p></li>
+<li><p><a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data wrangling with dplyr and tidyr</a></p></li>
+<li><p><a href="http://www.r-bloggers.com/data-manipulation-with-tidyr/?utm_source=feedburner&amp;utm_medium=email&amp;utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29">Data manipulation with tidyr</a></p></li>
+</ul></li>
 </ul>
 </div>
 </div>

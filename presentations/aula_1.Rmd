@@ -789,11 +789,7 @@ write.csv(trapa,"trapa.csv")
 
 ## Erros mais comuns no R
 
-- Leia atentamente as mensagens de erro  
-- com o tempo você vai começar a se acostumar com as mais comuns e saber logo o problema  
-- Se não entender, use o google!  
-
-## Objeto não encontrado
+- Nomes de objetos e funções errados  
 ```{r, echo=FALSE}
 rm(list=ls())
 dados <- c(23, 10, 45)
@@ -809,35 +805,9 @@ ls()
 dados
 ```
 
-
-## Função não encontrada
-```{r, eval=F}
-dados <- read.tabe("sps.csv", header=T,sep=";")
-```
-
-```{r}
-dados <- read.table("sps.csv", header=T,sep=";")
-```
-
-```{r, echo=FALSE, eval=FALSE}
-lineplot.CI(dados$cor, dados$peso)
-```
-![]( ./images/erro_funcao.jpg)  
-
-```{r}
-library(sciplot)
-lineplot.CI(dados$cor, dados$peso)
-```
-<div class= "note">
-ajustar o tamanho do lineplot para ele ficar no slide
-</div>
-
-
-## Esquecendo de fechar parênteses
-
-Se você não fecha algum dos parênteses do seu comando, vai aparecer um sinal de + no console.  
-- Feche os parênteses ou  
-- Aperte ESC  
+## Fechar parênteses
+  + Feche os parênteses ou  
+  + Aperte ESC  
 ```{r, eval=FALSE}
 plot(dados$cor,dados$peso
 ```
@@ -856,10 +826,19 @@ plot(dadoscor dados$peso)
 aula pratica
 aula.pratica
 ```
-<div class="note">
-colocar as imagens de mensagenbs de erro desse slide
-</div>
 
+![]( ./images/erro_simbolo.jpg)
+
+
+## Como lidar com os erros?
+
+- Leia atentamente as mensagens de erro  
+
+- Acostume-se com as mensagens mais comuns  
+
+- Se não entender, use o google!  
+
+- Perceba a diferença entre mensagem de erro e `warning()`
 
 ## Os 10 mandamentos do R {.smaller}
 <div class="columns-2">
