@@ -3,34 +3,35 @@ title: 'Roteiro 2'
 author: "Melina Leite"
 date: "Departamento de Ecologia IB-USP"
 output:
+  rmdformats::readthedown:
+    highlight: kate
   pdf_document:
     highlight: zenburn
-    toc: yes
-  html_document:
-    theme: united
     toc: yes
 ---
 
 ```{r setup, echo = F, message = F, cache = F}
 knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALSE, cache=FALSE, warning=FALSE)
+
+#global options que vieram no rmdformats de html
+library(knitr)
+library(rmdformats)
+options(max.print="75")
+opts_knit$set(width=75)
 ```
 
-
-
-# Importando e verificando os dados
 Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios. Falaremos também dos índices de diversidade mais usados em estudos de levantamento e monitoramento ambiental e como calculá-los no R. Veremos como fazer curvas de rarefação dos dados no R. Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.
 
+# Importando e verificando os dados
 
-## Relembrando a importação de dados
-<!-- PENSAR EM OUTROS EXEMPLOS DE PARA COLOCAR NO TUTORIAL -->
-Baixe os arquivos de dados[ilhas e sps]() e faça a leitura deles no R:
+Baixe os arquivos de dados [ilhas](https://www.dropbox.com/s/mz0omdb3qhfv282/ilhas.csv?dl=0) e [sps](https://www.dropbox.com/s/3jupvtct55827vx/sps.csv?dl=0) e faça a leitura deles no R:
 ```{r}
-ilhas <- read.csv2("ilhas.csv",header=T,row.names = 1)
+ilhas <- read.csv2("./data/ilhas.csv",header=T,row.names = 1)
 ilhas <- as.matrix(ilhas)
-sps <- read.csv2("sps.csv",header=T, dec=".")
+sps <- read.csv2("./data/sps.csv",header=T, dec=".")
 ```
 
-A tabela `ilhas` é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família `read.table`, os objetos criados são sempre da classe data frame, por isso a necessidade de transformar o objeto em matriz.
+A tabela `ilhas` é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família `read.table`, os objetos criados são sempre da classe `data frame`, por isso a necessidade de transformar o objeto em matriz.
 
 A tabela `sps` é um data frame contendo as informações de atributos das mesmas espécies presentes em `ilhas`.
 
@@ -51,21 +52,50 @@ summary(sps)
 
 Percebemos que existe um erro de digitação em `dieta`, há uma linha em que o nível `frutos` está escrito sem plural `fruto`. Abaixo veremos como consertar este erro.
 
+
 ## Corrigindo erros em data frames 
+
+Há diferentes formas de se corrigir erros em vetores, data frames e matrizes. Abaixo, veremos um exemplo de como consertar erros de digitação em variáveis categóricas (fatores ou caracteres) usando indexação de data frames.
+
+Primeiro vamos descobrir onde está o erro na variável `dieta` do data frame `sps`:
+```{r}
+# descobrindo em qual linha o nível de frutos está errado:
+sps[ sps$dieta=="fruto" , ] # linha 9
+
+# atribuindo à linha 9, coluna 4 a palavra frutos (correta)
+sps[9,4] <- "frutos"
+
+#verificando a correção:
+sps[9,]
+
+# podemos fazer os passos acima de maneira mais direta:
+sps[ sps$dieta=="fruto" , 4] <- "frutos"
+```
+
+Vejamos o que aconteceu com a variável `dieta`:
+```{r}
+sps$dieta #classe de fatores 4 níveis
+
+# contando quantos dados de cada nível
+table(sps$dieta)
+```
+
+Como `dieta` é um fator, o nível "errado" `fruto` permanece na contagem dos fatores. Uma forma de re-arranjar a variável para conter apenas os 3 níveis corretos é transformar a variável em classe `character` e depois retransformar em `factor`:
+
+```{r}
+sps$dieta<- as.character(sps$dieta)
+sps$dieta<- as.factor(sps$dieta)
+sps$dieta
+```
 
 volta a falar da importação de dados, transformar em data frames.
 mostrar as ferramentas para verificar os dados, inclusive no Rstudio (ver tabela)
 como consertar erros usando indexação
 NAs
 
-## tranformando dados
-relembrar como criar colunas em data frame
-descobrir como criar colunas em matrizes
-funçao scale para centralizar e escalonar dados Rbook pg60
+## Organizando data frames: `sort`, `order`, `rank
 
-
-## Utilizando as funções sort, order, rank
- As três funções `sort`, `order` e `rank`são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo [houses.txt](https://github.com/melinatarituba/consultR_curso/tree/master/tutorials) e carregue ele no R. Vamos ver a diferença entre as funções na prática:
+ As três funções `sort`, `order` e `rank`são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo [houses.txt](https://www.dropbox.com/s/cxk4fg6xr023jpn/houses.txt?dl=0) e carregue ele no R. Vamos ver a diferença entre as funções na prática:
  
 ```{r}
 houses<-read.table("houses.txt",header=T)
@@ -79,7 +109,7 @@ view <- data.frame(houses$Price,ranks,sorted,ordered)
 view
 ```
 
-A função `rank` retorna a posição do ranking que aquele preço está. Como o vetor `Price`tem 12 números, o preço mais alto (325) vai ter o maior valor (12), e o preço mais baixo (95) o menor valor, 1. Os rankings fracionados indicam empate, por exemplo existem dois preços de 188, seus rankings seriam 8 e 9, como estão empatados a função atribuiu 8.5 a ambos.
+A função `rank` retorna a posição do ranking que aquele preço está. Como o vetor `Price` tem 12 números, o preço mais alto (325) vai ter o maior valor (12), e o preço mais baixo (95) o menor valor, 1. Os rankings fracionados indicam empate, por exemplo existem dois preços de 188, seus rankings seriam 8 e 9, como estão empatados a função atribuiu 8.5 a ambos.
 
 A função `sort` é a mais intuitiva, ela ordena os preços do menor para o maior, ou do maior para o menor se você usar o argumento `decreasing=TRUE`. Porém, pode ser uma função perigosa, porque se você a usa em uma coluna de um data frame, ela poderá desacoplar a coluna sendo ordenada das demais colunas. Ou seja, você só mudará a coluna em questão deixando todo o data frame inalterado, o que fará perder a conexão entre os dados das linhas e as variáveis nas colunas.
 
@@ -92,15 +122,32 @@ houses[order(houses$Price), ]
 
 # veja a diferença se eu usar a função sort
 houses$Price <- sort(houses$Price)
-houses # OPS! bagunçou o data frame!
+houses 
+# OPS! bagunçou o data frame!
 ```
 
 Se você quiser ordenar o data frame por uma coluna de maneira decrescente, utilize o argumento `decreasing=TRUE` da função `order`. Essa função é relativamente boa quando queremos exportar uma tabela de dados/resultados para apresentar em relatórios/apresentações/artigos. Assim, você ordena o data frame pela coluna que você achar mais importante na hora de apresentar seus dados/resultados.
 
 
-# Estatística descritiva
+# Descrevendo e resumindo dados
 
-colocar as principais funções para estatística descritiva em vetores, matrizes e data frames
+## Estatísticas descritivas
+
+Como vimos no roteiro 1,listamos as principais estatísticas resumo dos dados e suas funções no R. 
+
+```{r}
+max(sps$compr.asa)
+min(sps$compr.corpo)
+
+range(sps$peso)
+
+mean(sps$peso)
+sd(sps$peso)
+var(sps$peso)
+
+median(sps$peso)
+quantile(sps$peso)
+```
 
 ## Descrevendo as observações - Contagens
 
@@ -119,9 +166,9 @@ dados$local <- gl(2,4, 50,labels = c("borda", "interior"), ordered = F)
 table(dados$Ambiente,dados$local)
 ```
 
+## Família Apply e aggregate
 
-##Família Apply e aggregate
-
+!!!!
 
 # Gráficos exploratórios
 
@@ -132,6 +179,9 @@ O R é um ambiente de trabalho onde a análise gráfica de dados é de fácil ex
 
 <!-- ver material do curso R-lampago, parte 6 e 7 graficos exploratórios
 7. Gráficos Exploratórios
+livro ieno
+apostila vital
+apostila unesp
  -->
 
 
@@ -143,7 +193,7 @@ O R é um ambiente de trabalho onde a análise gráfica de dados é de fácil ex
 
 # Criação e edição de gráficos
 
-# Aprofundando-se
+# Material de Apoio
  
  dar exemplos de pacotes plyr dplyr, maggritt, ggplot2
  
@@ -173,5 +223,5 @@ mont[order(tot.sp, decreasing = T) , order(tot.loc, decreasing =T)]
 ```
  
  
- 
+ <!-- continuar exercícios -->
  

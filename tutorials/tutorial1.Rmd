@@ -174,9 +174,7 @@ No formato CSV, cada linha será uma observação e as colunas serão separadas 
 
 ### Lendo um Arquivo CSV    
 
-Como exemplo, usaremos a tabela de dados `pratica1.csv`, baixados [aqui](https://github.com/melinatarituba/consultR_curso/blob/master/tutorials)[^5]. Salve o arquivo no diretório que estiver trabalhando com o R: `pratica1.csv`. Esse arquivo pode ser visualizado em qualquer editor de textos, pois o formato CSV é um formato texto. 
-
-[^5]: clique com o botão direito no arquivo e mande `save link as`.
+Como exemplo, usaremos a tabela de dados `pratica1.csv`, baixados [aqui](https://www.dropbox.com/s/27xqz6ohesa3i3d/pratica1.csv?dl=0). Salve o arquivo no diretório que estiver trabalhando com o R: `pratica1.csv`. Esse arquivo pode ser visualizado em qualquer editor de textos, pois o formato CSV é um formato texto. 
 
 Importanto a tabela de dados para o R. Lembre-se que é necessário gravar a leitura do arquivo em um objeto:
 ```{r}
