@@ -49,10 +49,10 @@ camilla e a demanda da empresa, problemas com softwares pagos, refazer análises
 
 ### **Aula 2**  
 *	Análises exploratórias  
+    + estatística descritiva
+    + gráficos exploratórios
 *	Criação e edição de gráfico  
-*	Índices de diversidade  
-*	Curvas de rarefação  
-
+    + parâmetros gráficos
 ***
 
 ### **Aula 3**  
@@ -60,10 +60,15 @@ camilla e a demanda da empresa, problemas com softwares pagos, refazer análises
 *	Modelos lineares  
     + Regressão linear simples e múltipla  
     + Análise de variância e covariância  
+* Modelos lineares generalizados
 
 
 ### **Aula 4**  
-*   Modelos lineares generalizados  
+* Análises de composição e diversidade em comunidades
+    + índices de diversidade
+    + curva do coletor
+    + rarefação
+    +estimadores de riqueza
 *	Análises multivariadas:  
     +	PCA  
     +	NMDS  
@@ -536,10 +541,10 @@ Salvar planilha excel como arquivos **.txt** ou **.csv**
 
 ```{r}
 # arquivo txt com separação tabular
-trapa <- read.table(file="trapalhoes.txt", header=T, sep="\n")
+trapa <- read.table(file="../data/trapalhoes.txt", header=T, sep="\n")
 
 #arquivo csv com separação por , ou ;
-trapa <- read.table(file="trapalhoes.csv", header=T, sep=";")
+trapa <- read.table(file="../data/trapalhoes.csv", header=T, sep=";")
 trapa
 
 class(trapa); dim(trapa)
@@ -570,7 +575,7 @@ read.table(..., sep=",") #csv internacional
 
 Onde está o erro?
 ```{r}
-trapa2<-  read.table(file="trapalhoes.csv", header=T, sep=",")
+trapa2<-  read.table(file="../data/trapalhoes.csv", header=T, sep=",")
 trapa2
 dim(trapa2)
 ```
