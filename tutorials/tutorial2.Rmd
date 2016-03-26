@@ -19,16 +19,19 @@ library(rmdformats)
 options(max.print="75")
 opts_knit$set(width=75)
 ```
+```{r, echo=F}
+setwd("/Users/melinatarituba/git-meme/consultR/tutorials")
+```
 
-Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios. Falaremos também dos índices de diversidade mais usados em estudos de levantamento e monitoramento ambiental e como calculá-los no R. Veremos como fazer curvas de rarefação dos dados no R. Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.
+Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios.  Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.
 
 # Importando e verificando os dados
 
 Baixe os arquivos de dados [ilhas](https://www.dropbox.com/s/mz0omdb3qhfv282/ilhas.csv?dl=0) e [sps](https://www.dropbox.com/s/3jupvtct55827vx/sps.csv?dl=0) e faça a leitura deles no R:
 ```{r}
-ilhas <- read.csv2("./data/ilhas.csv",header=T,row.names = 1)
+ilhas <- read.csv2("../data/ilhas.csv",header=T,row.names = 1)
 ilhas <- as.matrix(ilhas)
-sps <- read.csv2("./data/sps.csv",header=T, dec=".")
+sps <- read.csv2("../data/sps.csv",header=T, dec=".")
 ```
 
 A tabela `ilhas` é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família `read.table`, os objetos criados são sempre da classe `data frame`, por isso a necessidade de transformar o objeto em matriz.
@@ -78,6 +81,7 @@ sps$dieta #classe de fatores 4 níveis
 
 # contando quantos dados de cada nível
 table(sps$dieta)
+# veremos a função table mais abaixo
 ```
 
 Como `dieta` é um fator, o nível "errado" `fruto` permanece na contagem dos fatores. Uma forma de re-arranjar a variável para conter apenas os 3 níveis corretos é transformar a variável em classe `character` e depois retransformar em `factor`:
@@ -88,17 +92,13 @@ sps$dieta<- as.factor(sps$dieta)
 sps$dieta
 ```
 
-volta a falar da importação de dados, transformar em data frames.
-mostrar as ferramentas para verificar os dados, inclusive no Rstudio (ver tabela)
-como consertar erros usando indexação
-NAs
 
-## Organizando data frames: `sort`, `order`, `rank
+## Organizando data frames: `sort`, `order`, `rank`
 
  As três funções `sort`, `order` e `rank`são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo [houses.txt](https://www.dropbox.com/s/cxk4fg6xr023jpn/houses.txt?dl=0) e carregue ele no R. Vamos ver a diferença entre as funções na prática:
  
 ```{r}
-houses<-read.table("houses.txt",header=T)
+houses<-read.table("../data/houses.txt",header=T)
 houses
 
 ranks <- rank(houses$Price)
@@ -133,7 +133,7 @@ Se você quiser ordenar o data frame por uma coluna de maneira decrescente, util
 
 ## Estatísticas descritivas
 
-Como vimos no roteiro 1,listamos as principais estatísticas resumo dos dados e suas funções no R. 
+Como vimos no roteiro 1,listamos as principais estatísticas resumo dos dados e suas funções no R. Vejamos os exemplos com os dados de `sps`:
 
 ```{r}
 max(sps$compr.asa)
@@ -153,22 +153,72 @@ quantile(sps$peso)
 
 A forma mais simples de descrever quantitativamente observações é agrupá-las em categorias e contar quantas observações pertence a cada categoria.
 
-No R a forma mais direta de obter contagens (frequências) é através da função `table().` Tomando como exemplo o dataframe `dados`, podemos nos perguntar quantas amostras de cada ambiente foram tiradas:
-```{r}
-table(dados$Ambiente)
-```
-
-A função table é útil para variáveis categóricas (fatores ou caracteres). Vamos incluir uma variável categórica na tabela `dados` referente ao local amostrado em casda ambiente e saber quantos locais foram amostrados por ambiente:
+No R a forma mais direta de obter contagens (frequências) é através da função `table().` Tomando como exemplo o data frame `sps`, podemos nos perguntar quantas espécies existem por dieta:
 
 ```{r}
-dados$local <- gl(2,4, 50,labels = c("borda", "interior"), ordered = F)
-
-table(dados$Ambiente,dados$local)
+table(sps$dieta)
 ```
 
-## Família Apply e aggregate
+A função table muito é útil para variáveis categóricas (fatores ou caracteres). Vamos ver agora quantas espécies existem em uma combinação de dieta e cor:
 
-!!!!
+```{r}
+table(sps$dieta,sps$cor)
+```
+
+## Funções tapply e aggregate
+
+Em `data frames`, quando temos uma variavel categórica (fator) e uma numérica, as funções `aggregate` e `tapply` são muito úteis. Estas funções aplicam uma função qualquer a uma variável quantiativa para cada classe de variável categórica.
+
+A função `tapply` vai criar uma tabela com os resultados da função que você aplicou ao seu `data frame`. Por exemplo, queremos saber o comprimento médio do corpo das espécies por dieta, pois achamos que os bichos que tem uma dieta nectarívora sejam menores:
+
+```{r}
+#Comprimento médio do corpo por dieta
+tapply(X = sps$compr.corpo, INDEX = sps$dieta, FUN = mean)
+```
+
+Entendendo os argumentos da função:  
+- em `X` colocamos a variável quantitativa que estamos interessados em saber  
+- em `INDEX` colocamos a(s) variável(is) qualitativa(s) que queremos resumir  
+- em `FUN` colocamos a função que queremos aplicar na variável quantitativa, por exemplo `mean`, `max`, `min`, `var`.
+  
+Experimente este outro exemplo que separa o peso máximo das espécies por cor e dieta:
+```{r}
+tapply(sps$peso, list(sps$cor, sps$dieta), max)
+```
+
+Qual é a classe do objeto que resulta da função `apply`?
+
+A função `aggregate` é o equivalente das tabelas dinâmicas das planilhas eletrônicas. Por exemplo, para obter do objeto `sps` um `data frame` com a abundância média das espécies por dieta e cor você executa o comando: 
+
+```{r}
+aggregate(formula = abund ~ cor + dieta, data = sps, FUN = mean)
+```
+
+Na função `aggregate` você pode inserir as variáveis através de fórmula ou como na função `tapply` indicando a variável quantitataiva a ser analisada e a variável categórica de interesse. A fórmula permite visualizar mais facilmente o que estamos fazendo. No exemplo acima queremos ver o sumário da abundância média das espécies por cor e dieta.
+
+Em `aggregate` podemos também escolher mais de uma variável quantitativa como resultado. Veja o exemplo abaixo:
+
+```{r}
+# Abundância e peso médio por cor e dieta
+aggregate(cbind(abund, peso) ~ cor+ dieta, sps, mean)
+```
+
+**OBS** Certifique-se que você entende a diferença entre as funções `aggregate` e `tapply` principalmente em relação ao tipo de saída (resultado) da função. Pense em quais situações seria melhor usar cada uma destas funções.
+
+## Função `apply`
+
+A função `apply` é utilizada matrizes, tem o objetivo de aplicar uma função nas linhas ou colunas da matriz. Por exemplo, na matriz `ilhas` queremos saber quantos bichos foram coletados por ilha:
+```{r}
+apply(X=ilhas, MARGIN=2,FUN=sum)
+```
+
+Ou então queremos saber qual a abundância média das espécies em cada ilha:
+```{r}
+apply(X=ilhas, MARGIN=1,FUN=mean)
+```
+
+O argumento `MARGIN` é quem diz se você aplicará a função por linha (1) ou coluna (2). 
+
 
 # Gráficos exploratórios
 
@@ -180,22 +230,62 @@ O R é um ambiente de trabalho onde a análise gráfica de dados é de fácil ex
 <!-- ver material do curso R-lampago, parte 6 e 7 graficos exploratórios
 7. Gráficos Exploratórios
 livro ieno
-apostila vital
+apostila vital cap 2
 apostila unesp
  -->
 
+<!--começar com os graficos do anscombe par amostrar a importancia de plotar os dados para ter noçaão das coisas.-->
+
+## O quarteto de Anscombe
 
 
+```{r, echo=F}
+ans<-anscombe
+ans[12,] <-apply(ans,2,mean)
+ans[13,] <-apply(ans,2,sd)
+rownames(ans)[12]<-"media"
+rownames(ans)[13]<-"sd"
+round(ans,2)
+```
 
-# Índices de diversidade
 
-# Curvas de Rarefação
+## O quarteto de Anscombe
+<div align="center">
+```{r, echo=F}
+par(mfrow=c(2,2) ,pch=16, mar=c(3,4,2,2), las=1, mgp=c(1.5,0.5,0))
+plot(anscombe$y1~anscombe$x1, col="red", xlab="x1", ylab="y1")
+abline(a=3,b=0.5,col="blue")
+mtext("média = 9, sd = 3.16, correlação=0.81, y = 3 + 0.5x",3,line=.8,cex=1.4, at=15)
+plot(anscombe$y2~anscombe$x2,col="red",xlab="x2", ylab="y2")
+abline(a=3,b=0.5,col="blue")
+plot(anscombe$y3~anscombe$x3,col="red", xlab="x3", ylab="y3")
+abline(a=3,b=0.5,col="blue")
+plot(anscombe$y4~anscombe$x4, col="red",xlab="x4", ylab="y4")
+abline(a=3,b=0.5,col="blue")
+```
+</div>
+<!-- Todos os quatro conjunto de dados são idênticos quando examinado usando estatística básica, mas variam consideravelmente quando graficados. -->
+
+
+## Gráficos: Uma variável
+
+## barplot
+## histograma
+## boxplot
+outliers
+## Gráficos: Duas variáveis
+
 
 # Criação e edição de gráficos
 
+
+
 # Material de Apoio
  
- dar exemplos de pacotes plyr dplyr, maggritt, ggplot2
+ dar exemplos de pacote lattice e ggplot2  
+ link para tutorial graphics parameters
+ 
+ 
  
 # Exercícios!
 

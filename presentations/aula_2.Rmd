@@ -10,11 +10,16 @@ mode: selfcontained
 logo: Rlogo-1.png
 ---
 
+```{r, echo=F}
+setwd("/Users/melinatarituba/git-meme/consultR/presentations")
+```
+
+
 # Mais um pouco sobre manipulação e verificação de dados
 
 ## Importando dados - matrizes
 ```{r}
-ilhas <- read.csv2("ilhas.csv",header=T,row.names = 1)
+ilhas <- read.csv2("../data/ilhas.csv",header=T,row.names = 1)
 ilhas<-as.matrix(ilhas)
 ilhas
 ```
@@ -42,7 +47,7 @@ apply(ilhas.ocor, 2, sum)
 
 ## Importando data frame
 ```{r}
-sps <- read.csv2("sps.csv",header=T, dec=".")
+sps <- read.csv2("../data/sps.csv",header=T, dec=".")
 sps
 ```
 
@@ -77,6 +82,16 @@ sps$dieta<- as.factor(sps$dieta)
 sps$dieta
 ```
 
+## Inserindo variáveis
+Abundância total das espécies da planilha ilhas:
+```{r}
+rowSums(ilhas)
+
+sps$abund <- rowSums(ilhas)
+
+head(sps)
+```
+
 ## Estatística descritiva {.columns-2}
 ```{r}
 max(sps$compr.asa)
@@ -108,7 +123,7 @@ Ordenando `sps` por peso:
 ```{r}
 sps[ order(sps$peso) , ]
 ```
-<!-- colocar mais exemplos de ordenação, sort, rank? -->
+
 
 ## Totais marginais: a função tapply
 Comprimento médio do corpo por dieta
@@ -124,19 +139,14 @@ tapply(sps$peso, list(sps$cor, sps$dieta), max)
 ## aggregate em data frames
 abundância média por dieta e cor
 ```{r}
-aggregate(formula = abund ~ cor + dieta, data = sps, FUN = median)
+aggregate(formula = abund ~ cor + dieta, data = sps, FUN = mean)
 ```
 
 ## aggregate em data frames
 abundância e peso médio por cor e dieta
 ```{r}
-aggregate(cbind(abund, peso) ~ cor+ dieta, sps, median)
+aggregate(cbind(abund, peso) ~ cor+ dieta, sps, mean)
 ```
-
-
-## Apply family
-<!-- funções xapply e agregate estão na apostila bie5782 capt 4:http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:04-dados   tb pag 56 e 61 Rbook-->
-<!-- apostila vita capitulo 2 -->
 
 
 #Gráficos exploratórios
@@ -184,26 +194,6 @@ outliers
 ## Gráficos: Duas variáveis
 
 
-
-# Índices de divesidade
-
-## Shannon
-O que é?
-<!-- indice de shannon BIE5782 - tutorial 2  nesse tutorial tem tambem muito de estatística descritiva-->
-Como calcular
-
-# Curvas de raferação
-
 # Criação e edição de gráficos
-
-
-## alguns pacotes interessantes:
-
-ggplot2
-dplyr
-tidyr
-plyr
-
-
 
 

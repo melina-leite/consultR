@@ -20,6 +20,10 @@ Primeiras palavras:
   tutorias disciplina, desenv. pacotes  
   ajudar alunos em análises
 </div>
+```{r, echo=F}
+setwd("/Users/melinatarituba/git-meme/consultR/presentations")
+```
+
 
 
 ## Objetivos do curso

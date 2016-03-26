@@ -83,32 +83,30 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
       <li><a href="#importando-e-verificando-os-dados">Importando e verificando os dados</a><ul>
       <li><a href="#verificacao-dos-dados">Verificação dos dados</a></li>
       <li><a href="#corrigindo-erros-em-data-frames">Corrigindo erros em data frames</a></li>
-      <li><a href="#tranformando-dados">tranformando dados</a></li>
-      <li><a href="#utilizando-as-funcoes-sort-order-rank">Utilizando as funções sort, order, rank</a></li>
+      <li><a href="#organizando-data-frames-sort-order-rank">Organizando data frames: <code>sort</code>, <code>order</code>, `rank</a></li>
       </ul></li>
-      <li><a href="#estatistica-descritiva">Estatística descritiva</a><ul>
+      <li><a href="#descrevendo-e-resumindo-dados">Descrevendo e resumindo dados</a><ul>
+      <li><a href="#estatisticas-descritivas">Estatísticas descritivas</a></li>
       <li><a href="#descrevendo-as-observacoes---contagens">Descrevendo as observações - Contagens</a></li>
-      <li><a href="#familia-apply-e-aggregate">Família Apply e aggregate</a></li>
+      <li><a href="#funcoes-tapply-e-aggregate">Funções tapply e aggregate</a></li>
+      <li><a href="#funcao-apply">Função apply</a></li>
       </ul></li>
       <li><a href="#graficos-exploratorios">Gráficos exploratórios</a></li>
-      <li><a href="#indices-de-diversidade">Índices de diversidade</a></li>
-      <li><a href="#curvas-de-rarefacao">Curvas de Rarefação</a></li>
-      <li><a href="#criacao-e-edicao-de-graficos">Criação e edição de gráficos</a></li>
-      <li><a href="#aprofundando-se">Aprofundando-se</a></li>
+      <li><a href="#material-de-apoio">Material de Apoio</a></li>
       <li><a href="#exercicios">Exercícios!</a></li>
       </ul>  
     </div>
 </div>
 
 <div id="main">
-<p>Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios. Falaremos também dos índices de diversidade mais usados em estudos de levantamento e monitoramento ambiental e como calculá-los no R. Veremos como fazer curvas de rarefação dos dados no R. Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.</p>
+<p>Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios. Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.</p>
 <div id="importando-e-verificando-os-dados" class="section level1">
 <h1>Importando e verificando os dados</h1>
 <p>Baixe os arquivos de dados <a href="https://www.dropbox.com/s/mz0omdb3qhfv282/ilhas.csv?dl=0">ilhas</a> e <a href="https://www.dropbox.com/s/3jupvtct55827vx/sps.csv?dl=0">sps</a> e faça a leitura deles no R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ilhas &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;ilhas.csv&quot;</span>,<span class="dt">header=</span>T,<span class="dt">row.names =</span> <span class="dv">1</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ilhas &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;./data/ilhas.csv&quot;</span>,<span class="dt">header=</span>T,<span class="dt">row.names =</span> <span class="dv">1</span>)
 ilhas &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(ilhas)
-sps &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;sps.csv&quot;</span>,<span class="dt">header=</span>T, <span class="dt">dec=</span><span class="st">&quot;.&quot;</span>)</code></pre></div>
-<p>A tabela <code>ilhas</code> é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família <code>read.table</code>, os objetos criados são sempre da classe data frame, por isso a necessidade de transformar o objeto em matriz.</p>
+sps &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;./data/sps.csv&quot;</span>,<span class="dt">header=</span>T, <span class="dt">dec=</span><span class="st">&quot;.&quot;</span>)</code></pre></div>
+<p>A tabela <code>ilhas</code> é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família <code>read.table</code>, os objetos criados são sempre da classe <code>data frame</code>, por isso a necessidade de transformar o objeto em matriz.</p>
 <p>A tabela <code>sps</code> é um data frame contendo as informações de atributos das mesmas espécies presentes em <code>ilhas</code>.</p>
 <div id="verificacao-dos-dados" class="section level2">
 <h2>Verificação dos dados</h2>
@@ -122,15 +120,32 @@ sps &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class=
 </div>
 <div id="corrigindo-erros-em-data-frames" class="section level2">
 <h2>Corrigindo erros em data frames</h2>
-<p>volta a falar da importação de dados, transformar em data frames. mostrar as ferramentas para verificar os dados, inclusive no Rstudio (ver tabela) como consertar erros usando indexação NAs</p>
+<p>Há diferentes formas de se corrigir erros em vetores, data frames e matrizes. Abaixo, veremos um exemplo de como consertar erros de digitação em variáveis categóricas (fatores ou caracteres) usando indexação de data frames.</p>
+<p>Primeiro vamos descobrir onde está o erro na variável <code>dieta</code> do data frame <code>sps</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># descobrindo em qual linha o nível de frutos está errado:</span>
+sps[ sps$dieta==<span class="st">&quot;fruto&quot;</span> , ] <span class="co"># linha 9</span>
+
+<span class="co"># atribuindo à linha 9, coluna 4 a palavra frutos (correta)</span>
+sps[<span class="dv">9</span>,<span class="dv">4</span>] &lt;-<span class="st"> &quot;frutos&quot;</span>
+
+<span class="co">#verificando a correção:</span>
+sps[<span class="dv">9</span>,]
+
+<span class="co"># podemos fazer os passos acima de maneira mais direta:</span>
+sps[ sps$dieta==<span class="st">&quot;fruto&quot;</span> , <span class="dv">4</span>] &lt;-<span class="st"> &quot;frutos&quot;</span></code></pre></div>
+<p>Vejamos o que aconteceu com a variável <code>dieta</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sps$dieta <span class="co">#classe de fatores 4 níveis</span>
+
+<span class="co"># contando quantos dados de cada nível</span>
+<span class="kw">table</span>(sps$dieta)</code></pre></div>
+<p>Como <code>dieta</code> é um fator, o nível “errado” <code>fruto</code> permanece na contagem dos fatores. Uma forma de re-arranjar a variável para conter apenas os 3 níveis corretos é transformar a variável em classe <code>character</code> e depois retransformar em <code>factor</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sps$dieta&lt;-<span class="st"> </span><span class="kw">as.character</span>(sps$dieta)
+sps$dieta&lt;-<span class="st"> </span><span class="kw">as.factor</span>(sps$dieta)
+sps$dieta</code></pre></div>
 </div>
-<div id="tranformando-dados" class="section level2">
-<h2>tranformando dados</h2>
-<p>relembrar como criar colunas em data frame descobrir como criar colunas em matrizes funçao scale para centralizar e escalonar dados Rbook pg60</p>
-</div>
-<div id="utilizando-as-funcoes-sort-order-rank" class="section level2">
-<h2>Utilizando as funções sort, order, rank</h2>
-<p>As três funções <code>sort</code>, <code>order</code> e <code>rank</code>são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo <a href="https://github.com/melinatarituba/consultR_curso/tree/master/tutorials">houses.txt</a> e carregue ele no R. Vamos ver a diferença entre as funções na prática:</p>
+<div id="organizando-data-frames-sort-order-rank" class="section level2">
+<h2>Organizando data frames: <code>sort</code>, <code>order</code>, `rank</h2>
+<p>As três funções <code>sort</code>, <code>order</code> e <code>rank</code>são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo <a href="https://www.dropbox.com/s/cxk4fg6xr023jpn/houses.txt?dl=0">houses.txt</a> e carregue ele no R. Vamos ver a diferença entre as funções na prática:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">houses&lt;-<span class="kw">read.table</span>(<span class="st">&quot;houses.txt&quot;</span>,<span class="dt">header=</span>T)
 houses
 
@@ -140,7 +155,7 @@ ordered &lt;-<span class="st"> </span><span class="kw">order</span>(houses$Price
 
 view &lt;-<span class="st"> </span><span class="kw">data.frame</span>(houses$Price,ranks,sorted,ordered)
 view</code></pre></div>
-<p>A função <code>rank</code> retorna a posição do ranking que aquele preço está. Como o vetor <code>Price</code>tem 12 números, o preço mais alto (325) vai ter o maior valor (12), e o preço mais baixo (95) o menor valor, 1. Os rankings fracionados indicam empate, por exemplo existem dois preços de 188, seus rankings seriam 8 e 9, como estão empatados a função atribuiu 8.5 a ambos.</p>
+<p>A função <code>rank</code> retorna a posição do ranking que aquele preço está. Como o vetor <code>Price</code> tem 12 números, o preço mais alto (325) vai ter o maior valor (12), e o preço mais baixo (95) o menor valor, 1. Os rankings fracionados indicam empate, por exemplo existem dois preços de 188, seus rankings seriam 8 e 9, como estão empatados a função atribuiu 8.5 a ambos.</p>
 <p>A função <code>sort</code> é a mais intuitiva, ela ordena os preços do menor para o maior, ou do maior para o menor se você usar o argumento <code>decreasing=TRUE</code>. Porém, pode ser uma função perigosa, porque se você a usa em uma coluna de um data frame, ela poderá desacoplar a coluna sendo ordenada das demais colunas. Ou seja, você só mudará a coluna em questão deixando todo o data frame inalterado, o que fará perder a conexão entre os dados das linhas e as variáveis nas colunas.</p>
 <p>A função <code>order</code> pode ser considerada a mais importante e um pouco menos intuitiva. Veja os números na coluna <code>odered</code>, eles também estão numerados de 1 a 12 como em <code>ranks</code>, porém eles querer dizer algo bem diferente. O primeiro valor (9) é número da linha em que o menor valor (95) se encontra. O segundo valor (6) é o número da linha em que o segundo menor valor (101) se encontra, e assim por diante. Observe novamente o objeto <code>view</code> e tente entender a lógica de <code>order</code>.</p>
 <p>A função <code>order</code> é particularmente útil na ordenação de data frames inteiros através da indexação. Veja o exemplo:</p>
@@ -149,13 +164,28 @@ houses[<span class="kw">order</span>(houses$Price), ]
 
 <span class="co"># veja a diferença se eu usar a função sort</span>
 houses$Price &lt;-<span class="st"> </span><span class="kw">sort</span>(houses$Price)
-houses <span class="co"># OPS! bagunçou o data frame!</span></code></pre></div>
+houses 
+<span class="co"># OPS! bagunçou o data frame!</span></code></pre></div>
 <p>Se você quiser ordenar o data frame por uma coluna de maneira decrescente, utilize o argumento <code>decreasing=TRUE</code> da função <code>order</code>. Essa função é relativamente boa quando queremos exportar uma tabela de dados/resultados para apresentar em relatórios/apresentações/artigos. Assim, você ordena o data frame pela coluna que você achar mais importante na hora de apresentar seus dados/resultados.</p>
 </div>
 </div>
-<div id="estatistica-descritiva" class="section level1">
-<h1>Estatística descritiva</h1>
-<p>colocar as principais funções para estatística descritiva em vetores, matrizes e data frames</p>
+<div id="descrevendo-e-resumindo-dados" class="section level1">
+<h1>Descrevendo e resumindo dados</h1>
+<div id="estatisticas-descritivas" class="section level2">
+<h2>Estatísticas descritivas</h2>
+<p>Como vimos no roteiro 1,listamos as principais estatísticas resumo dos dados e suas funções no R.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">max</span>(sps$compr.asa)
+<span class="kw">min</span>(sps$compr.corpo)
+
+<span class="kw">range</span>(sps$peso)
+
+<span class="kw">mean</span>(sps$peso)
+<span class="kw">sd</span>(sps$peso)
+<span class="kw">var</span>(sps$peso)
+
+<span class="kw">median</span>(sps$peso)
+<span class="kw">quantile</span>(sps$peso)</code></pre></div>
+</div>
 <div id="descrevendo-as-observacoes---contagens" class="section level2">
 <h2>Descrevendo as observações - Contagens</h2>
 <p>A forma mais simples de descrever quantitativamente observações é agrupá-las em categorias e contar quantas observações pertence a cada categoria.</p>
@@ -166,8 +196,29 @@ houses <span class="co"># OPS! bagunçou o data frame!</span></code></pre></div>
 
 <span class="kw">table</span>(dados$Ambiente,dados$local)</code></pre></div>
 </div>
-<div id="familia-apply-e-aggregate" class="section level2">
-<h2>Família Apply e aggregate</h2>
+<div id="funcoes-tapply-e-aggregate" class="section level2">
+<h2>Funções tapply e aggregate</h2>
+<p>Em <code>data frames</code>, uando temos uma variavel categórica (fator) e uma numérica, as funções <code>aggregate</code> e <code>tapply</code> são muito úteis. Estas funções aplicam uma função qualquer a uma variável quantiativa para cada classe de variável categórica.</p>
+<p>A função <code>tapply</code> vai criar uma tabela com os resultados da função que você aplicou ao seu <code>data frame</code>. Por exemplo, queremos saber o comprimento médio do corpo das espécies por dieta, pois achamos que os bichos que tem uma dieta nectarívora sejam menores:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Comprimento médio do corpo por dieta</span>
+<span class="kw">tapply</span>(<span class="dt">X =</span> sps$compr.corpo, <span class="dt">INDEX =</span> sps$dieta, <span class="dt">FUN =</span> mean)</code></pre></div>
+<p>Entendendo os argumentos da função:<br />
+- em <code>X</code> colocamos a variável quantitativa que estamos interessados em saber<br />
+- em <code>INDEX</code> colocamos a(s) variável(is) qualitativa(s) que queremos resumir<br />
+- em <code>FUN</code> colocamos a função que queremos aplicar na variável quantitativa, por exemplo <code>mean</code>, <code>max</code>, <code>min</code>, <code>var</code>.</p>
+<p>Experimente este outro exemplo que separa o peso máximo das espécies por cor e dieta:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tapply</span>(sps$peso, <span class="kw">list</span>(sps$cor, sps$dieta), max)</code></pre></div>
+<p>Qual é a classe do objeto que resulta da função <code>apply</code>?</p>
+<p>A função <code>aggregate</code> é o equivalente das tabelas dinâmicas das planilhas eletrônicas. Por exemplo, para obter do objeto <code>sps</code> um <code>data frame</code> com a abundância média das espécies por dieta e cor você executa o comando:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">aggregate</span>(<span class="dt">formula =</span> abund ~<span class="st"> </span>cor +<span class="st"> </span>dieta, <span class="dt">data =</span> sps, <span class="dt">FUN =</span> mean)</code></pre></div>
+<p>Na função <code>aggregate</code> você pode inserir as variáveis através de fórmula ou como na função <code>tapply</code> indicando a variável quantitataiva a ser analisada e a variável categórica de interesse. A fórmula permite visualizar mais facilmente o que estamos fazendo. No exemplo acima queremos ver o sumário da abundância média das espécies por cor e dieta.</p>
+<p>Em <code>aggregate</code> podemos também escolher mais de uma variável quantitativa como resultado. Veja o exemplo abaixo:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Abundância e peso médio por cor e dieta</span>
+<span class="kw">aggregate</span>(<span class="kw">cbind</span>(abund, peso) ~<span class="st"> </span>cor+<span class="st"> </span>dieta, sps, mean)</code></pre></div>
+<p><strong>OBS</strong> Certifique-se que você entende a diferença entre as funções <code>aggregate</code> e <code>tapply</code> principalmente em relação ao tipo de saída (resultado) da função. Pense em quais situações seria melhor usar cada uma destas funções.</p>
+</div>
+<div id="funcao-apply" class="section level2">
+<h2>Função apply</h2>
 </div>
 </div>
 <div id="graficos-exploratorios" class="section level1">
@@ -180,20 +231,15 @@ houses <span class="co"># OPS! bagunçou o data frame!</span></code></pre></div>
 </ul>
 <!-- ver material do curso R-lampago, parte 6 e 7 graficos exploratórios
 7. Gráficos Exploratórios
+livro ieno
+apostila vital
+apostila unesp
  -->
 </div>
-<div id="indices-de-diversidade" class="section level1">
-<h1>Índices de diversidade</h1>
-</div>
-<div id="curvas-de-rarefacao" class="section level1">
-<h1>Curvas de Rarefação</h1>
-</div>
-<div id="criacao-e-edicao-de-graficos" class="section level1">
-<h1>Criação e edição de gráficos</h1>
-</div>
-<div id="aprofundando-se" class="section level1">
-<h1>Aprofundando-se</h1>
-<p>dar exemplos de pacotes plyr dplyr, maggritt, ggplot2</p>
+<div id="material-de-apoio" class="section level1">
+<h1>Material de Apoio</h1>
+<p>dar exemplos de pacote lattice e ggplot2<br />
+ link para tutorial graphics parameters</p>
 </div>
 <div id="exercicios" class="section level1">
 <h1>Exercícios!</h1>
@@ -216,6 +262,7 @@ houses <span class="co"># OPS! bagunçou o data frame!</span></code></pre></div>
 </li>
 <li>A matriz resultante tem sinais de aninhamento? Por que?</li>
 </ol>
+<p><!-- continuar exercícios --></p>
 </div>
 </div>
 </div>

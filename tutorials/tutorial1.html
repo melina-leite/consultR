@@ -204,7 +204,7 @@ m *<span class="st"> </span>k <span class="co">#qua foi a mensagem do R quando v
 <p><strong>DICA:</strong> Na sua planilha de dados, vai ser muito mais fácil trabalhar com nomes de colunas que não possuem espaço (ex. <code>abund_1</code> ou <code>abund.1</code> ao invés de <code>abund 1</code>). O R ao ler espaços vai coloar um ponto (.) no lugar do espaço. Evite, ou melhor <strong>NUNCA coloque acentos e caracteres especiais</strong> na sua planilha, tanto nos nomes de colunas quanto em fatores e caracteres de dados. Ao converter os dados pro R, dependendo da <a href="https://pt.wikipedia.org/wiki/Codifica%C3%A7%C3%A3o_de_caracteres">codificação de caracteres</a> do seu computador, no lugar dos acentos aparecerão caracteres muito esquisitos e isso vai dificultar muito a sua vida na hora de manipular seus dados.</p>
 <div id="lendo-um-arquivo-csv" class="section level3">
 <h3>Lendo um Arquivo CSV</h3>
-<p>Como exemplo, usaremos a tabela de dados <code>pratica1.csv</code>, baixados <a href="https://github.com/melinatarituba/consultR_curso/blob/master/tutorials">aqui</a><a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>. Salve o arquivo no diretório que estiver trabalhando com o R: <code>pratica1.csv</code>. Esse arquivo pode ser visualizado em qualquer editor de textos, pois o formato CSV é um formato texto.</p>
+<p>Como exemplo, usaremos a tabela de dados <code>pratica1.csv</code>, baixados <a href="https://www.dropbox.com/s/27xqz6ohesa3i3d/pratica1.csv?dl=0">aqui</a>. Salve o arquivo no diretório que estiver trabalhando com o R: <code>pratica1.csv</code>. Esse arquivo pode ser visualizado em qualquer editor de textos, pois o formato CSV é um formato texto.</p>
 <p>Importanto a tabela de dados para o R. Lembre-se que é necessário gravar a leitura do arquivo em um objeto:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dados &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;pratica1.csv&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>, <span class="dt">sep=</span><span class="st">','</span>, <span class="dt">dec=</span><span class="st">'.'</span>)
 dados &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;pratica1.csv&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>, <span class="dt">sep=</span><span class="st">';'</span>, <span class="dt">dec=</span><span class="st">'.'</span>,<span class="dt">row.names =</span> <span class="dv">1</span>)</code></pre></div>
@@ -677,7 +677,7 @@ dados$local</code></pre></div>
 <ol style="list-style-type: decimal">
 <li>Qual é a classe deste objeto?<br />
 </li>
-<li>Qual a diferença em dias entre esta data e o dia em que o Brasil foi tricampeão mundial<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>? Guarde esse valor em um objeto chamado dif.<br />
+<li>Qual a diferença em dias entre esta data e o dia em que o Brasil foi tricampeão mundial<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>? Guarde esse valor em um objeto chamado dif.<br />
 </li>
 <li>Qual será a data de daqui a 43 dias? Guarde esse valor em um objeto chamado outrodia.</li>
 </ol>
@@ -762,8 +762,7 @@ dados$local</code></pre></div>
 <li id="fn1"><p>e consequentemente o R irá abrir também!<a href="#fnref1">↩</a></p></li>
 <li id="fn2"><p>por nós mesmos ou por quem criou a função, por exemplo.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>às vezes quando salvamos do excel a separação é ; (ponto-vírgula).<a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p>clique com o botão direito no arquivo e mande <code>save link as</code>.<a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p>21/06/70<a href="#fnref5">↩</a></p></li>
+<li id="fn4"><p>21/06/70<a href="#fnref4">↩</a></p></li>
 </ol>
 </div>
 </div>

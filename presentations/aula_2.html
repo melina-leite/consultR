@@ -114,7 +114,7 @@
 
 </article></slide><slide class=''><hgroup><h2>Importando dados - matrizes</h2></hgroup><article  id="importando-dados---matrizes">
 
-<pre class = 'prettyprint lang-r'>ilhas &lt;- read.csv2(&quot;ilhas.csv&quot;,header=T,row.names = 1)
+<pre class = 'prettyprint lang-r'>ilhas &lt;- read.csv2(&quot;../data/ilhas.csv&quot;,header=T,row.names = 1)
 ilhas&lt;-as.matrix(ilhas)
 ilhas</pre>
 
@@ -165,7 +165,7 @@ apply(ilhas.ocor, 2, sum)</pre>
 
 </article></slide><slide class=''><hgroup><h2>Importando data frame</h2></hgroup><article  id="importando-data-frame">
 
-<pre class = 'prettyprint lang-r'>sps &lt;- read.csv2(&quot;sps.csv&quot;,header=T, dec=&quot;.&quot;)
+<pre class = 'prettyprint lang-r'>sps &lt;- read.csv2(&quot;../data/sps.csv&quot;,header=T, dec=&quot;.&quot;)
 sps</pre>
 
 <pre >##      sp     cor peso   dieta compr.asa compr.corpo
@@ -213,6 +213,9 @@ sps</pre>
 ##  Max.   :93.00  
 ## </pre>
 
+<div class="note">
+<p>mostrar que o summary é bom para encontrar erros nas tabelas</p></div>
+
 </article></slide><slide class=''><hgroup><h2>Consertando erros</h2></hgroup><article  id="consertando-erros">
 
 <pre class = 'prettyprint lang-r'>sps[ sps$dieta==&quot;fruto&quot; , ]</pre>
@@ -243,6 +246,22 @@ sps$dieta</pre>
 <pre >##  [1] frutos  insetos insetos insetos frutos  frutos  nectar  insetos
 ##  [9] frutos  insetos
 ## Levels: frutos insetos nectar</pre>
+
+</article></slide><slide class=''><hgroup><h2>Inserindo variáveis</h2></hgroup><article  id="inserindo-variaveis">
+
+<p>Abundância total das espécies da planilha ilhas:</p>
+
+<pre class = 'prettyprint lang-r'>sps$abund &lt;- rowSums(ilhas)
+
+head(sps)</pre>
+
+<pre >##    sp    cor peso   dieta compr.asa compr.corpo abund
+## 1 sp1  verde   20  frutos       5.7        17.1    74
+## 2 sp2  verde  110 insetos      31.0        93.0    24
+## 3 sp3 marrom   40 insetos      11.0        33.0     9
+## 4 sp4 marrom   15 insetos       4.0        12.0    92
+## 5 sp5 marrom   20  frutos       6.5        19.5    30
+## 6 sp6   azul  200  frutos      29.8        89.4    50</pre>
 
 </article></slide><slide class=''><hgroup><h2>Estatística descritiva</h2></hgroup><article  id="estatistica-descritiva" class="columns-2">
 
@@ -302,82 +321,23 @@ sps$dieta</pre>
 ##   marrom       1       2      0
 ##   verde        1       1      0</pre>
 
-</article></slide><slide class=''><hgroup><h2>Inserindo/transformando dados</h2></hgroup><article  id="inserindotransformando-dados">
-
-<p>Inserindo abundância total em sps</p>
-
-<pre class = 'prettyprint lang-r'>sps$abund &lt;- rowSums(ilhas)</pre>
-
-<p>Transformando e inserindo log da abundância</p>
-
-<pre class = 'prettyprint lang-r'>sps$log.abund &lt;- log(sps$abund)
-head(sps,2L)</pre>
-
-<pre >##    sp   cor peso   dieta compr.asa compr.corpo abund log.abund
-## 1 sp1 verde   20  frutos       5.7        17.1    74  4.304065
-## 2 sp2 verde  110 insetos      31.0        93.0    24  3.178054</pre>
-
-</article></slide><slide class=''><hgroup><h2>Centralizando e escalonando dados</h2></hgroup><article  id="centralizando-e-escalonando-dados">
-
-<p>(valor - média)/desvio padrão</p>
-
-<pre class = 'prettyprint lang-r'>scale(sps$peso)</pre>
-
-<pre >##             [,1]
-##  [1,] -0.4702881
-##  [2,]  1.0148321
-##  [3,] -0.1402614
-##  [4,] -0.5527947
-##  [5,] -0.4702881
-##  [6,]  2.4999523
-##  [7,] -0.3052747
-##  [8,] -0.6353014
-##  [9,] -0.3877814
-## [10,] -0.5527947
-## attr(,&quot;scaled:center&quot;)
-## [1] 48.5
-## attr(,&quot;scaled:scale&quot;)
-## [1] 60.60116</pre>
-
-<pre class = 'prettyprint lang-r'>(sps$peso-mean(sps$peso))/sd(sps$peso)</pre>
-
-<pre >##  [1] -0.4702881  1.0148321 -0.1402614 -0.5527947 -0.4702881  2.4999523
-##  [7] -0.3052747 -0.6353014 -0.3877814 -0.5527947</pre>
-
-<pre class = 'prettyprint lang-r'>sps$peso.scale &lt;- scale(sps$peso)</pre>
-
-<p>Essa função server também para matrizes!</p>
-
 </article></slide><slide class=''><hgroup><h2>Ordenação de data frames</h2></hgroup><article  id="ordenacao-de-data-frames">
 
 <p>Ordenando <code>sps</code> por peso:</p>
 
 <pre class = 'prettyprint lang-r'>sps[ order(sps$peso) , ]</pre>
 
-<pre >##      sp     cor peso   dieta compr.asa compr.corpo abund log.abund
-## 8   sp8 amarelo   10 insetos       2.8         8.4    29  3.367296
-## 4   sp4  marrom   15 insetos       4.0        12.0    92  4.521789
-## 10 sp10 amarelo   15 insetos       3.2         9.6    42  3.737670
-## 1   sp1   verde   20  frutos       5.7        17.1    74  4.304065
-## 5   sp5  marrom   20  frutos       6.5        19.5    30  3.401197
-## 9   sp9 amarelo   25  frutos       7.3        21.9    39  3.663562
-## 7   sp7 amarelo   30  nectar       8.5        25.5    56  4.025352
-## 3   sp3  marrom   40 insetos      11.0        33.0     9  2.197225
-## 2   sp2   verde  110 insetos      31.0        93.0    24  3.178054
-## 6   sp6    azul  200  frutos      29.8        89.4    50  3.912023
-##    peso.scale
-## 8  -0.6353014
-## 4  -0.5527947
-## 10 -0.5527947
-## 1  -0.4702881
-## 5  -0.4702881
-## 9  -0.3877814
-## 7  -0.3052747
-## 3  -0.1402614
-## 2   1.0148321
-## 6   2.4999523</pre>
-
-<!-- colocar mais exemplos de ordenação, sort, rank? -->
+<pre >##      sp     cor peso   dieta compr.asa compr.corpo abund
+## 8   sp8 amarelo   10 insetos       2.8         8.4    29
+## 4   sp4  marrom   15 insetos       4.0        12.0    92
+## 10 sp10 amarelo   15 insetos       3.2         9.6    42
+## 1   sp1   verde   20  frutos       5.7        17.1    74
+## 5   sp5  marrom   20  frutos       6.5        19.5    30
+## 9   sp9 amarelo   25  frutos       7.3        21.9    39
+## 7   sp7 amarelo   30  nectar       8.5        25.5    56
+## 3   sp3  marrom   40 insetos      11.0        33.0     9
+## 2   sp2   verde  110 insetos      31.0        93.0    24
+## 6   sp6    azul  200  frutos      29.8        89.4    50</pre>
 
 </article></slide><slide class=''><hgroup><h2>Totais marginais: a função tapply</h2></hgroup><article  id="totais-marginais-a-funcao-tapply">
 
