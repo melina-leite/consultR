@@ -28,8 +28,11 @@ setwd("/Users/melinatarituba/git-meme/consultR/presentations")
 
 ## Objetivos do curso
 <div class="notes">
-como pensei o curso? 
-camilla e a demanda da empresa, problemas com softwares pagos, refazer análises, conhecimento estatística
+como pensei o curso?  
+camilla e a demanda da empresa,  
+problemas com softwares pagos,  
+refazer análises, 
+melhorar conhecimento estatística  
 </div>
 
 - Introduzir o R como linguagem para análises de dados voltados para consultoria ambiental. 
@@ -57,6 +60,7 @@ camilla e a demanda da empresa, problemas com softwares pagos, refazer análises
     + gráficos exploratórios
 *	Criação e edição de gráfico  
     + parâmetros gráficos
+    
 ***
 
 ### **Aula 3**  
@@ -69,14 +73,11 @@ camilla e a demanda da empresa, problemas com softwares pagos, refazer análises
 
 ### **Aula 4**  
 * Análises de composição e diversidade em comunidades
-    + índices de diversidade
-    + curva do coletor
-    + rarefação
-    +estimadores de riqueza
+    + índices de diversidade, curva do coletor
+    + rarefação, estimadores de riqueza
 *	Análises multivariadas:  
-    +	PCA  
-    +	NMDS  
-</div>
+    +	PCA e NMDS  
+
 
 ## Organização do curso
 
@@ -149,9 +150,11 @@ falar da minha experiência, dificuldade de aprendizado, e as coisas que faço a
 
 - ambiente e linguagem de programação
 
+<div align="center">
 "A chave para entender o R é que trata-se de uma linguagem. Uma linguagem para manipular objetos." Bill Venables  
 
 "A pergunta certa sobre uma análise em R não é se é possível fazê-la, e sim como fazê-la." Paulo Justiniano Ribeiro
+</div>
 
 <div class="note">
 - linguagem de programação voltada para manipulação, análise e edição gráfica de dados
@@ -164,10 +167,14 @@ falar da minha experiência, dificuldade de aprendizado, e as coisas que faço a
 
 - Reprodutibilidade 
 
-- _Software_ livre
+- _Software_ livre e colaborativo
+
+- comunidade ativa, muitos pacotes sobre tudo!
 
 <div class="note">
 há diferentes maneira de fazer a mesma coisa no R
+
+enviar dados e script em relatórios
 </div>
 
 ## Uma questão de costume
@@ -180,6 +187,7 @@ há diferentes maneira de fazer a mesma coisa no R
 
 <div class="note">
 assim com é com outros programas, usar o R requer costume
+
 vantagem do R é que você mantém o caminho de tudo que fez - refazer análises!
 </div>
 
@@ -190,6 +198,7 @@ vantagem do R é que você mantém o caminho de tudo que fez - refazer análises
 
 <div class="note">
 cada vez mais, mais pessoas usam e buscam aprender o R  
+
 comunidade muito ativa, grande documentação online
 </div>
 
@@ -200,13 +209,20 @@ comunidade muito ativa, grande documentação online
 https://cran.r-project.org/
 
 <div class="note">
-falar que no CRAN tem um monte de manuais e fontes para buscar ajuda -->
+CRAN tem um monte de manuais e fontes para buscar ajuda
+
+alguém teve problema com instalação?
 </div>
 
 ## Estrutura básica da linguagem R
 <div align="center">
 ![](./images/dontpanic.png)
 </div>
+
+<div class="note">
+Primeira coisa a ser feita: NÃO ENTRAR EM PÂNICO!
+</div>
+
 ## R no Windows
 
 <div class="columns-2">
@@ -225,7 +241,8 @@ falar que no CRAN tem um monte de manuais e fontes para buscar ajuda -->
 </div>
 
 <div class="note">
-precisa intalar o R e depois usar o Rstudio, clicando no icone
+problema com instalação?  
+precisa intalar o R e depois usar o Rstudio  
 tornar esse programa como padrão para arquivos .R
 </div>
 
@@ -233,6 +250,8 @@ tornar esse programa como padrão para arquivos .R
 
 <div class="note">
 abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar um novo script
+
+control + R ou control + ENTER - mandar do script para o console
 </div>
 
 - Interface mais amigável 
@@ -250,12 +269,10 @@ abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar
 30*7          #Multiplicação
 10/2          #Divisão
 10^2          #Potência
-sqrt(4)       #Raiz quadrada
 log(100,10)   #Log na base 10
 exp(1)        # n. euler elevado a 1
 round(1.987645,2) #arredondamento
 abs(-1)       #número absoluto
-pi            #3,141618...
 ```
 
 ## Precedência de operações e parênteses {.columns-2}
@@ -267,7 +284,8 @@ pi            #3,141618...
 (2*4)^(3-1)
 ```
 <div class="note">
-  lembrar da importância do parênteses!
+  importância do parênteses!
+  
   sempre haverá uma hora que nos esqueceremos dele!
 </div>
 
@@ -275,12 +293,12 @@ pi            #3,141618...
 
 Objeto <- expressão
 ```{r}
-objeto <- 10+2  # Criando
-objeto          # "Chamando"
-objeto*10   # x 10
-objeto      # ?
-objeto2 <- objeto*10   # novo
-objeto2   #Agora sim salvou a operação
+conta <- 10+2  # Criando
+conta          # "Chamando"
+conta*10   # x 10
+conta      # ?
+conta2 <- conta*10   # novo
+conta2   #Agora sim salvou a operação
 ```
 
 ## Fazendo operações com objetos {.columns-2}
@@ -289,8 +307,10 @@ objeto2   #Agora sim salvou a operação
 a <- sqrt(4)
 a
 b <- 5
+b
 a*b
 d <- c(2,4,6)
+d
 d*b
 ```
 <div class="note">
@@ -301,12 +321,19 @@ d*b
 
 função(argumento1=valor1, argumento2=valor2, ...)
 
+```{r, eval=FALSE,echo=FALSE}
+area <- c(100,235,449, 98, 147, 214, 346, 89)
+riqueza <- c(56,62,70,33,49,67,71,45)
+```
+
+
 ```{r, eval=FALSE}
-plot(x=area, y=riqueza, log='xy')
+plot(x=area, y=riqueza, log="xy")
 
 plot(area, riqueza)
 
 log(x=100, base=10)
+
 log(100,10)
 ```
 
@@ -335,45 +362,44 @@ example(mean)
 </div>
 
 <div class="note">
-  mostrar no Rstudio onde fica o help, os locais de busca...      também que quando se dá tab ele tenta completar a funcao e ja mostra o basico do help e argumentos -->
+  mostrar no Rstudio onde fica o help, os locais de busca...      
+  também que quando se dá tab ele tenta completar a funcao e ja mostra o basico do help e argumentos -->
 </div>
 
 ## Instalando pacotes
 
 <div class="columns-2">
-- Diretamente pelo console:
+- Diretamente pelo console
 ```{r, eval=FALSE}
 install.packages("vegan")
-
 ```
-
-- Pelo Rstudio ->
 
 - Carregando o pacote instalado*
 ```{r, eval=FALSE}
 library(vegan)
 ```
 
+
+- Pelo Rstudio
+
 ![](./images/Rstudio_installpkg.jpg)
 
 </div>
 
 <div class="note">
-  uma vez instalado o pacote não precisa mais instalar. mas toda vez que você abrir seu script novamente, terá de fazer o carregamento do pacote. geralmente library() fina no inicio do script, com todos os pacotes usados-->
+  RBASE + pacotes
+  
+  instala 1 x  
+  carrega toda vez  
+   library no início do script  
 </div>
 
-## Um erro comum
-Funções também são objetos, se você digita uma função sem os parênteses, o R vai exibir o conteúdo da função
-
-```{r}
-help
-```
 
 ## Linguagem orientada a objeto
 
 ```{r}
-area <- c(100,235,449, 98, 147, 214, 346, 89)
-riqueza <- c(56,62,70,33,49,67,71,45)
+area <- c(100, 235, 449, 98, 147, 214, 346, 89)
+riqueza <- c(56, 62 ,70, 33, 49, 67, 71, 45)
 
 summary(area)
 summary(riqueza)
@@ -812,6 +838,13 @@ dadoz
 ```{r}
 ls()
 dados
+```
+
+## Um erro comum
+Funções também são objetos, se você digita uma função sem os parênteses, o R vai exibir o conteúdo da função
+
+```{r}
+help
 ```
 
 ## Fechar parênteses
