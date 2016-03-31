@@ -37,10 +37,9 @@ melhorar conhecimento estatística
 
 - Introduzir o R como linguagem para análises de dados voltados para consultoria ambiental. 
  
-- Revisar conceitos de estatística e as análises mais comuns na área ambiental.
+- Revisar tópicos de estatística e as análises mais comuns na área ambiental.
 
 - Ao final, cada um deverá ser capaz de criar o próprio código para análises de seus dados. 
-    <!-- Código base para as análises mais comuns realizadas pelo participante.-->
 
 - Esse curso **NÃO** pretende:
     + substituir uma disciplina de estatística básica
@@ -174,7 +173,7 @@ falar da minha experiência, dificuldade de aprendizado, e as coisas que faço a
 <div class="note">
 há diferentes maneira de fazer a mesma coisa no R
 
-enviar dados e script em relatórios
+enviar dados e script em relatórios (comun em artigos)
 </div>
 
 ## Uma questão de costume
@@ -241,17 +240,18 @@ Primeira coisa a ser feita: NÃO ENTRAR EM PÂNICO!
 </div>
 
 <div class="note">
-problema com instalação?  
-precisa intalar o R e depois usar o Rstudio  
-tornar esse programa como padrão para arquivos .R
+- problema com instalação?  
+- precisa intalar o R e depois usar o Rstudio  
+- tornar esse programa como padrão para arquivos .R
 </div>
 
 ## Configurações Rstudio {.bigger}
 
 <div class="note">
-abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar um novo script
+- abrir o Rstudio e ir mostrando as coisas, as janelas, as facilidades. como criar um novo script  
+- control + R ou control + ENTER - mandar do script para o console  
+- Codificação de caracteres 
 
-control + R ou control + ENTER - mandar do script para o console
 </div>
 
 - Interface mais amigável 
@@ -263,6 +263,14 @@ control + R ou control + ENTER - mandar do script para o console
     - soft-wrap code
 
 ## O R como calculadora {.columns-2}
+
+<div class="notes">
+- abrir site
+- baixar a aula 1 script 
+- salvar em uma pasta separada
+- abrir ele no Rstudio
+</div>
+
 
 ```{r}
 2+5           #Soma
@@ -330,11 +338,11 @@ riqueza <- c(56,62,70,33,49,67,71,45)
 ```{r, eval=FALSE}
 plot(x=area, y=riqueza, log="xy")
 
-plot(area, riqueza)
+plot(area, riqueza) # omitindo argumentos
 
 log(x=100, base=10)
 
-log(100,10)
+log(100,10) # omitindo argumentos
 ```
 
 ## Obtendo ajuda!
@@ -362,8 +370,8 @@ example(mean)
 </div>
 
 <div class="note">
-  mostrar no Rstudio onde fica o help, os locais de busca...      
-  também que quando se dá tab ele tenta completar a funcao e ja mostra o basico do help e argumentos -->
+ - Rstudio onde fica o help, os locais de busca...      
+ -  tab ele tenta completar a funcao e ja mostra o basico do help e argumentos
 </div>
 
 ## Instalando pacotes
@@ -424,7 +432,7 @@ Salve seus comandos em um arquivo
 - o arquivo será um arquivo texto com extensão **.R** ou **.r** 
 
 <div class="note">
-  fazer um exemplo de criar uma pasta e um projeto dentro dela
+mostrar exemplo de criar uma pasta e um projeto dentro dela
 </div>
 
 ## Qual o diretório de trabalho atual?
@@ -435,7 +443,7 @@ getwd()
 
 Mudando o diretório de trabalho
 ```{r, eval=FALSE}
-setwd( "/Users/melinatarituba/git-meme/consultR_curso")
+setwd( "/Users/melinatarituba/git-meme/consultR")
 
 ```
 
@@ -472,7 +480,7 @@ class(area)
 x <- c("TRUE","FALSE","TRUE","TRUE")
 class(x)
 
-x<- as.logical(x)
+x <- as.logical(x)
 class(x)
 ```
 
@@ -577,7 +585,7 @@ trapa <- read.table(file="../data/trapalhoes.txt", header=T, sep="\n")
 trapa <- read.table(file="../data/trapalhoes.csv", header=T, sep=";")
 trapa
 
-class(trapa); dim(trapa)
+class(trapa);
 ```
 
 ## Leitura de dados
