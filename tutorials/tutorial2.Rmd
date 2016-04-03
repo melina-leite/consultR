@@ -42,8 +42,8 @@ A tabela `sps` é um data frame contendo as informações de atributos das mesma
 
 Após a importação precisamos verifica se a tabela foi importada corretamente, e se há erros na tabela. Em data frames costumamos utilizar a função `str` para ver a estrutura do objeto, mas em matrizes esta função não é tão útil.
 ```{r}
-str(ilhas)
 str(sps)
+str(ilhas) #função não muito útil para matrizes
 ```
 
 Se algo não parece correto quando você olha a tabela importada, é muito provável que tenha havido um erro de importação. Verifique novamente a sua tabela de dados e os argumentos da função de leitura de dados, principalmente `sep`, `header`, `dec` e `rown.names`.
@@ -63,16 +63,16 @@ Há diferentes formas de se corrigir erros em vetores, data frames e matrizes. A
 Primeiro vamos descobrir onde está o erro na variável `dieta` do data frame `sps`:
 ```{r}
 # descobrindo em qual linha o nível de frutos está errado:
-sps[ sps$dieta=="fruto" , ] # linha 9
+sps[ sps$dieta == "fruto" , ] # linha 9
 
 # atribuindo à linha 9, coluna 4 a palavra frutos (correta)
-sps[9,4] <- "frutos"
+sps[9, 4] <- "frutos"
 
 #verificando a correção:
-sps[9,]
+sps[9, ]
 
 # podemos fazer os passos acima de maneira mais direta:
-sps[ sps$dieta=="fruto" , 4] <- "frutos"
+sps[ sps$dieta == "fruto" , 4] <- "frutos"
 ```
 
 Vejamos o que aconteceu com a variável `dieta`:
@@ -129,37 +129,71 @@ houses
 Se você quiser ordenar o data frame por uma coluna de maneira decrescente, utilize o argumento `decreasing=TRUE` da função `order`. Essa função é relativamente boa quando queremos exportar uma tabela de dados/resultados para apresentar em relatórios/apresentações/artigos. Assim, você ordena o data frame pela coluna que você achar mais importante na hora de apresentar seus dados/resultados.
 
 
-# Descrevendo e resumindo dados
+# Análise exploratórioa de dados
+
+Podemos pensar a análise exploratória de dados de duas maneiras;
+
+* Análise numérica: computando as estatísticas descritivas dos dados
+
+* Análise gráfica: explorando o comportamento e a relação entre as variáveis através de gráficos.
+
+Ambas são MUITO importantes para que possamos entender nosso dados, conhecer suas características e podermos faze as análises estatísticas mais apropriadas em um segundo passo. É nesta fase que estudamos a distribuição dos dados, observamos as premissas de normalidade e homogeneidade, encontramos possíveis dados atípicos (_outliers_), e analisamos graficamente a relação entre as nossas variáveis de interesse.
 
 ## Estatísticas descritivas
 
-Como vimos no roteiro 1,listamos as principais estatísticas resumo dos dados e suas funções no R. Vejamos os exemplos com os dados de `sps`:
+Como vimos no roteiro 1, listamos as principais estatísticas de resumo dos dados e suas funções no R. Vejamos os exemplos com os dados de `sps`:
 
 ```{r}
-max(sps$compr.asa)
-min(sps$compr.corpo)
+max(sps$compr.asa) # máximo
+min(sps$compr.corpo) # mínimo
 
-range(sps$peso)
+range(sps$peso) # máximo e mínimo
 
-mean(sps$peso)
-sd(sps$peso)
-var(sps$peso)
+mean(sps$peso) # média
+sd(sps$peso) # desvio padrão
+var(sps$peso) # variância
 
-median(sps$peso)
-quantile(sps$peso)
+median(sps$peso) # mediana
+quantile(sps$peso) # quantil
 ```
+
+Muitas das funções acima estão reunidas na função `summary`:
+```{r}
+summary(sps$peso) # sumário
+```
+
+### Quantis
+Muitas das estatísticas acima são conhecidas de vocês, mas uma que geralmente é mais difícil de interpretar e entender é o **quantil**. A **mediana** é um quantil onde dividimos o conjunto de dados em 50%. Ou seja, 50% dos teus dados estão para a esquerda e 50% para a direita daquele valor. Vejamos um exemplo
+
+```{r}
+valores
+```
+
+
+O padrão da função `quantile` são os quartis, ou seja, são os valores das probabilidades em 25%, 50% e 75% (que é o mesmo retornado na função `summary`). Mas podemos mudar para qualquer quantil desejado:
+```{r}
+quantile(valores, probs = seq(from = 0, to = 1, by = 0.1))
+```
+
+
+
+<!-- PROCURAR EXEMPLO E EXPLICAÇÕES NO LIVRO DO MORETIN PARA ESSA SEÇÃO -->
+
+
+
+
 
 ## Descrevendo as observações - Contagens
 
-A forma mais simples de descrever quantitativamente observações é agrupá-las em categorias e contar quantas observações pertence a cada categoria.
+A forma mais simples de descrever quantitativamente observações qualitativas é agrupá-las em categorias e contar quantas observações pertence a cada categoria.
 
-No R a forma mais direta de obter contagens (frequências) é através da função `table().` Tomando como exemplo o data frame `sps`, podemos nos perguntar quantas espécies existem por dieta:
+No R a forma mais direta de obter contagens (frequências) é através da função `table.` Tomando como exemplo o data frame `sps`, podemos nos perguntar quantas espécies existem por dieta:
 
 ```{r}
 table(sps$dieta)
 ```
 
-A função table muito é útil para variáveis categóricas (fatores ou caracteres). Vamos ver agora quantas espécies existem em uma combinação de dieta e cor:
+A função `table` muito é útil para **variáveis categóricas** (classe de fatores ou caracteres). Vamos ver agora quantas espécies existem em uma combinação de dieta e cor:
 
 ```{r}
 table(sps$dieta,sps$cor)
@@ -167,7 +201,7 @@ table(sps$dieta,sps$cor)
 
 ## Funções tapply e aggregate
 
-Em `data frames`, quando temos uma variavel categórica (fator) e uma numérica, as funções `aggregate` e `tapply` são muito úteis. Estas funções aplicam uma função qualquer a uma variável quantiativa para cada classe de variável categórica.
+Em `data frames`, quando temos uma variavel categórica (fator) e uma numérica, as funções `aggregate` e `tapply` são muito úteis. Estas funções aplicam uma função qualquer a uma variável quantitativa para cada classe de variável categórica.
 
 A função `tapply` vai criar uma tabela com os resultados da função que você aplicou ao seu `data frame`. Por exemplo, queremos saber o comprimento médio do corpo das espécies por dieta, pois achamos que os bichos que tem uma dieta nectarívora sejam menores:
 
@@ -227,56 +261,115 @@ O R é um ambiente de trabalho onde a análise gráfica de dados é de fácil ex
 - **Gráficos para análise de dados**: são gráficos simples que permitam visualizar o mais claro possível padrões presentes nos dados. Esses gráficos são construídos rapidamente no R e as formas de construí-los permitem inúmeras interações com os elementos de informação nos gráficos.  
 - **Gráficos prontos para apresentação**: são construídos para inclusão em documentos e trabalhos técnicos e científicos, como forma de ilustrar resultados e conclusões. Gráficos de apresentação são mais elaborados. Sua construção no R exige mais tempo e conhecimento, pois o R não oferece recursos interativos para manipular os elementos pictoriais dos gráficos. Veremos sobre estes gráficos mais adiante no roteiro.  
 
-<!-- ver material do curso R-lampago, parte 6 e 7 graficos exploratórios
-7. Gráficos Exploratórios
-livro ieno
-apostila vital cap 2
-apostila unesp
- -->
+Analisar um gráfico é uma maneira rápida e concisa de visualizar certas informações contidas em um conjunto de observações. O gráfico certo a ser utilizado em cada situação depende da informação que queremos visualizar e do tipo de variável que estamos trabalhando. Um gráfico mal elaborado muitas vezes falha em trazer com clareza a informação que queremos visualizar e, em alguns casos, pode levar a falsas evidências.
 
-<!--começar com os graficos do anscombe par amostrar a importancia de plotar os dados para ter noçaão das coisas.-->
 
 ## O quarteto de Anscombe
 
+Para ilustrar a importância de se fazer a análise  visual dos seus dados, colocamos um exemplo clássico de conjunto de dados com características completamente distintas, mas que resultam nos mesmos resultados de análises estatísticas - o [**Quarteto de Anscombe**](https://pt.wikipedia.org/wiki/Quarteto_de_Anscombe). Se não olhássemos a "cara" dos dados antes de analisar, poderíamos tirar conclusões errôneas baseadas apenas nos resultados das análises.  
+Abaixo estão os 4 conjutos de dados:
 
-```{r, echo=F}
-ans<-anscombe
-ans[12,] <-apply(ans,2,mean)
-ans[13,] <-apply(ans,2,sd)
-rownames(ans)[12]<-"media"
-rownames(ans)[13]<-"sd"
-round(ans,2)
+```{r}
+# o R já possui em seu pacote base os dados:
+help("anscombe")
+
+# para carregá-lo em sua área de trabalho:
+data(anscombe)
 ```
 
+Esse objeto é composto de 4 pares de variáveis: x1 a x4 (variáveis independentes ou preditoras) e y1 a y4 (variáveis depententes ou resposta).
 
-## O quarteto de Anscombe
-<div align="center">
-```{r, echo=F}
-par(mfrow=c(2,2) ,pch=16, mar=c(3,4,2,2), las=1, mgp=c(1.5,0.5,0))
+```{r}
+#média das colunas
+media <-apply(ans, 2, mean)
+media
+# desvio padrão das colunas
+desv.pad <-apply(ans, 2, sd)
+desv.pad
+```
+
+Todos os quatro conjunto de dados são idênticos quanto às suas propriedades estatísticas (média, variância, correlação, coeficientes de regressão), mas variam consideravelmente quando graficados.
+
+```{r}
+#plotando os gráficos das relações entre x e y
+par(mfrow=c(2,2) ,pch=16) # parâmetro gráfico
+
+# conjunto dados 1
 plot(anscombe$y1~anscombe$x1, col="red", xlab="x1", ylab="y1")
 abline(a=3,b=0.5,col="blue")
-mtext("média = 9, sd = 3.16, correlação=0.81, y = 3 + 0.5x",3,line=.8,cex=1.4, at=15)
+title("Regressão: y=3+0.5x") # valores da regressão linear
+
+# conjunto dados 2
 plot(anscombe$y2~anscombe$x2,col="red",xlab="x2", ylab="y2")
 abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") 
+
+#conjunto dados 3
 plot(anscombe$y3~anscombe$x3,col="red", xlab="x3", ylab="y3")
 abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") 
+
+#conjunto dados 4
 plot(anscombe$y4~anscombe$x4, col="red",xlab="x4", ylab="y4")
 abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") 
 ```
-</div>
-<!-- Todos os quatro conjunto de dados são idênticos quando examinado usando estatística básica, mas variam consideravelmente quando graficados. -->
+
 
 
 ## Gráficos: Uma variável
 
-## barplot
-## histograma
-## boxplot
+O primeiro passo da análise gráfica dos dados é fazer gráficos para cada variável separadamente. Neste gráficos podemos analisar a distribuição das variáveis quantitativas, verificar a presença de _outliers_ (dados atípicos), e também observar a distribuição de frequência das variáveis qualitativas (categóricas). 
+
+
+
+### Gráficos de barra
+
+Gráficos de barras são geralmente utilizados para representar as quantitades de alguma variáveis qualitativas (categóricas), ou seja, para variáveis das classes fatore ou caracteres. Nestes gráficos, geralmente obsevamos a quantitade de vezes que o fator ocorre nos dados (sua frequência absoluta) ou suas frequências relativas (a porcentagem).
+
+
+```{r}
+# observar as frequências dos tipos de dieta nos dados de sps
+# primeiro descobre as frequências:
+t.dieta <- table(sps$dieta)
+
+barplot(t.dieta, ylab="número de espécies", main="Dieta das espécies")
+```
+
+### Gráficos de pontos
+
+Os gráficos **Cleverland Dotplot** são muito usados para ver a
+
+### Histogramas
+
+Histogramas são usados para variávies numéricas e servem para vermos a forma da distribuição dos dados:
+
+```{r}
+
+```
+
+
+
+### Boxplots
 outliers
+
+### Gráficos quantil-quantil
+normalidade
+
 ## Gráficos: Duas variáveis
+
+### plot
+
+## pairs - correlações
+
+
 
 
 # Criação e edição de gráficos
+
+
+
+
 
 
 
