@@ -313,8 +313,15 @@ title("Regressão: y=3+0.5x")
 plot(anscombe$y4~anscombe$x4, col="red",xlab="x4", ylab="y4")
 abline(a=3,b=0.5,col="blue")
 title("Regressão: y=3+0.5x") 
+par(mfrow=c(1,1)) #voltando para a definição de 1 plot
 ```
 
+## Encontrando valores atípicos (outliers)
+
+Chamamos de valores atípicos, em inglês _outliers_ aquela observação nos dados que é ou muito grande ou muito pequena se comparada ao conjunto total dos dados. Tais _outliers_ podem dominar os resultados de uma análise estatística. Uma simples obsevação pod determinar se a variável é significativa ou não em um modelo de regressão, ou dominar os eixoes em uma análise multivariada, como a Análise de Componentes Principais (PCA).  
+Veja o exemplo do conjunto de dados 4 do quarteto de Anscombe, existe um único valor extremo à direita do gráfico que "puxa" toda a reta da regressão para ele. Esta observação é claramente um outlier.  
+Os outliers podem ser fruto de um erro na mensuração da variável ou na digitação do valor. E assim, podem ser consertados, medidos novamente ou até mesmo excluídos do conjunto de dados. Entretanto, valores extremos genuinamente coletados, ou seja, que são fruto da variabilidade da variável em si, não devem ser excluídos da amostra. Logo, sendo valores incorretos ou corretos, primeiro é preciso saber que eles estão presentes (identificá-los) e entender seus efeitos no resultados das análises para depois decidir o que fazer com os outliers.  
+Os métodos gráficos são a principal maneira de se detectar outliers, tanto em uma dimensão (uma variável), quanto em outliers em duas ou mais dimensões.**Boxplots** e **Cleveland dotplots** são particularmente interessantes para isso.
 
 
 ## Gráficos: Uma variável
@@ -338,31 +345,131 @@ barplot(t.dieta, ylab="número de espécies", main="Dieta das espécies")
 
 ### Gráficos de pontos
 
-Os gráficos **Cleverland Dotplot** são muito usados para ver a
-
-### Histogramas
-
-Histogramas são usados para variávies numéricas e servem para vermos a forma da distribuição dos dados:
+Os gráficos **Cleveland Dotplot** são muito usados para ver a abrangência dos dados de acordo com a ordem com que foram coletados. Ou seja, o número da linha de uma observação é plotado contra o valor da observação.
+É útil para encontrar *outliers* em uma variável:
 
 ```{r}
-
+dotchart(houses$Price, ylab="Ordem dos dados", xlab="valores", main="preços de casas $")
 ```
 
 
+### Histogramas
+
+Histogramas são usados para variávies numéricas e servem para vermos a forma da distribuição dos dados.
+Baixe o conjunto de dados [Sparrows](https://www.dropbox.com/s/e5xrbjh5s687pp6/Sparrows.txt?dl=0), para fazer os histogramas abaixo:
+
+```{r}
+pardais <- read.table("../data/Sparrows.txt",header=T)
+
+#histograma de peso dos animais:
+hist(pardais$Wt)
+hist(pardais$Tarsus)
+
+hist(pardais$Head, main="Pardais", xlab="Head (cm)")
+```
+
+Podemos também fazer vários histogramas condicionando os dados a algum fator. Para isso usaremos o pacote `lattice`, que vem junto com o Rbase. Esse pacote é muito útil para fazer gráficos exploratórios multipainéis.
+
+```{r}
+#lembre-se de carregar o pacote!
+library(lattice)
+
+#histograma dos pesos em função do sexo
+histogram(~Wt|Sex,
+          data= pardais)
+
+#histograma do peso em função do observador
+histogram(~Wt|factor(Observer), 
+          data = pardais,
+          layout = c(1,7),
+          strip=F,
+          strip.left=T)
+```
 
 ### Boxplots
-outliers
+Os boxplots são uma maneira muito útil de sintetizar as informações básicas dos dados em apenas um gráfico. São também muito usados para identificação de _outliers_.  
+Um boxplot visualiza o centro e o espalhamento dos dados, assim com seus extremos. A informação essencial em um boxplot é dada por cinco valores: o minimo, os quartis 25%, 50% (mediana), 75% e o máximo. A "caixa" formada pela figura do boxplot contém 50% das observações centrais dos dados.  
+Veja uns exemplos:
+
+```{r}
+boxplot(pardais$Wingcrd, main="tamanho de asa de pardais")
+boxplot(sps$peso, main="peso das espécies")
+boxplot(pardais$Tarsus)
+```
+
+Observe nestes boxplot os pontos que ficam para fora da "caixa". Estes são os valores extremos, que deveriam ser investigados como "ponteciais outliers" pelo pesquisador.  
+
+O formato do boxplot, assim como a presença ou não de valores fora da "caixa", são bons indicadores da distribuição dos dados. Por exemplo, se o boxplot não contém valores extremos, e a linha interna da caixa (mediana) estiver em uma posição central, ou seja não assimétrica para baixo ou para cima, é um indicativo de uma distribuição simétrica como a Normal.
+
+Fazer boxplots condicionados à variáveis categóricas também é muito útil e já aponta para possíveis diferenças entre os níveis desta variável.
+
+```{r}
+boxplot(Wt~Sex, data=pardais)
+```
+
 
 ### Gráficos quantil-quantil
-normalidade
+
+A **distribuição normal** (gaussiana) é uma premissa em muitos dos métodos estatísticos utilizados atualmente. A premissa da normalidade significa que a variável resposta (dependente) é normalmente distribuída em cada valor da variável preditora (independente).  
+A normalidade dos dados contínuos é geralmente visualizada em histogramas e plots de densidade e gráficos quantil-quantil.  
+Um gráfico quantil-quantil plota os quantis de duas distribuições. Pontos que se aproximam de uma linha reta indicam que as duas distribuições são similares.  Com isso, podemos plotar os quantis dos dados brutos (ou resíduos) contra os quantis teóricos de uma distribuição normal padronizada (distribuição Z), para ver se a distribuição dos dados se parece com a distribuição normal.
+
+Vejamos os gráficos dos exemplos abaixo:
+```{r}
+qqnorm(pardais$Culmen)
+qqline(pardais$Culmen)
+```
+
+A função `qqnorm` plota os quantis da amostra (dos dados) em comparação com os quantis teóricos da distribuição normal, e a função `qqline` desenha a linha onde os quantis são similares. Os desvios para longe dessa linha indicam os desvios da normalidade dos dados, ou seja, quanto mais próximo à reta estão s pontos do gráfico, mais confiança temos de que a distribuição dos dados pode ser considerada normal.
+
+```{r}
+#simulando dados normais
+normais <- rnorm(n=101,mean = 50, sd = 2)
+
+qqnorm(normais)
+qqline(normais)
+```
+
 
 ## Gráficos: Duas variáveis
 
-### plot
-
-## pairs - correlações
 
 
+### Gráficos de dispersão
+
+Os gráficos de dispersão são usados para observar a relação entre duas variáveis contínuas. Ou seja serve para inspecionar visualmente se duas variáveis são associadas.
+
+```{r}
+plot(pardais$Tarsus, pardais$Wingcrd)
+
+# fazendo a relação usando formato de fórmula:
+plot(pardais$Wt~pardais$Head)
+
+# fazendo graficos separadaos para variável sexo (pacote lattice)
+xyplot(Wt~Head|as.factor(Observer), data=pardais)
+
+# cores diferentes para variável sexo
+plot(Wt~Head, data=subset(pardais,Sex=="Female"), 
+     xlim=c(29,37), ylim=c(15,28))
+par(new=T) #adicionando o grafico abaixo no de cima
+plot(Wt~Head, data=subset(pardais,Sex=="Male"), col="red", 
+     xlim=c(29,37), ylim=c(15,28))
+# ou
+cores <- ifelse(pardais$Sex=="Male", "red", "black") #criando vetor com cores
+plot(Wt~Head, data=pardais, col=cores)
+```
+
+
+### Pairs - correlações
+
+`Pairs` é uma função no R que faz um painel de gráficos de dispersão muito interessante para vermos as correlações entre as variáveis quantitativas.  
+Essa função é particularmente importante para vermos de uma só vez as correlações entre a variável dependente e as variáveis independentes, assim como as correçaões entre as variáveis independentes. 
+
+```{r}
+pairs(pardais[ ,3:8], upper.panel = cor(pardais[,3:8]))
+```
+
+<!-- CONTINUAR AQUI, USAR FUNCOES DA IENO 2015 PARA PAIRS? -->
 
 
 # Criação e edição de gráficos
