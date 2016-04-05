@@ -163,24 +163,36 @@ summary(sps$peso) # sumário
 ```
 
 ### Quantis
-Muitas das estatísticas acima são conhecidas de vocês, mas uma que geralmente é mais difícil de interpretar e entender é o **quantil**. A **mediana** é um quantil onde dividimos o conjunto de dados em 50%. Ou seja, 50% dos teus dados estão para a esquerda e 50% para a direita daquele valor. Vejamos um exemplo
+Muitas das estatísticas acima são conhecidas de vocês, mas uma que geralmente é mais difícil de interpretar e entender é o **quantil**. A **mediana** é um quantil que divide o conjunto de dados em 50%. Ou seja, 50% dos teus dados estão para a esquerda e 50% para a direita daquele valor. Vejamos um exemplo:  
 
+Suponha que tenhamos os seguintes valores de uma variável:
 ```{r}
-valores
+valores <- c(15,5,3,8,10,2,7,11,12)
 ```
 
-
-O padrão da função `quantile` são os quartis, ou seja, são os valores das probabilidades em 25%, 50% e 75% (que é o mesmo retornado na função `summary`). Mas podemos mudar para qualquer quantil desejado:
+Primeiro vamos odernar este vetor em ordem crescente:
 ```{r}
+valores.ord<- valores[order(valores)]
+valores.ord
+```
+Se dividirmos os dados na metade, teremos a mediana, que neste caso é o quinto valor no vetor ordenado (8).  
+```{r}
+length(valores) # para saber qual o tamanho do vetor
+valores.ord[5]
+
+median(valores) #conferindo o valor da mediana
+```
+
+Assim, podemos dividir os dados em quantas porcentagens quisermos. Por exemplo, se eu quero saber qual o valor em que 10% dos meus dados se encontram:
+```{r}
+quantile(valores, probs=0.1)
+```
+
+O padrão da função `quantile` são os quartis, ou seja, são os valores das probabilidades em 25%, 50% e 75% (que é o mesmo retornado na função `summary`). Mas podemos mudar para qualquer quantil desejado. Vemos que o argumento `probs` nos permite escolher qual em quais valores de probabilidade (0-1) queremos dividir nossos dados:
+```{r}
+quantile(valores)
 quantile(valores, probs = seq(from = 0, to = 1, by = 0.1))
 ```
-
-
-
-<!-- PROCURAR EXEMPLO E EXPLICAÇÕES NO LIVRO DO MORETIN PARA ESSA SEÇÃO -->
-
-
-
 
 
 ## Descrevendo as observações - Contagens
@@ -434,7 +446,6 @@ qqline(normais)
 ## Gráficos: Duas variáveis
 
 
-
 ### Gráficos de dispersão
 
 Os gráficos de dispersão são usados para observar a relação entre duas variáveis contínuas. Ou seja serve para inspecionar visualmente se duas variáveis são associadas.
@@ -442,7 +453,7 @@ Os gráficos de dispersão são usados para observar a relação entre duas vari
 ```{r}
 plot(pardais$Tarsus, pardais$Wingcrd)
 
-# fazendo a relação usando formato de fórmula:
+# fazendo a associaçao entre as varáveis usando formato de fórmula:
 plot(pardais$Wt~pardais$Head)
 
 # fazendo graficos separadaos para variável sexo (pacote lattice)
@@ -463,29 +474,216 @@ plot(Wt~Head, data=pardais, col=cores)
 ### Pairs - correlações
 
 `Pairs` é uma função no R que faz um painel de gráficos de dispersão muito interessante para vermos as correlações entre as variáveis quantitativas.  
-Essa função é particularmente importante para vermos de uma só vez as correlações entre a variável dependente e as variáveis independentes, assim como as correçaões entre as variáveis independentes. 
-
+Essa função é particularmente importante para vermos de uma só vez as correlações entre a variável dependente e as variáveis independentes, assim como as correlações entre as variáveis independentes.  
+As funções abaixo serão usada na função `pairs` para fazer histogramas na diagonal e os valores da correlação nos painéis superiores (retiradas do help da função):
 ```{r}
-pairs(pardais[ ,3:8], upper.panel = cor(pardais[,3:8]))
+## colocar histogramas de frequência na diagonal do plot
+panel.hist <- function(x, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+```
+```{r}
+## colocar os valores das correlações com tamanho proporcional à correlação
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
 ```
 
-<!-- CONTINUAR AQUI, USAR FUNCOES DA IENO 2015 PARA PAIRS? -->
+Plotando o gráfico:
+```{r}
+pairs(pardais[ ,3:8], upper.panel = panel.cor, diag.panel = panel.hist)
+```
 
 
 # Criação e edição de gráficos
 
+Nesta parte iremos aprender a editar vários parâmetros gráficos no R para que fiquem mais adequados à publicações e relatórios. Editar gráficos no R não é fácil, pode demorar um tanto, mas no R podemos mudar quase todos os parâmetros dentro de um gráfico, o que nos dá liberdade para "desenha-lo" da maneira que quisermos. 
+
+As funções gráficas como `plot`, `boxplot` e `hist` já mostram os gráficos com a formatação padrão no R. É nesta formatação que vamos trabalhar:
+
+Ex. gráfico de dispersão:
+
+```{r}
+riqueza <- c(15,18,22,24,25,30,31,34,37,39,41,45)
+area <- c(2,4.5,6,10,30,34,50,56,60,77.5,80,85)
+local <- rep(c("lago1", "lago2"), each=6)
+
+plot(riqueza~area)
+```
+
+Existem duas maneiras de se mudar os parâmetros gráficos. A primeira é usando os argumentos da própria função do gráfico. A segunda forma é utilizando a função `par` e seus argumentos antes de plotar o gráfico. Alguns argumentos só podem ser chamados exclusivamente por uma destas maneiras. Por exemplo, `ylab` e `xlab` modificam o nome (label) dos eixos e só podem ser chamadas por dentro do gráfico, já outras funções só podem ser chamadas pelo `par()`, como por exemplo, `mar` que controla o tamanho das margens do gráfico e `mfrow` que controla quantos gráficos serão mostrados no mesmo dispositivo. 
+A página de help do `par` é uma das mais procuradas por todos que estão fazendo gráficos no R, e por isso é importante que se gaste um tempo para aprender qual tipo de informação ela fornece, onde está a informação, e como mudar os parâmetros do R.  
+
+**Recomendação:** recomendamos imprimir ou deixar sempre aberto o help da função `par` para consulta na hora que estiver fazendo os gráficos. Existem inúmeros argumentos muito úteis que certamente serão sempre consultados. O [R-reference Card](https://cran.r-project.org/doc/contrib/Short-refcard.pdf) também é muito útil na hora de fazer gráficos pois ele tem os argumentos e funções mais utilizados.
+
+### Aumentando os tamanhos de eixos e pontos:
+```{r}
+par(cex=2)
+plot(riqueza~area)
+par(cex=1) # para voltar ao tamanho padrão
+```
+
+O argumento `cex` se aplica ao tamanho de fonte das legendas, título, pontos, de uma forma geral no gráfico. Veja o help para os argumentos `cex.lab`, `cex.axis`, e outros tipos de argumentos que trabalham o tamanho dos elementos gráficos.
+
+Experimente colocar o `cex` como argumento do `plot`:
+```{r}
+plot(riqueza~area, cex=2)
+```
+
+Neste caso, qual a diferença entre o `cex` usando em `par` e o `cex` usado em `plot`? E se usarmos o cex nas duas funções?
+
+```{r}
+par(cex=2)
+plot(riqueza~area, cex=2)
+par(cex=1)
+```
+
+Estas diferenças ocorrem pois `par(cex=2)` tem a função geral de aumentar todas as fontes e pontos, enquanto que no `plot(cex=2)` tem a função de aumentar só o pontos. Neste caso, as duas informações se multiplicam para gerar o último gráfico. 
+
+É importante ressaltar que quando o dispositivo gráfico está "aberto", uma vez que utilizamos a função `par` ela vai estar funcionando para todos os gráficos subsequentes. Se você quiser "limpar" os parâmetros do `par` para fazer um novo gráfico, você deve fechar os dispositivos gráficos (símbolo de vassoura no painel gráfico no Rstudio) e rodar o comando do gráfico novamente. Ou então, usar a função `dev.off()` sem nenhum argumento dentro para fechar os dispositivos gráficos (janelas). Outra opção (como no código acima), é voltar com o parâmetro gráfico padrão (default).
+
+
+#### Mudando a cor e o formato dos pontos do gráfico:
+```{r}
+plot(riqueza~area, pch=4, col="blue")
+```
+
+#### Mudando nome de eixos e títulos dos gráficos
+```{r}
+plot(riqueza~area, xlab = "Área", ylab="Número de Espécies", main= "relação espécies-área")
+
+
+# área em metros quadrados
+plot(riqueza~area, xlab = expression("Área (m"^2*")"), ylab="Número de Espécies", main= "Borboletas do Parque")
+```
+
+#### Dois gráficos num mesmo plot
+
+Para colocar dois gráficos numa mesma figura no R, vc precisa usar o argumento `par(mfrow=c( , ))` para controlar “quantas figuras” serão desenhadas. O vetor contido dentro da função mfrow=() controla o numero de gráficos que serão desenhados no eixo x (1° número) e no eixo y (2° número).
+
+Outro arguemtno importante de `par` é o `par(mar=c())` que  controla o “tamanho das margens” do gráfico e como a figura ficará disposta dentro do dispositivo. O vetor contido dentro da função `mar=()`, controla as posições das margens, sendo que o 1° numero controla a margem da parte de baixo do gráfico, o 2° controla a margem do lado esquerdo, o 3° numero controla a parte de cima e o 4° numero controla o tamanho da margem do lado direito do gráfico. 
+
+```{r}
+par(mfrow=c(1,2))
+plot(riqueza~area)
+boxplot(riqueza~local)
+
+par(mfrow=c(2,1))
+plot(riqueza~area)
+boxplot(riqueza~local)
+
+par(mar=c(4,14,2,6))
+plot(riqueza~area)
+boxplot(riqueza~local)
+
+dev.off() # para fechar os dispositivos gráficos. e "zerar" o par()
+```
+
+### Diferenças entre os tipos de gráficos
+
+Às vezes, a forma como se muda argumentos do `plot()`, `boxplot()` e `barplot()` não é a mesma, ou seja, comandos que funcionam perfeitamente para o `plot()` podem não produzir efeito algum no `boxplot()`, e vice-versa. Isso atrapalha um pouco, mas assim que se acostuma fica mais fácil. Há duas dicas para resolver este problema: (i) tente sempre jogar os argumentos para o `par()` pois às vezes eles podem não funcionar se chamadas por dentro do `plot()`, `boxplot()`, etc, mas irão funcionar pelo `par()`; (ii) descubra o nome em inglês do parâmetro que se quer mudar (_label, tick, legend_) e jogue no Google “legend boxplot”. Com certeza, alguém já teve este mesmo problema, e entrando dentro da lista do R (as diversas que existem) ou em aulas disponibilizadas na internet, com certeza se acha uma solução.  
+
+
+### Inserindo mais informações em gráficos
+
+Existem diversas informações que se pode incluir em um gráfico. Pode-se colocar uma letra para mostrar que este é o painel “a” e ao lado é o painel ”b”; pode-se colocar asteriscos para mostrar quais relações são significativas; pode-se desenhar flechas, outros pontos, uma infinidade de coisas. Tudo isto pode ser feito, mas requer funções comandos separados daqueles já passados pelo `par()` e `plot()`, `boxplot()` ou `barplot()`. Estas funções que acrescentam "coisas" ao gráficos são chamadas de funções de nivel inferior (**low-level plotting commands**), pois elas dependem que a função do plot seja "chamada". Dentre as várias funções existentes para se inserir informações em gráficos, existem sete que são bastante úteis
+
+#### `lines()`
+Para inserir linhas retas ou curvas não paramétricas:
+
+```{r}
+plot(riqueza~area)
+lines(area, riqueza)
+lines(lowess(area,riqueza))
+```
+
+#### `abline()`
+
+Para inserir linhas de tendência criadas a partir de um modelo linear. Para isso é primeiro necessário criar o modelo, para depois criar a linha. 
+
+```{r}
+model <-lm(riqueza~area)
+plot(riqueza~area)
+abline(model)
+```
+
+Ou então, você pode dar os valores dos parâmetros para a função
+```{r}
+# colocando um intercepto e uma inclinação à reta:
+abline(a=15, b=0.30, col="red")
+```
+
+Esta função também serve para inserir linhas verticais ou horizontais no gráfico
+```{r}
+abline(v=40, lty=2, col="darkgreen")
+abline(h=30, lty=4, col="purple")
+```
+
+#### `text()` e `mtext()`
+
+A função `text` acrescenta texto dentro do gráfico. 
+```{r}
+plot(riqueza~area)
+text(x=10,y=43, "texto aqui")
+```
+
+Já a função `mtext` acrescenta texto nas margens do gráfico ou da janela gráfica. Seu uso mais comum é inserir legendas nos eixos (quando a gente omite a legenda padrão da função plot).
+
+```{r}
+#omitindo legenda no eixo x
+plot(riqueza~area, xlab="")
+
+#inserindo texto no local
+mtext(side=1, "área do lago", line=3, cex=2)
+```
+
+#### `axis()`
+
+Muitas vezes o que a gente quer é inserir um eixo novo no gráfico, ou sobrescrever o eixo plotado de forma diferente do eixo do plot. Para isso usamos a função `axis` que desenha o eixo de acordo com as especificações dadas:
+
+```{r}
+#omitindo o eixo x:
+plot(riqueza~area, xaxt="n")
+
+# desenhando outro eixo para x:
+axis(1, at=seq(0,80,20), labels=c("zero", "vinte", "quarenta", "sessenta", "oitenta"))
+```
 
 
 
 
+### sobrepondo outro gráfico
 
+par(new=T)
+
+
+## Salvando gráficos
+
+jpeg()
+pdf()
 
 # Material de Apoio
+ 
  
  dar exemplos de pacote lattice e ggplot2  
  link para tutorial graphics parameters
  
- 
+Muitos dos exemplos desta aula foram tirados dos roteiros e exercícios da página do curso de R [](). Vale a pena conferir na íntegra os roteiros 4 e 5. 
+
+capitulo do crawley sobre graficos
  
 # Exercícios!
 
@@ -500,8 +698,10 @@ vnormal = rnorm(10000, 30, 7)
 ### 2. Aninhamento de comunidades
 O termo “aninhamento” (nesting) é usado para a situação em que comunidades mais pobres em espécies são um subconjunto das comunidades mais ricas. Uma análise exploratória rápida de aninhamento é ordenar as linhas e as colunas de uma matriz binária de ocorrência das espécies por comunidades.
 
-1. Crie um objeto da classe `matrix` com a matriz de ocorrência de mamíferos em topos de [montanhas](http://ecologia.ib.usp.br/bie5782/lib/exe/fetch.php?media=dados:gbmam93.csv.pdf) (retire a extensão pdf). (DICA: a função read.table retorna um data frame. Use a função as.matrix para mudar a classe para matriz.)  
+1. Crie um objeto da classe `matrix` com a matriz de ocorrência de mamíferos em topos de [montanhas](https://www.dropbox.com/s/pxiiwcj4yukbfgl/gbmam93.csv?dl=0). (DICA: a função `read.table` retorna um data frame. Use a função `as.matrix` para mudar a classe para matriz.) 
+
 2. Use o ordenamento por indexação para criar uma matriz com as comunidades por ordem decrescente de espécies, e as espécies por ordem decrescente de frequência de ocorrência. (OUTRA DICA: lembre-se da função apply!).  
+
 3. A matriz resultante tem sinais de aninhamento? Por que?  
 
 ```{r resultado, echo=FALSE}
@@ -512,6 +712,25 @@ tot.loc <- apply(mont,2,sum)
 mont[order(tot.sp, decreasing = T) , order(tot.loc, decreasing =T)]
 ```
  
- 
- <!-- continuar exercícios -->
- 
+### 3. Eucaliptos
+
+Neste exercício, use o conjunto de dados [Inventário em Florestas Plantadas de Eucalyptus grandis](https://www.dropbox.com/s/uemq45p7moveodx/egrandis.csv?dl=0).  
+
+1. Utilize o gráfico boxplot para analisar o DAP de árvores de _E. grandis_ em função das variáveis região (regiao) e rotação (rotacao).  
+
+2. Avalie a normalidade da altura (ht) do conjunto total de árvores com um gráfico quantil-quantil contra a distribuição normal.
+
+```{r resultado, echo=F}
+egrandis <- read.table("../data/egrandis.csv", header=T, sep=";")
+
+boxplot(dap~regiao, data=egrandis)
+boxplot(dap~rotacao, data=egrandis)
+boxplot(dap~regiao+rotacao, data=egrandis)
+
+
+qqnorm(egrandis$ht)
+qqline(egrandis$ht)
+```
+
+
+
