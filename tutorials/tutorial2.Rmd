@@ -19,8 +19,9 @@ library(rmdformats)
 options(max.print="75")
 opts_knit$set(width=75)
 ```
+
 ```{r, echo=F}
-setwd("/Users/melinatarituba/git-meme/consultR/tutorials")
+#setwd("/Users/melinatarituba/git-meme/consultR/tutorials")
 ```
 
 Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios.  Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.
@@ -28,10 +29,17 @@ Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação 
 # Importando e verificando os dados
 
 Baixe os arquivos de dados [ilhas](https://www.dropbox.com/s/mz0omdb3qhfv282/ilhas.csv?dl=0) e [sps](https://www.dropbox.com/s/3jupvtct55827vx/sps.csv?dl=0) e faça a leitura deles no R:
-```{r}
+```{r, echo=F}
+# para testar os comandos do roteiro rodando no computador
 ilhas <- read.csv2("../data/ilhas.csv",header=T,row.names = 1)
 ilhas <- as.matrix(ilhas)
 sps <- read.csv2("../data/sps.csv",header=T, dec=".")
+```
+
+```{r, }
+ilhas <- read.csv2("ilhas.csv",header=T,row.names = 1)
+ilhas <- as.matrix(ilhas)
+sps <- read.csv2("sps.csv",header=T, dec=".")
 ```
 
 A tabela `ilhas` é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família `read.table`, os objetos criados são sempre da classe `data frame`, por isso a necessidade de transformar o objeto em matriz.
@@ -96,9 +104,14 @@ sps$dieta
 ## Organizando data frames: `sort`, `order`, `rank`
 
  As três funções `sort`, `order` e `rank`são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo [houses.txt](https://www.dropbox.com/s/cxk4fg6xr023jpn/houses.txt?dl=0) e carregue ele no R. Vamos ver a diferença entre as funções na prática:
- 
-```{r}
+
+```{r, echo=F}
 houses<-read.table("../data/houses.txt",header=T)
+```
+
+
+```{r}
+houses<-read.table("houses.txt",header=T)
 houses
 
 ranks <- rank(houses$Price)
@@ -129,7 +142,7 @@ houses
 Se você quiser ordenar o data frame por uma coluna de maneira decrescente, utilize o argumento `decreasing=TRUE` da função `order`. Essa função é relativamente boa quando queremos exportar uma tabela de dados/resultados para apresentar em relatórios/apresentações/artigos. Assim, você ordena o data frame pela coluna que você achar mais importante na hora de apresentar seus dados/resultados.
 
 
-# Análise exploratórioa de dados
+# Análise exploratória de dados
 
 Podemos pensar a análise exploratória de dados de duas maneiras;
 
@@ -175,6 +188,7 @@ Primeiro vamos odernar este vetor em ordem crescente:
 valores.ord<- valores[order(valores)]
 valores.ord
 ```
+
 Se dividirmos os dados na metade, teremos a mediana, que neste caso é o quinto valor no vetor ordenado (8).  
 ```{r}
 length(valores) # para saber qual o tamanho do vetor
@@ -367,11 +381,16 @@ dotchart(houses$Price, ylab="Ordem dos dados", xlab="valores", main="preços de 
 
 ### Histogramas
 
-Histogramas são usados para variávies numéricas e servem para vermos a forma da distribuição dos dados.
+Os histogramas são gráficos que representam a distribuição de frequências dos valores de uma variável quantitativa, servem para vermos a forma da distribuição dos dados.
 Baixe o conjunto de dados [Sparrows](https://www.dropbox.com/s/e5xrbjh5s687pp6/Sparrows.txt?dl=0), para fazer os histogramas abaixo:
 
+```{r, echo=F}
+pardais <- read.table("./data/Sparrows.txt",header=T)
+```
+
+
 ```{r}
-pardais <- read.table("../data/Sparrows.txt",header=T)
+pardais <- read.table("Sparrows.txt",header=T)
 
 #histograma de peso dos animais:
 hist(pardais$Wt)
@@ -380,7 +399,7 @@ hist(pardais$Tarsus)
 hist(pardais$Head, main="Pardais", xlab="Head (cm)")
 ```
 
-Podemos também fazer vários histogramas condicionando os dados a algum fator. Para isso usaremos o pacote `lattice`, que vem junto com o Rbase. Esse pacote é muito útil para fazer gráficos exploratórios multipainéis.
+Podemos também fazer vários histogramas condicionando os dados a algum fator (variável categórica, com diferentes níveis). Para isso usaremos o pacote `lattice`, que vem junto com o Rbase. Esse pacote é muito útil para fazer gráficos exploratórios multipainéis.
 
 ```{r}
 #lembre-se de carregar o pacote!
@@ -398,7 +417,11 @@ histogram(~Wt|factor(Observer),
           strip.left=T)
 ```
 
+**OBS:** Para ver mais exemplos da funcionalidade do pacote `lattice`, utilize o comando `demo(lattice)`!
+
+
 ### Boxplots
+
 Os boxplots são uma maneira muito útil de sintetizar as informações básicas dos dados em apenas um gráfico. São também muito usados para identificação de _outliers_.  
 Um boxplot visualiza o centro e o espalhamento dos dados, assim com seus extremos. A informação essencial em um boxplot é dada por cinco valores: o minimo, os quartis 25%, 50% (mediana), 75% e o máximo. A "caixa" formada pela figura do boxplot contém 50% das observações centrais dos dados.  
 Veja uns exemplos:
@@ -508,7 +531,7 @@ pairs(pardais[ ,3:8], upper.panel = panel.cor, diag.panel = panel.hist)
 ```
 
 
-# Criação e edição de gráficos
+# Edição de gráficos
 
 Nesta parte iremos aprender a editar vários parâmetros gráficos no R para que fiquem mais adequados à publicações e relatórios. Editar gráficos no R não é fácil, pode demorar um tanto, mas no R podemos mudar quase todos os parâmetros dentro de um gráfico, o que nos dá liberdade para "desenha-lo" da maneira que quisermos. 
 
@@ -563,11 +586,13 @@ plot(riqueza~area, pch=4, col="blue")
 
 #### Mudando nome de eixos e títulos dos gráficos
 ```{r}
-plot(riqueza~area, xlab = "Área", ylab="Número de Espécies", main= "relação espécies-área")
+plot(riqueza~area, xlab = "Área", ylab="Número de Espécies", 
+     main= "relação espécies-área")
 
 
 # área em metros quadrados
-plot(riqueza~area, xlab = expression("Área (m"^2*")"), ylab="Número de Espécies", main= "Borboletas do Parque")
+plot(riqueza~area, xlab = expression("Área (m"^2*")"), 
+     ylab="Número de Espécies", main= "Borboletas do Parque")
 ```
 
 #### Dois gráficos num mesmo plot
@@ -663,28 +688,108 @@ axis(1, at=seq(0,80,20), labels=c("zero", "vinte", "quarenta", "sessenta", "oite
 ```
 
 
-
-
 ### sobrepondo outro gráfico
 
-par(new=T)
+As vezes nós queremos colocar mais de uma informação em um gráfico, e para isso nós sobrepomos um novo gráfico em cima do já existente. Por exemplo, nós queremos incluir os dados de umidade dos locais no eixo Y2.
+
+```{r}
+umidade <- c(82,91,78,57,48,45,35,38,21,15,24,33)
+
+#dando mais espaço para a margem direita
+par(mar=c(5,4,4,4))
+
+#plotando o grafico principal
+plot(riqueza~area)
+
+par(new=T) # para permitir sobrescrever o gráfico
+
+#plotando a nova variável Y2, mas sem desenhar o eixo
+plot(umidade~area, yaxt="n", ylab="",type="l") 
+
+# desenhando o eixo de Y2
+axis(4)
+mtext("Umidade (%)",4, line = 2)
+```
+
+Outro exemplo seria se quiséssemos colocar cores diferente para os locais amostrados usando a função de nível inferior `points`:
+
+```{r}
+#separando os dados por local
+riq.lago1 <- riqueza[local=="lago1"]
+area.lago1 <- area[local=="lago1"]
+
+riq.lago2 <- riqueza[local=="lago2"]
+area.lago2 <- area[local=="lago2"]
+
+# plotando o lago 1 primeiro
+plot(riq.lago1~area.lago1, xlim=c(0,85), ylim=c(15,45), 
+     col="orange", pch=16, xlab = "Área", ylab= "Riqueza",
+     las=1, bty="l", cex=2)
+
+# incluindo os pontos do lago 2
+points(riq.lago2~area.lago2, pch=16, col="purple", cex=2)
+```
+
+#### Incluindo legendas
+
+Vamos colocar a legenda do plot acima para sabermos qual cor corresponde a qual local:
+```{r}
+legend("topleft", legend= c("lago 1", "lago 2"), pch=16, col=c("orange", "purple"), bty="n")
+```
+
+
 
 
 ## Salvando gráficos
 
-jpeg()
-pdf()
+Após ter feitos todos os gráficos desejados, é possível salvá-los em vários formatos, como jpeg, png, postscript, pdf. Consulte a ajuda do pacote `grDevices` para a lista completa e mais informações.
+
+Após chegar ao gráfico final, ajustando todos os parâmetros desejados, você pode usar a função do R para criar o arquivo no formato desejado. Há funções para cada formato de arquivo, todas elas com o primeiro argumento `filename`, que especifica o nome do arquivo a salvar.
+
+O primeiro comando é usar a função para o formato de arquivo que você quer salvar, colocar o nome do arquivo e alguns parâmetros gráficos como altura (`heigh`) e largura (`width`) da figura. Depois disso vem o código da figura, este código será enviado para o arquivo sendo montado. Por fim, você usa a função `dev.off`, que fecha o gráfico para se salvo:
+ 
+```{r}
+jpeg(filename = "Algumnome.jpg", width = 480, height = 480)
+plot(riqueza~area)
+dev.off()
+```
+
+Importante:
+
+- Seu arquivo de figura só terá os parâmetros desejados se você executar todo o código após abrir o arquivo da figura, incluindo todos os comandos par().  
+- Seu arquivo de figura só será salvo quando você executar o comando dev.off(). Até que isso aconteça, todos os resultados de comandos gráficos continuarão a ser enviados para este arquivo.  
+- Por isso, se você criar dois gráficos, o segundo substituirá o primeiro.  
+- Ao executar o comando dev.off(), o arquivo será gravado no diretório de trabalho. Se você quiser gravá-lo em outro lugar, terá que especificar o caminho completo no comando de criação do arquivo, no argumento filename.  
+
+No **Rstudio** existe um caminho manual para você salvar o gráfico sendo exibido na aba Plots. No botão Export você pode salvar como arquivo de imagem ou pdf, ajustar o tamanho desejado e salvar. Essa forma é mais fácil, porém cada vez que você quiser salvar terá de fazê-lo através de cliques, o que não garante que os gráficos salvos tenham os mesmos parâmetros, por exemplo a altura e largura. 
+
+**OBS:** outro fato importante de mencionar no **Rstudio** é que se o seu painel de plot estiver muito pequeno em relação ao tamanho do gráfico, ao rodar a função do gráfico, vai aparecer uma mensagem de erro dizendo que as margens do painel são muito pequenas para o plot. Para resolver isso você pode aumentar o espaço do painel de plot ou então abrir uma janela de dispositivo gráfico à parte com a função `x11()` (para Windows):
+
+```{r}
+# abrindo uma janela para fazer o gráfico, à parte do Rstudio
+x11()
+# fazendo o plot
+plot(riqueza~area)
+
+# o plot será enviado diretamente para a janela aberta.
+```
+
+
 
 # Material de Apoio
- 
- 
- dar exemplos de pacote lattice e ggplot2  
- link para tutorial graphics parameters
- 
-Muitos dos exemplos desta aula foram tirados dos roteiros e exercícios da página do curso de R [](). Vale a pena conferir na íntegra os roteiros 4 e 5. 
 
-capitulo do crawley sobre graficos
- 
+- Muitos dos exemplos desta aula foram tirados dos roteiros e exercícios do site da [disciplina de R do IB-USP](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:02_tutoriais:tutorial4:start). Vale a pena conferir na íntegra os roteiros 4 e 5.
+
+- Capítulo 6 da Apostila de R da disciplina da USP, sobre [gráficos avançados](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:10-graficos02)
+
+- Exercícios sobre [parâmetros gráficos](http://r-exercises.com/2016/03/24/graphics-parameters-exercises/) 
+
+- O pacote [ggplot2](http://ggplot2.org/) é uma nova forma de fazer gráficos seguindo uma sintaxe um tanto diferente do pacote base. Vale a pena conferir e testar alguns exemplos!
+
+- Recomendo ler o Capítulo 5 do livro "The R Book" do Crawley sobre gráficos. Se ainda não baixo o livro, [baixe aqui!]((http://gen.lib.rus.ec/book/index.php?md5=e09db860b99f0710ec5746796c101d59)) 
+
+- Artigo sobre como explorar dados e evitar problemas estatísticos comuns: [Zuur et al. 2010](https://www.dropbox.com/s/72bws84hemahlum/zuur%20et%20al%202010%20protocol%20data%20exploration%20to%20avoid%20common%20statistical%20problems.pdf?dl=0)
+
 # Exercícios!
 
 ### 1. Para gerar uma amostra de 10.000 números de uma distribuição Normal com média 30 e desvio padrão 7, utilize o comando:
@@ -704,7 +809,7 @@ O termo “aninhamento” (nesting) é usado para a situação em que comunidade
 
 3. A matriz resultante tem sinais de aninhamento? Por que?  
 
-```{r resultado, echo=FALSE}
+```{r , echo=FALSE}
 mont <- read.csv2("montanha.csv",dec=".",header = T,row.names = 1)
 mont <-as.matrix(mont)
 tot.sp <- apply(mont,1,sum)
@@ -720,7 +825,7 @@ Neste exercício, use o conjunto de dados [Inventário em Florestas Plantadas de
 
 2. Avalie a normalidade da altura (ht) do conjunto total de árvores com um gráfico quantil-quantil contra a distribuição normal.
 
-```{r resultado, echo=F}
+```{r, echo=F}
 egrandis <- read.table("../data/egrandis.csv", header=T, sep=";")
 
 boxplot(dap~regiao, data=egrandis)
@@ -732,5 +837,14 @@ qqnorm(egrandis$ht)
 qqline(egrandis$ht)
 ```
 
+### 4. Eucaliptos 2
+
+Crie um gráfico de dispersão entre “dap”1) e “ht”2) com:
+
+1. Legendas dos eixos com nomes das variáveis e suas unidades  
+2. Marcações do eixos (ticks) para dentro da área do gráfico  
+3. Apenas dois eixos (formato “L”)  
+4. Título informativo  
+5. Tamanho das fontes maiores que o padrão  
 
 

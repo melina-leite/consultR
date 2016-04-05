@@ -19,9 +19,7 @@ library(rmdformats)
 options(max.print="75")
 opts_knit$set(width=75)
 ```
-```{r, echo=F}
-setwd("/Users/melinatarituba/git-meme/consultR/tutorials")
-```
+
 
 # Primeiros passos
 
