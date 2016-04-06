@@ -119,6 +119,11 @@ table(sps$cor, sps$dieta)
 
 
 ## Ordenação de data frames  
+
+```{r}
+head(sps, n=3L)
+```
+
 Ordenando `sps` por peso:
 ```{r}
 sps[ order(sps$peso) , ]
@@ -151,8 +156,6 @@ aggregate(cbind(abund, peso) ~ cor+ dieta, sps, mean)
 
 #Gráficos exploratórios
 
-<!--começar com os graficos do anscombe par amostrar a importancia de plotar os dados para ter noçaão das coisas.-->
-
 ## O quarteto de Anscombe
 ```{r, echo=F}
 ans<-anscombe
@@ -179,11 +182,10 @@ plot(anscombe$y4~anscombe$x4, col="red",xlab="x4", ylab="y4")
 abline(a=3,b=0.5,col="blue")
 ```
 </div>
-<!-- Todos os quatro conjunto de dados são idênticos quando examinado usando estatística básica, mas variam consideravelmente quando graficados. -->
 
-## 
-<!-- ver material do curso R-lampago, parte 6 e 7 graficos exploratórios
-7. Gráficos Exploratórios -->
+<div class="note">
+Todos os quatro conjunto de dados são idênticos quando examinado usando estatística básica, mas variam consideravelmente quando graficados
+</div>
 
 ## Gráficos: Uma variável
 

@@ -790,6 +790,12 @@ plot(riqueza~area)
 
 - Artigo sobre como explorar dados e evitar problemas estatísticos comuns: [Zuur et al. 2010](https://www.dropbox.com/s/72bws84hemahlum/zuur%20et%20al%202010%20protocol%20data%20exploration%20to%20avoid%20common%20statistical%20problems.pdf?dl=0)
 
+- Mais dois livros bem interessantes sobre análises de dados ecológicos e R:  
+    - Zuur et al. 2009. [Analysing Ecological Data](https://www.dropbox.com/s/zato5f7nnai7h8g/Zuur%2C%20Ieno%2C%20Smith_2007_Analysing%20ecological%20data.pdf?dl=0). Capítulo 4 fala sobre análise exploratória e gráficos  
+    - Zuur et al. 2009. [A beginner's guide to R](https://www.dropbox.com/s/g0hn0w9f5rn3i91/Zuur%2C%20Ieno%2C%20Meesters_2009_A%20Beginner%27s%20Guide%20to%20R.pdf?dl=0). Capitulos 5 e 7 sobre gráficos.  
+  
+
+
 # Exercícios!
 
 ### 1. Para gerar uma amostra de 10.000 números de uma distribuição Normal com média 30 e desvio padrão 7, utilize o comando:
