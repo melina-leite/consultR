@@ -106,7 +106,7 @@ sps$dieta
  As três funções `sort`, `order` e `rank`são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo [houses.txt](https://www.dropbox.com/s/cxk4fg6xr023jpn/houses.txt?dl=0) e carregue ele no R. Vamos ver a diferença entre as funções na prática:
 
 ```{r, echo=F}
-houses<-read.table("../data/houses.txt",header=T)
+houses<-read.table("./data/houses.txt",header=T)
 ```
 
 
@@ -479,7 +479,8 @@ plot(pardais$Tarsus, pardais$Wingcrd)
 # fazendo a associaçao entre as varáveis usando formato de fórmula:
 plot(pardais$Wt~pardais$Head)
 
-# fazendo graficos separadaos para variável sexo (pacote lattice)
+# fazendo graficos separadaos para variável observador 
+# pacote lattice
 xyplot(Wt~Head|as.factor(Observer), data=pardais)
 
 # cores diferentes para variável sexo
@@ -583,6 +584,9 @@ Estas diferenças ocorrem pois `par(cex=2)` tem a função geral de aumentar tod
 ```{r}
 plot(riqueza~area, pch=4, col="blue")
 ```
+
+Dê o comando `demo(colors)` para ter uma noção da quantidade de cores possíveis a serem chamadas por nome. Existem diferentes paletas de cores formas de defini-las.
+
 
 #### Mudando nome de eixos e títulos dos gráficos
 ```{r}
