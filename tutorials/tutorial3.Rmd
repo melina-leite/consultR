@@ -1,0 +1,81 @@
+---
+title: 'Roteiro 3'
+author: "Melina Leite"
+date: "Departamento de Ecologia IB-USP"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+---
+
+```{r setup, echo = F, message = F, cache = F}
+knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALSE, cache=FALSE, warning=FALSE)
+
+#global options que vieram no rmdformats de html
+library(knitr)
+library(rmdformats)
+options(max.print="75")
+opts_knit$set(width=75)
+```
+
+```{r, echo=F}
+setwd("~/git_meme/consultR/tutorials")
+```
+
+Neste roteiro estudaremos um pouco sobre inferência estatística, as distribuições de probabilidade mais usadas, os modelos lineares gerais e generalizados (ANOVA, regressão). Este roteiro não pretende se aprofundar nestes temas, principalmente em relação aos aspectos matemáticos e teóricos das análises. Nós enfocaremos na questão prática de entender como funcionam os modelos estatísticos, como fazê-los no R, se nossos dados atendem às premissas destes e como interpretar os resultados destas análises no R.
+
+
+# Variáveis Aleatórias e Distribuições de Probabilidade
+
+O termo Variável Aleatória está ligado à Probabilidade
+
+## Uniforme
+
+## Bernouli
+
+## Binomial
+
+## Poisson
+
+## Normal
+
+# Inferência estatística
+
+  - população - amostra - amostragem
+
+  - parâmetros - estimadores
+
+  - Intervalo de confiança
+
+# Teste de significância
+
+  - valor-P
+  - teste t
+
+# Modelos lineares
+  - formato do modelo
+  - Premissas
+    - homogeneidade variância
+    - normalidade
+
+## ANOVA
+  - R²
+  - diagnóstico resíduos
+  
+## Regressão linear simples
+
+
+# Modelos lineares generalizados
+
+  - outras distribuições que não a normal
+  
+## distribuição Binomial
+
+## distribuição Poisson
+
+
+# transformação dos dados?
+
+
