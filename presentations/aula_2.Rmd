@@ -11,7 +11,7 @@ logo: Rlogo-1.png
 ---
 
 ```{r, echo=F}
-setwd("/Users/melinatarituba/git-meme/consultR/presentations")
+setwd("~/git_meme/consultR/presentations")
 ```
 
 
@@ -229,7 +229,7 @@ Todos os quatro conjunto de dados são idênticos quando examinado usando estat�
 ## Gráficos de barra
 
 Representar as quantitades de alguma variáveis qualitativas (categóricas)
-<div align="center"
+<div align="center">
 ```{r}
 t.dieta <- table(sps$dieta)
 barplot(t.dieta, ylab="número de espécies", main="Dieta das espécies")

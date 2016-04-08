@@ -697,7 +697,7 @@ Abaixo listo as referências usadas para criação desse roteiro, assim como sit
 3. Verifique o seu diretório de trabalho.  
 4. Mude o diretório de trabalho para o diretório que você criou.  
 5. Verifique o conteúdo da área de trabalho.  
-6. Carregue o arquivo [letras.RData](http://ecologia.ib.usp.br/bie5782/lib/exe/fetch.php?media=dados:letras.rdata.pdf) (apagar extensão .pdf).  
+6. Carregue o arquivo [letras.RData](https://www.dropbox.com/s/gmy2rlmxnacj0eg/letras.rdata?dl=0) (apagar extensão .pdf).  
 7. Verifique novamente sua área de trabalho.  
 8. Saia do R, tomando o cuidado de salvar sua área de trabalho.  
 9. Repita os passos 2 a 5.  
@@ -706,7 +706,7 @@ Abaixo listo as referências usadas para criação desse roteiro, assim como sit
 
 ### 2. Use a ajuda para conhecer argumentos das funções
 1. Execute o R, usando o diretório de trabalho criado no exercício anterior.  
-2. Use a função load para carregar o arquivo bichos.RData (apagar extensão .pdf) no workspace.  
+2. Use a função load para carregar o arquivo [bichos.RData](https://www.dropbox.com/s/b8ju12vfhxi6w77/bichos.rdata?dl=0) (apagar extensão .pdf) no workspace.  
 3. Consulte a ajuda da funções rm e ls para descobrir como apagar apenas os objetos cujos nomes começam com “temp”.  
 
 ### 3. Classes de Objetos
