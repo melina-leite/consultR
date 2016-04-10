@@ -22,7 +22,7 @@ opts_knit$set(width=75)
 ```
 
 ```{r, echo=F}
-setwd("~/git_meme/consultR/tutorials")
+setwd("../consultR/tutorials")
 ```
 
 Neste roteiro usaremos um exemplo inicial para discutir algumas questões referentes à inferência estatística, distribuições de probabilidade, modelos estatísticos e testes de hipóteses. Este roteiro não pretende se aprofundar nestes temas, principalmente em relação aos aspectos formais matemáticos e teóricos das análises. Nós enfocaremos na questão prática de entender como funcionam os modelos estatísticos, como fazê-los no R, se nossos dados atendem às premissas destes e como interpretar os resultados destas análises no R.
@@ -32,7 +32,7 @@ Este roteiro nem de longe substitui um bom estudo/curso sobre estatística bási
 
 # Um problema
 
-Vamos começar esboçando um problema inicial. Um pesquisador prentende medir a altura de árvores em uma floresta, pois ele tem algumas idéias sobre esta **distribuição de frequências de alturas** e gostaria de **inferir** sobre algumas características das árvores. É humanamente impossível medir todas as árvores da floresta (**população**), então ele pega uma **amostra aleatória** de árvores para prover as informações.
+Vamos começar esboçando um problema inicial. Um pesquisador prentende medir a altura de árvores em uma floresta, pois ele tem algumas idéias sobre esta **distribuição de frequências de alturas** e gostaria de **inferir** sobre algumas características das árvores. É humanamente impossível medir todas as árvores da floresta (**população**), então ele pega uma **amostra aleatória** de árvores para prover as informações. Vamos ajudar esse pesquisador a analisar seus dados.
 
 #### Inferência estatística
 Inferência estatística nada mais é do que tentar fazer afirmações sobre as características de uma **população**, com base em informações dadas por **amostras**. Para isso, nós vamos estimar os parâmetros reais da população através de nossa amostra. Nesse caso o termo **população** é qualquer conjunto de elementos que você está observando, ou seja, estamos nos referindo a uma população de números que podem ou não estar associados a uma população biológica. **Amostra** é qualquer subconjunto desta população.
@@ -41,15 +41,21 @@ A altura média das árvores da floresta é um **parâmetro** que não sabemos e
 
 O que nós fazemos então é ajustar um modelo teórico de distribuição de probabilidades nos nossos dados para poder inferir sobre os parâmetros da população. Por exemplo, observando o histograma da distribuição das alturas, os valores estimados da média e variância dos dados, modelamos a 'altura das árvores' como uma **variável aleatória** que tem uma **distribuição de probabilidades normal** com média (μ) e desvio padrão (σ).
 
-```{r}
+Baixe o arquivo de dados [arvores.csv](https://www.dropbox.com/s/wthkhgox6ehbo4u/arvores.csv?dl=0) 
+```{r dados importados, echo=F}
+arv <-read.table("../data/arvores.csv", sep=";", header=T)
+
+```
+
+```{r dados}
 # dados da altura das árvores coletadas pelo pesquisador
-arv <- data.frame(alt=c(rnorm(50, 20,4), rnorm(50, 30, 4)),
-                  sp=rep(c("sp1","sp2"), each=50))
+arv <-read.table("arvores.csv", sep=";")
 
 hist(arv$alt)
 
 mean(arv$alt)
 var(arv$alt)
+sd(arv$alt)
 ```
 
 
@@ -101,7 +107,7 @@ Usamos a notação X ~ Bernouli(p) para indicar esta variável.
 
 Um gráfico da função de probabilidade da Bernoulli com p=0.3:
 
-```{r}
+```{r bernoulli}
 plot(dbinom(0:1, size=1, prob=0.3), 
     xlim=c(0,3), ylim=c(0,1), 
     xlab="resultados previstos",
@@ -132,7 +138,7 @@ var[ZX] = np(1-p)
 
 Há uma probabilidade de 0,30 de um girino, ao forragear em um corpo d’água, ser predado por uma larva de odonata. Vamos desenhar o histograma das probabilidades de que, dentre seis girinos que estão forrageando no corpo d’água, 0, 1, 2, 3, 5 ou 6 sejam predados.
 
-```{r}
+```{r binomial}
 plot(y=dbinom(0:6, size=6, prob=0.3), 
     x=c(0:6),
     xlab="Número de girinos predados",
@@ -160,7 +166,7 @@ var[X] = (λ)
 
 Suponha que um pesquisador registrou o número de visitas à flor de uma planta durante um período de 15 minutos. O número médio de borboletas que visitam no período de 15 minutos é 10 (λ). Vamos determinar a probabilidade de que cinco borboletas visitem a flor em 15 minutos. A probabilidade de uma borboleta visitar é a mesma para quaisquer dois períodos de tempo de igual comprimento. Abaixo o histograma dessa distribuição de probabilidade.
 
-```{r}
+```{r poisson}
 #probabilidade de que 5 borboletas visitem a flor:
 dpois(5,10)
 
@@ -174,7 +180,7 @@ plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
 
 ## Normal
 
-A distribuição normal é uma das mais importantes distribuições com probabilidades contínuas. Esta distribuição é inteiramente descrita por parâmetros de média (μ) e desvio padrão (σ), ou seja, conhecendo-se estes parâmetros consegue-se determinar qualquer probabilidade em uma distribuição Normal.  
+A distribuição normal é uma das mais importantes distribuições com probabilidades contínuas. Esta distribuição é descrita pelos parâmetros média (μ) e desvio padrão (σ), ou seja, conhecendo-se estes parâmetros consegue-se determinar qualquer probabilidade em uma distribuição Normal.  
 
 A importância da distribuição normal como um modelo de fenômenos quantitativos é devido em parte ao [**Teorema Central do limite **](https://pt.wikipedia.org/wiki/Teorema_central_do_limite). O teorema afirma que "toda soma de variáveis aleatórias independentes de média finita e variância limitada é aproximadamente Normal, desde que o número de termos da soma seja suficientemente grande". Independentemente do tipo de distribuição da população, na medida em que o tamanho da amostra aumenta, a distribuição das médias amostrais tende a uma distribuição Normal.
 
@@ -187,7 +193,7 @@ Variáveis aleatórias com distribuição aproximadamente normal apresentam as s
 #### Exemplo
 Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais, sabendo que a média da população é 17,1 cm e o desvio padrão é de 1,21 cm? Vamos descobrir usando a função `pnorm` e traçar o histograma dessa distribuição de probabilidade.
 
-```{r}
+```{r normal}
 # calculando a probabilidade de ter um peixe maior ou igual a 20.15
 prob <- pnorm(q = 20.15, mean=17.1, sd=1.21, lower.tail = F)
 prob
@@ -208,46 +214,478 @@ abline(v=20.15, lty=3)
 
 
 Voltamos então com nosso exemplo sobre as alturas das árvores de duas espécies em uma floresta.
-```{r}
+```{r dados2}
 arv
 ```
 
-Imagine que nós agora queremos saber na verdade se a altura de uma espécie de plantas nessa floresta é diferente da altura de outra espécie. Nós podemos desenhar as distribuições de frequências das alturas separadamente para cada espécie:
+Nós modelamos estes dados como uma variável aleatória de distribuição normal. Porém, nós coletamos os dados de duas espécies diferentes, será que a altura de uma espécie nessa floresta é diferente da altura de outra espécie. Ou seja, será que as espécies pertencem a uma mesma distribuição e as diferenças encontradas são devido ao acaso ou será que cada espécie é uma variável aleatória com médias diferentes?
+Nós podemos desenhar as distribuições de frequências das alturas separadamente para cada espécie:
+
+```{r histograma}
+histogram(~alt|sp, 
+          data = arv,
+          layout = c(1,2),
+          strip=F,
+          strip.left=T)
+```
 
 
+A diferença entre as médias observadas das espécies é:
+```{r dif medias}
+mean(arv$alt[arv$sp=="sp2"]) - mean(arv$alt[arv$sp=="sp1"])
+```
+
+Então, se afirmarmos que não há diferença entre as alturas das espécies, podemos estar incorrendo no erro chamado de **tipo 2**, de que há diferenças. Se afirmarmos que há diferença entre as alturas, ou seja rejeitamos a hipótese nula, podemos incorrer no erro do **tipo 1**, dizendo que há diferenças quando não há. Como decidir?
+
+Vamos construir nossas hipóteses:
+
+H0 - não há diferença entre as alturas das duas espécies. A média da altura da espécie 1 é igual à média da altura da espécie 2 e a diferença observada se deve ao acaso.  
+H1 - há diferença entre as alturas das duas espécies. A média da altura da espécie 1 é diferente da média da altura da espécie 2.
+
+Vamos definir os erros:
+
+Ao escolher por uma das hipóteses, quais erros podemos cometer?
+
+**ERRO DO TIPO I**: rejeitar a hipótese nula dada que ela é verdadeira.
+
+**ERRO DO TIPO II**: aceitar a hipótese nula dado que ela é falsa.
+
+Podemos calcular as probabilidades de cada um destes errros:
+
+α: probabilidade do erro do tipo I
+
+β: probabilidade do erro do tipo II
+
+A quantidade α também é conhecida como **nível de significância do teste.**
 
 
-Então a nossa dúvida é se a diferença encontrada entre as alturas das árvores da sp1 e da sp2 é suficiente para consideramos que uma das espécies, em média, é maior que a outra. Para saber esta resposta nós modelamos estas populações como se vindas de uma distribuição de frequências teórica como a Normal. Estas distribuições de frequência, ou probabilidade, são distribuições teóricas que nós usamos para "encaixarmos" nossos dados e conseguirmos a partir de seus parâmetros estimados inferir e testar nossas hipóteses sobre a população.
+Para sabermos se de fato uma árvore é, em média, mais alta que a outra, procederemos utilizando um teste de hipóteses, neste caso o **teste t**. Este teste basicamente irá contrastar a probabilidade de que a diferença que você encontrou nas médias das alturas das duas espécies pode se considerada devido ao acaso ou não. Ou seja, nossa pergunta é qual é a probabilidade de que as duas amostras foram tiradas ao aoacaso da mesma população de medidas? Com que frequência esperaríamos amostras com médias tão ou mais diferentes do que a de nossas amostras se elas realmente vieram da mesma população de medidas? Vamos ver se podemos ou não rejeitar a hipótese nula (de que a diferença é ao acaso), baseado em alguma probabilidade de estarmos cometendo algum erro em nossa afirmação de que a hipótese nula é verdadeira.
 
-Para sabermos se de fato uma árvore é, em média, mais alta que a outra, procederemos utilizando um teste de significância. Este teste basicamente irá contrastar a probabilidade de que a diferença que você encontrou pode se considerada devido ao acaso ou não. Ou seja, vamos ver se podemos ou não rejeitar a hipótese nula (de que a diferença é ao acaso), baseado em algum limiar 
+#### graus de liberdade
 
+Antes de partirmos para o teste t em si, precisamos entender o conceito de graus de liberdade. Para encontrar a probabilidade associda com qualquer valor em partircular de uma estatística (no exemplo anterior seria a estatística t), precisamos conhecer quantas observações independentes foram usadas para calculá-las. Usualmente se diz que os graus de iberade dos testes estatísticos são o número de observações independentes menos o número de parâmetros estimados. Em nosso exemplo, tínhamos 100 árvores amostradas e estimamos a média e o desvio padrão, para construir a distribuiçõa de resultads esperados quando a hipótese nula era verdadeira. Portanto, o grau de liberdade para a estatística t em nosso exemplo é 100-2 = 98.
 
-  - valor-P
-  - teste t
+### Teste t
+
+Não entraremos em detalhes de como se calcula a estatística t e como é a distribuição (recomendo ver na [wikipedia](https://pt.wikipedia.org/wiki/Distribui%C3%A7%C3%A3o_t_de_Student)). O importante saber aqui é que tendo as duas amostras modeladas como uma distribuição normal, calculamos a estatística t e com um certo valor de graus de liberdade, nós podemos recorrer às tabelas da distribuição t para ver qual a probabilidade de se obter aquele valor que obtivemos dada que a hipótese nula é verdadeira. Se esta probabilidade for muito pequena, a chance de estarmos caindo no erro do tipo 1 é pequena.
+
+No R, a função usada para fazer um teste t é `t.test`. 
+
+```{r teste t}
+t.test(arv$alt~arv$sp, var.equal=T)
+#o argumento var.equa=T diz que as variâncias das duas espécies é igual
+# podemos fazer o teste com a premissa de que as variâncias não sejam iguais, usando var.equal=F, isso vai consumir graus de liberdade
+```
+
+Vamos interpretar este resultado: temos o valor de t calculado e os graus de liberade (já calculado pela gente antes). Com estes 2 valores, o que o R faz é calcular a probabilidade de que a hipótese nula seja verdadeira. Esse é o **valor-p**. Que neste exemplo deu um valor beem pequeno.
+Vemos então que podemos rejeitar H0, com uma probabilidade muito baixa de estarmos incorrendo no erro de tipo 1, e desta forma acreditamos que as espécies de árvores tenham distribuições de alturas diferentes.
+
+ 
+O teste T possui três variantes básicas: a mais usada é normalmente chamada de teste t para amostras independentes, e permite a comparação de duas médias (a que acabamos de fazer); o teste t para uma amostra compara uma média com um valor fixo; e o teste t pareado (ou teste t para amostras dependentes) compara médias de unidades amostrais dependentes aos pares. Todos estas variações do teste t podem ser executadas no R pela função `t.test`, e o uso do teste t pareado e do teste t para uma amostra pode ser ativado com o uso dos argumentos `paired` e `mu`, respectivamente. Para saber mais como realizar estes testes no R, veja o capítulo 3 da apostila [Introdução ao uso do software R para as Ciências Biológicas](https://cantinhodor.files.wordpress.com/2015/03/introduc3a7c3a3o-ao-software-r-para-biologia-marcos-vital-ufal-marc3a7o-2015.pdf).
+ 
+
 
 # Modelos lineares
-  - formato do modelo
-  - Premissas
-    - homogeneidade variância
-    - normalidade
+
+E se tivéssemos na verdade 3 espécies de árvores para compararmos as alturas? Acabamos de ver que o teste t serve apenas para comparar duas amostras. O que chamamos de modelos lineares é uma grande família de modelos estatísticos que modelam uma relação linear entre a variável dependente (Y) e a(s) variável(is) independente(s). Nesta família encontra-se o teste t que acabamos de ver, a Análise de Variânci (ANOVA), a regressão, etc.
+
+Chamamos de **Modelos Lineare Gerais** (LMs), aqueles que possuem como premissa a variável dependente Y como de distribuição Normal, e de **Modelos Lineares Genearlizados** (GLMs) os que assumem outros tipos de distribuição para a variável dependente (como a Binomial e Poisson). No R, a função que usamos para estes modelos são `lm` e `glm` (há alguns mais específicos como o prórpio `t.test` e o `aov` para ANOVA) O R lida com todos os modelos lineares de maneira similar, e um detalhe importante é que todas as análises desta família devem ser salvas em um objeto, para seu resultado ser apresentado após o comando `summary`.
+
+É importante lembrar que neste roteiro estamos lidando com modelos paramétricos, ou seja, que modela a variável de interesse como uma variável aleatória pertencente a uma certa distribuição de probabilidades. Existem outras abordagens estatísticas não-paramétricas que fazem testes que não tem como premissa a distribuição de probabilidades. Veja um exemplo de teste t não paramétrico neste [roteiro](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:02_tutoriais:tutorial6:start). 
+
+Mesmo fazendo parte de um mesmo conjunto de modelos, nas sessões seguintes vamos separar os modelos lineares pelos nomes tradicionais das análises: ANOVA e Regressão. Depois disso veremos alguns exemplos de GLMs aplicáveis a dados ecológicos.
+
 
 ## ANOVA
-  - R²
-  - diagnóstico resíduos
-  
+
+Vamos então incluir no nosso exemplo inicial uma terceira espécie amostrada (e vamos diminuir o número de amostras por espécie para ficar mais fácil de calcular):
+```{r dados3}
+alt.sp3 <- c(36.90076761,33.23131727,32.82767311,24.93410577,31.87626329,
+         28.76824248,26.6436144,31.41238398,27.65383929,31.70425719,
+         33.60752445,28.30263354,29.32210674,23.4790054,22.20793046,
+         18.28797293,23.39044736,28.75820917,29.94344703,34.47430235,
+         32.09820862,26.99845592,27.64858951,31.90557306,33.63236368,
+         25.35966179,35.00885172,32.89125598,18.98802229,30.8516906,
+         22.04191398,35.37232889,35.67150408,34.30257037,24.43038475,
+         20.6274663,31.15717916,23.27023231,36.20568545,34.33068448,
+         28.40769054,31.00578874,29.50989158,31.69915991,37.25975797,
+         30.1279997,38.623371,35.36472829,29.88304259,31.00145491)
+
+sp3 <- data.frame(alt=alt.sp3, sp=rep("sp3",50))
+arv2 <- rbind(arv,sp3)
+
+amostras <- seq(1,150,by=5)
+
+arv3 <- arv2[ amostras, ]
+```
+
+Neste exemplo lidaremos com um modelo simples de anova chamado _one way_ ANOVA, porque lida apenas com uma variável independente categórica (fator). 
+
+A ANOVA irá então testar a hipótese nula de que as médias das 3 espécies não diferem. 
+
+Faremos agora a ANOVA "na unha", para entendermos melhor cada passo da análise e a interpretação de seus resultados para depois usarmos a função do R que faz esta análise diretamente.
+
+### ANOVA na unha
+
+Vamos calcular os valores da tabela de ANOVA. Começando com os desvios quadráticos, ou seja, quanto os dados desviam da média (idéia parecida com a variância). O ponto importante é que essa variação é aditiva e portanto, pode se decomposta. A variação total é decomposta em variação relacionada ao tratamento (_entre grupos_), no nosso caso às espécies, e uma variação interna dos grupos (chamada de erro). A estatística F é a razão entre essas variaões após dividir cada uma delas pelos seus respectivos graus de liberdade. Complicou? Vamos fazer os cálculos e ver os gráficos para ver se entendemos melhor:
+
+A tabela de ANOVA que vamos construir é essa:
+
+![](../tutorials/images/tab_anova.png)
+
+Primeiro vamos mudar a forma do nosso data frame para facilitar os comandos
+```{r}
+arv4 <- data.frame(sp1=arv3$alt[arv3$sp=="sp1"],
+                   sp2=arv3$alt[arv3$sp=="sp2"],
+                   sp3=arv3$alt[arv3$sp=="sp3"])
+arv4
+
+boxplot(arv4)
+```
+Vamos calcular a média geral, as médias para cada espécie, e as diferenças entre a média geral e a média para cada espécie, para chegar ao valor da soma dos quadrados total:
+```{r}
+media.geral <- mean(arv3$alt)
+media.geral
+
+medias.sps <- apply(arv4, 2, mean)
+medias.sps
+
+dif.geral <- arv4 - media.geral
+ss.especies <- dif.geral^2
+ss.especies
+
+ss.total <- sum(ss.especies)
+ss.total
+```
+
+Para calcular os desvios quadráticos totais, nós subtraímos cada altura das árvores pela média geral e elevamos ao quadrado. Veja o gráfico:
+```{r}
+vetor.cor <- rep(1:3, each=10) #vetor de cores
+
+plot(x = c(1:30), y = arv3$alt, ylim=c(10,40),
+     pch=(rep(c(15,16,17), each=10)),
+     col=vetor.cor,
+     ylab="Variável Resposta", xlab="Observações",
+     main="Variação total")
+	for(i in 1:30)
+	{
+	lines(c(i,i),c(arv3$alt[i],mean(arv3$alt)),col=vetor.cor[i])
+	}
+	abline(h=media.geral)
+```
+
+
+Agora vamos fazer a somatória dos desvios quadráticos dentro de cada grupo (ss.intra).
+O gráfico para entender esse cálculo:
+```{r}
+vetor.medias<-rep(medias.sps, each=10)
+
+plot(c(1:30), arv3$alt, ylim=c(10,40),
+     pch=(rep(c(15,16,17),each=10)),
+     col=vetor.cor,
+     main="Variação Intra Grupos",
+     ylab="Variável Resposta", xlab="Observações")
+	for(i in 1:30)
+	{
+	lines(c(i,i),c(vetor.medias[i],arv3$alt[i]),col=vetor.cor[i])
+	}
+	lines(c(1,10),c(medias.sps[1],medias.sps[1]),col=1)
+	lines(c(11,20),c(medias.sps[2],medias.sps[2]),col=2)
+	lines(c(21,30),c(medias.sps[3],medias.sps[3]),col=3)
+```
+
+Cálculo dos valores:
+```{r}
+medias.sps
+ss.sp1=sum((arv4$sp1-medias.sps["sp1"])^2)
+ss.sp1
+ss.sp2=sum((arv4$sp2-medias.sps["sp2"])^2)
+ss.sp2
+ss.sp3=sum((arv4$sp3-medias.sps["sp3"])^2)
+ss.sp3
+ss.intra=ss.sp1+ss.sp2+ss.sp3
+ss.intra
+```
+
+A soma dos quadrados entre grupos:
+```{r}
+plot(c(1:30), vetor.medias, ylim=c(10,40), 
+     pch=(rep(c(15,16,17),each=10)),
+     col=vetor.cor, 
+     main="Variação Entre Grupos", 
+     ylab="Variável Resposta", xlab="Observações")
+		for(i in 1:30)
+		{
+		lines(c(i,i),c(vetor.medias[i],mean(vetor.medias)),col=vetor.cor[i])
+		}
+	abline(h=media.geral)
+	points(c(1:30),arv3$alt, ylim=c(10,50), 
+	       pch=(rep(c(0,1,2),each=10)), col=vetor.cor, cex=0.5)
+```
+
+```{r}
+medias.sps
+media.geral
+ss.entre=10*sum((medias.sps-media.geral)^2)
+ss.entre
+
+#conferindo os cálculos
+ss.intra+ss.entre
+ss.total
+```
+
+Cálculo do F
+```{r}
+# Desvios médios
+ms.entre=ss.entre/2
+ms.intra=ss.intra/27
+ms.entre
+ms.intra
+
+#F - razão das variâncias
+F.sps=ms.entre/ms.intra
+F.sps
+```
+
+#### Distribuição F
+
+Vamos ver na distribuição F qual a probabilidade de termos econtrado o valor `F.sps` ao acaso:
+```{r}
+curve(expr=df(x, 2,27),
+      main="Distribuição F de Fisher (df=2,27)", 
+      xlab="Valor F",
+      ylab="Densidade Probabilística (df)",
+      xlim=c(2,12))
+abline(v=F.sps, col="red")
+abline(h=0, lty=2)
+
+xf=seq(F.sps, 12, 0.01)
+ydf=df(xf, 2, 27)
+polygon(c(F.sps,xf),c(0,ydf),col="red")
+
+text(x= 7,y=0.08,paste("pf(x) =",
+     round(pf(F.sps,2,27,lower.tail=F),4)), 
+     cex=0.8, col="red")
+```
+
+Cálculo do P
+```{r}
+p.sps=pf(F.sps, 2, 27, lower.tail=FALSE)
+p.sps
+```
+
+#### A tabela final
+
+Colocando os dados calculados em nossa tabela de anova
+
+![](../tutorials/images/tab_anova_final.png)
+
+### ANOVA no R
+
+A função que constrói esta tabela de ANOVA e faz o teste estatístico é a `aov`. Vamos comparar:
+
+```{r aov}
+anova.sps <- aov(alt~sp, data=arv3)
+summary(anova.sps)
+```
+
+Agora nós sabemos de ondem vem estes números nesta tabela e como foi calculado o P, certo?
+
+### Testes à posteriori
+
+Perceba que a nossa hipótese nula na ANOVA que fizemos é de que as 3 médias não diferem. Ao rejeitá-la, então, nós apenas sabemos que pelo menos duas das médias são diferentes entre si, mas não sabemos quais são.
+Alguns estatísticos dizem que uma análise gráfica é  suficiente para saber quais médias diferem ou não entre si (por exemplo os autores do livro Estatística sem Matemática). Entretanto, há também a possibilidade de se fazer testes à posteriori que vão comparar as médias das espécies par a par. Vejamos aqui o mais utilizado **teste de Tukey HDS**, chamado pela função `TukeyHSD`, que atua diretamente no objeto com o resultado da ANOVA:
+
+```{r tukey}
+TukeyHSD(anova.sps)
+
+#revendo gráfico dos dados
+stripchart( arv3$alt~arv3$sp,
+           vertical=TRUE, pch=16, col=c("black", "green", "red"))
+
+#boxplot
+boxplot(arv4)
+```
+
+Nossa análise então indicou que há diferenças entre as médias das alturas das árvore e que a espécie 1 não difere da espécie 2, mas difere da espécie 3, enquanto a espécie 2 difere da espécie 3. 
+
+#### Outra maneira de fazer a ANOVA no R:
+
+Talvez você se deparem com um código no R que faz a ANOVA usando a função `lm`, que é mais genérica e usada pra fazer qualquer análise de modelo linear geral (distribuição normal). Então vejamos:
+```{r}
+lm.anova.sp <- lm(alt~sp, data=arv3)
+summary.aov(lm.anova.sp) #mesmo que o summary do aov
+
+# mostra o resultado de forma um pouco diferente, consegue entender?
+summary(lm.anova.sp) 
+```
+
+Vamos tentar interpretar o que esse segundo `summary` nos diz do modelo. A tabela de coeficientes tem tantas linha quanto paramêtros no modelo. No nosso caso nós temos 3 parâmetros que são as médias pra cada espécie.
+A primeira linha da tabela (intercept), é a média do fator que vem primeiro em ordem alfabética, no nosso caso indica a média da primeira espécie. As outras duas linhas são as diferenças entre médias da primeira espécie (intercept) com a segunda e a terceira espécie, ou seja não são os valores das médias das espécies. A estatísticas calculadas em cada linha (Std. Error, t value e P), são calculadas para o valor do coeficiente apresentando. Então, o valor de P na primeira linha indica se aquele coeficiente estimado é diferente de zero. Na segunda linha, como estamos lidando com a diferença da média da espécie 2 com a espécie 1, o teste indica se essa diferença é significativamente diferente da espécie 1. O mesmo par a linha da espécie 3, o valor de p é a diferença dela com a espécie 1. Por isso, estes valores de p, neste exemplo não nos traz informação para nosso modelo e comparações.
+
+
 ## Regressão linear simples
 
+Vamos pensar agora se nossa variável independente (explantória) fosse uma variável contínua, por exemplo, a quantidade de nutrientes no solo. Nós criamos uma variável de quantidade de nutrientes (completamente fictícia como todos os dados), e queremos agora saber se a quantidade de nutrientes no solo afeta a altura das árvores. Nossa hipótese é de que quanto mais nutrientes, mais alta a árvore pode ficar. 
+Nesse caso, chamamos esse modelo linear classicamente como regressão. 
+
+Inserindo os dados de quantidade de nutrientes:
+```{r}
+# criando a variável nutrientes
+nutri <- c(1.09, 1.73, 1.49, 2.84, 3.08, 8.24, 8.67, 6.10, 8.37, 8.03,
+           10.62, 14.26, 13.77, 14.81, 14.40, 17.27, 15.46, 18.66, 16.03,
+           17.37, 26.80, 27.1, 29.09, 20.46, 24.51, 28.56, 24.87, 27.44,
+           26.02, 22.94)
+
+#colocando no data.frame de dados
+arv3$nutri <- nutri
+```
+
+Agora vamos observar a relação entre a altura da ávore e a quantidade de nutrientes no solo:
+```{r}
+plot(arv3$alt~nutri)
+```
+
+Vamos então modelar a relação e ver os resultados:
+```{r}
+alt.nutr <- lm(alt~nutri, data=arv3)
+summary(alt.nutr)
+```
+
+Os resultados são parecidos com os de uma ANOVA, mas conta com alguns detalhes a mais. No exemplo acima, a linha (Intercept) refere-se ao intercepto da equação linear (o b, na equação y = ax + b), e verifica a hipótese nula de que ele seria igual a zero; de uma forma geral, nós raramente nos preocupamos com a esta parte do resultado, pois o intercepto normalmente não faz parte da nossa pergunta. Já a linha abaixo, com o nome da variável explicativa (nutri), é sempre do nosso interesse: ela verifica a hipótese nula de que o parâmetro a da equação seja igual a zero; ou seja, ao rejeitarmos a hipótese nula nós concluímos que de fato há uma relação estatisticamente significativa entre as duas variáveis, e que o efeito desta relação é medido por este parâmetro. Por fim, a interpretação da correlação, que está representada no parâmetro Adjusted R- squared também é importante, e mede o quanto da variação na variável resposta foi de fato explicada pela variável explicativa. Confuso? Então vejamos os resultados do exemplo acima: o teste rejeita a hipótese nula de que a altura das árvores não varia em função da quantidade de nutrientes (o valor de p menor do que 0.05). O resultado da regressão permite concluirmos que, em média, cada incremento de uma unidade de área aumenta a riqueza em 0,34 (este é o valor de a da equação). Por fim, o valor de R2 ajustado nos diz que 24.15% da altura da árvore é explicada pela quantidade de nutrientes do local.
+
+Os resultados de uma regressão linear que rejeita a hipótese nula são comumente apresentados com uma representação gráfica que mostra os dados (em um gráfico de dispersão) e a equação (na forma de uma reta). Para adicionar a reta da equação ao gráfico criado pelo comando `plot`, basta, com o gráfico aberto, executar o comando `abline`, fazendo referência ao objeto que contém o resultado da regressão:
+
+Vamos agora desenhar esta reta da regressão para entendermos melhor:
+```{r}
+plot(arv3$alt~nutri)
+abline(alt.nutr, col="red") # reta da regressão
+
+#reta da hipótese nula de ausência de efeito dos nutrientes
+abline(h=mean(arv3$alt), col="blue", lty=2)  
+```
+
+### ANCOVA?
+
+Com os dados das árvores nós testamos independentemente duas perguntas: se a altura média das árvores era diferente para cada espécie e se a altura das árvores dependia da quantidade de nutrientes no solo. Mas porque fazer estas análises separadamente? Ambas as variáveis independentes podem influenciar na altura das árvores e, para isso, precisamos modelá-las em conjunto.
+
+O modelo linear proposto abaixo é muitas vezes chamado de ANCOVA, ou seja, Análise de Covariância, que tem então duas variáveis explicativas, uma categórica (no nosso caso a espécie de planta) e uma contínua (os nutrientes).
+
+```{r}
+alt.sp.nutr <- lm(alt ~ nutri + sp, data=arv3)
+summary(alt.sp.nutr)
+```
+
+O modelo proposta acima é o que chamamos de **modelo aditivo**, ou seja, as médias das alturas das árvores podem diferir, mas o efeito do nutriente é o mesmo para todas as espécies. 
+
+Vejamos o gráfico de resultados do modelo:
+```{r}
+# tirando os valores de intercepto do modelo para cada especie
+coef(alt.sp.nutr)
+int.sp1 <- coef(alt.sp.nutr)[1]
+int.sp2 <- coef(alt.sp.nutr)[1]+coef(alt.sp.nutr)[3]
+int.sp3 <- coef(alt.sp.nutr)[1]+coef(alt.sp.nutr)[4]
+
+plot(alt~nutri, data=arv3)
+
+# reta de regressão para espécie 1
+abline(a=int.sp1, b=coef(alt.sp.nutr)[2], col="black")
+# reta de regressão para sp 2
+abline(a=int.sp2, b=coef(alt.sp.nutr)[2], col="red")
+# reta de regressão para ps 3
+abline(a=int.sp3, b=coef(alt.sp.nutr)[2], col="green")
+```
+
+Mas e se nós acreditamos que as espécies respondem de maneira diferente à quantidade de nutrientes no solo? Ou seja, uma espécie consegue crescer muito mais com a mesma quantidade de nutrientes do que as outras.
+
+Para testar esse segundo modelo, inserimos então a _interação_ entre a variável qualitativa espécie e a quantitativa nutrientes. Essa interação nada mais é do que um novo fator resultado da multiplicação entre as variáveis. Esse novo modelo é chamado de **modelo com interação**. 
+
+Existem duas notações de fórmula para este modelo, que devem dar o mesmo resultado. 
+```{r}
+alt.sp.nutr2 <- lm(alt ~ nutri + sp + nutri:sp, data=arv3)
+summary(alt.sp.nutr2)
+
+alt.sp.nutr3 <- lm(alt ~ nutri*sp, data=arv3)
+summary(alt.sp.nutr3)
+```
+
+Vejamos o gráfico de resultado
+```{r}
+# interceptos
+int.sp1 <- coef(alt.sp.nutr2)[1]
+int.sp2 <- coef(alt.sp.nutr2)[1] + coef(alt.sp.nutr2)[3]
+int.sp3 <- coef(alt.sp.nutr2)[1] + coef(alt.sp.nutr2)[4]
+
+#coeficientes
+coef.sp1 <- coef(alt.sp.nutr2)[2]
+coef.sp2 <- coef(alt.sp.nutr2)[2] + coef(alt.sp.nutr2)[5]
+coef.sp3 <- coef(alt.sp.nutr2)[2] + coef(alt.sp.nutr2)[6]
+
+plot(arv3$alt~nutri, col=rep(c("black", "red", "green"),each=10))
+
+abline(a=int.sp1, b=coef.sp1, col="black", xlim=c(0.5))
+abline(a=int.sp2, b=coef.sp2, col="red")
+abline(a=int.sp3, b=coef.sp3, col="green")
+```
+
+Olhando a tabela de ANOVA deste modelo vemos que a interação não foi significativa, e que apenas os nutrientes são responsáves pela variação no na altura das árvores:
+```{r}
+summary.aov(alt.sp.nutr3)
+```
+
+
+
+```{r selecao, echo=F}
+m1 <- lm(alt ~ nutri * sp, data=arv3)
+m2 <- lm(alt ~ nutri + sp, data=arv3)
+m3 <- lm(alt ~ nutri , data=arv3)
+m4 <- lm(alt ~ sp, data=arv3)
+m5 <- lm(alt ~ 1, data=arv3)
+
+library(bbmle)
+
+AICtab(m1,m2,m3,m4,m5, base=T, weights=T)
+```
 
 # Modelos lineares generalizados
 
+Os modelos estatísticos que lidamos até agora tem como pressuposto (premissa) a distribuição Normal da variável resposta e homogeneidade de variâncias (tb conhecido como homocedasticidade). No entanto, em muitas situações a suposição de normalidade e varância constante não é plausível. Conseqüentemente, o uso de métodos que assumem a normalidade pode ser insatisfatório e aumentam a probabilidade de cometermos erros inferenciais (erros do Tipo I e II). Nestes casos, outras alternativas que não pressupoem distribuição normal dos dados são atraentes e mais robustas.
+É aí que entram os GLMs para modelar os dados quando a variância não é constante, e/ou quando os erros não são normalmente distribuídos. Muitos tipos de dados têm erros não normais. No passado, as únicas maneiras capazes de lidar com esse problema eram a transformação da variável resposta ou a adoção de métodos não paramétricos. Em GLM, assumimos que cada resultado da variável dependente Y seja gerado a partir de uma variedade de diferentes tipos de distribuições que lidam com esse problema:  
 
+- Poisson – úteis para dados de contagem
+
+ - Binomial – úteis para dados com proporções
+ 
+ - Gamma – úteis para dados mostrando um coeficiente constante de variância 
+ 
+- Exponencial – úteis com dados de análises de sobrevivência
+
+Existem muitas razões para usar GLMs, em vez de regressão linear. Dados de presença-ausência são (geralmente) codificados como 1 e 0, os dados proporcionais são sempre entre 0 e 100%, e os dados de contagem são sempre não-negativos. GLMs usados para 0-1 e dados proporcionais são normalmente baseados em distribuição binomial e para dados de contagem as distribuições de Poisson e binomial negativa são opções comuns. A média, μ, da distribuição depende das variáveis independentes, X, e é calculada através de:
+E[Y]  = 𝜇 = g!𝟏(𝑋𝛽)
+
+onde E (Y) é o valor esperado de Y;  
+Xβ é o preditor linear, uma combinação linear de parâmetros desconhecidos, β;  
+g é a função de ligação.  
+
+O GLM consiste em três etapas:
+
+1. Uma hipótese sobre a distribuição da variável resposta Yi. Isso também define a média e a variância de Yi. (e.x., Distribuição Poisson, Binomial, Gamma).
+
+2. Especificação da parte sistemática. Esta é uma função das variáveis explicativas.
+𝑛! = 𝛼 + 𝛽! 𝑋!! + 𝛽! 𝑋!! + ⋯ + 𝛽! 𝑋!!
+
+3. A relação entre o valor médio de Yi e a parte sistemática. Esta é também chamada de ligação entre a média e a parte sistemática (Tabelas 2 e 3).
   
-## distribuição Binomial
 
-## distribuição Poisson
+VER CAPITULO 13 DO CRAWLEY PRA VE SE ELE EXPLICA MELHOR
 
+
+
+
+# Checando os modelos
+Crawley pag 404 e 418
+testes de premissas,  apostil vital pag 43 (levene, shapiro wilk)
+homogeneidade e normalidade
+diagnóstico de resíduos
 
 # transformação dos dados?
-
-
-
