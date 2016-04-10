@@ -16,6 +16,7 @@ knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALS
 #global options que vieram no rmdformats de html
 library(knitr)
 library(rmdformats)
+library(lattice)
 options(max.print="75")
 opts_knit$set(width=75)
 ```
@@ -24,32 +25,202 @@ opts_knit$set(width=75)
 setwd("~/git_meme/consultR/tutorials")
 ```
 
-Neste roteiro estudaremos um pouco sobre inferência estatística, as distribuições de probabilidade mais usadas, os modelos lineares gerais e generalizados (ANOVA, regressão). Este roteiro não pretende se aprofundar nestes temas, principalmente em relação aos aspectos matemáticos e teóricos das análises. Nós enfocaremos na questão prática de entender como funcionam os modelos estatísticos, como fazê-los no R, se nossos dados atendem às premissas destes e como interpretar os resultados destas análises no R.
+Neste roteiro usaremos um exemplo inicial para discutir algumas questões referentes à inferência estatística, distribuições de probabilidade, modelos estatísticos e testes de hipóteses. Este roteiro não pretende se aprofundar nestes temas, principalmente em relação aos aspectos formais matemáticos e teóricos das análises. Nós enfocaremos na questão prática de entender como funcionam os modelos estatísticos, como fazê-los no R, se nossos dados atendem às premissas destes e como interpretar os resultados destas análises no R.
+
+Este roteiro nem de longe substitui um bom estudo/curso sobre estatística básica. Recomendamos fortemente a leitura do livro [Estatística sem matemática](http://www.editoraplanta.com.br/EsM.htm), para aprender mais sobre estatística de forma intuitiva e fluida.
 
 
-# Variáveis Aleatórias e Distribuições de Probabilidade
+# Um problema
 
-O termo Variável Aleatória está ligado à Probabilidade
+Vamos começar esboçando um problema inicial. Um pesquisador prentende medir a altura de árvores em uma floresta, pois ele tem algumas idéias sobre esta **distribuição de frequências de alturas** e gostaria de **inferir** sobre algumas características das árvores. É humanamente impossível medir todas as árvores da floresta (**população**), então ele pega uma **amostra aleatória** de árvores para prover as informações.
 
-## Uniforme
+#### Inferência estatística
+Inferência estatística nada mais é do que tentar fazer afirmações sobre as características de uma **população**, com base em informações dadas por **amostras**. Para isso, nós vamos estimar os parâmetros reais da população através de nossa amostra. Nesse caso o termo **população** é qualquer conjunto de elementos que você está observando, ou seja, estamos nos referindo a uma população de números que podem ou não estar associados a uma população biológica. **Amostra** é qualquer subconjunto desta população.
+
+A altura média das árvores da floresta é um **parâmetro** que não sabemos e então usaremos a amostra para **estimar** este parâmetro. Podemos estimar a **distribuição** das alturas na amostra e esperamos que esta reflita a distribuição de altura de todas as árvores. Temos então como calcular os descritores da amostra e como estimativa dos descritores reais da população. Porém, afirmar algo sobre uma população baseado em uma amostra pode ser perigoso e nos fazer cometer erros. 
+
+O que nós fazemos então é ajustar um modelo teórico de distribuição de probabilidades nos nossos dados para poder inferir sobre os parâmetros da população. Por exemplo, observando o histograma da distribuição das alturas, os valores estimados da média e variância dos dados, modelamos a 'altura das árvores' como uma **variável aleatória** que tem uma **distribuição de probabilidades normal** com média (μ) e desvio padrão (σ).
+
+```{r}
+# dados da altura das árvores coletadas pelo pesquisador
+arv <- data.frame(alt=c(rnorm(50, 20,4), rnorm(50, 30, 4)),
+                  sp=rep(c("sp1","sp2"), each=50))
+
+hist(arv$alt)
+
+mean(arv$alt)
+var(arv$alt)
+```
+
+
+#### Definindo variáveis aleatórias
+A variável aleatória X é uma variável que tem um valor único (determinado aleatoriamente) para cada resultado de um experimento (lembre-se esse termo veio da teoria de probabilidade). A palavra aleatória indica que em geral só conhecemos aquele valor depois do experimento ser realizado.
+
+Exemplos de variáveis aleatórias:
+a. Altura das árvores de uma floresta (!!)
+b. Número de presas capturadas por um predador em um determinado dia;
+c. Comprimento de um peixe adulto selecionado aleatoriamente.
+
+As variáveis aleatórias podem ser discretas ou contínuas.
+
+**Variável aleatória discreta**: número ou a quantidade observada na unidade experimental ou tentativa.  
+- Representada por números inteiros (0, 1, 2, 3, 4...);  
+- Não pode conter números negativos;  
+- Número finito de possibilidades;  
+- Podemos achar a probabilidade de cada evento.  
+
+**Variável aleatória contínua**: usualmente medidas contínuas como peso, altura, distância, pH, biomassa, etc.  
+- Representada por números não inteiros (1.3, - 1.54, - 1.7);  
+- Pode conter números negativos;  
+- Número infinito de possibilidades;  
+- Probabilidade de cada evento é zero.
+
+Estas variáveis aleatórias terão sempre uma **função de probabilidade** associando cada possível valor da variável (X) à sua probabilidade de ocorrência P(X). Quando conhecemos todos os valores de uma variável aleatória, juntamente com suas respectivas probabilidades, temos uma **distribuição de probabilidades**. As distribuições de probabilidade discreta é conhecida como função massa de probabilidade, enquanto que distribuições de probabilidade contínua é conhecida como função de densidade de probabilidade. A diferença está no fato de que nas distribuições
+discretas temos a probabilidade para cada valor de X, enquanto que nas distribuições contínuas temos a probabilidade para um intervalo. 
+
+Hoje em dia você pode usar diversas distribuições de probabilidades que melhor se ajustam aos seus dados (e até mesmo fazer testes que não levam em conta estas distribuições teóricas, mas não veremos isso aqui). Falaremos brevemente, sem mencionar os aspectos matemáticos de algumas distribuições mais usadas por biólogos. Para saber mais sobre estas distribuições recomendo ler a apostila ["Estatística aplicada à ecologia usando o R"](https://cran.r-project.org/doc/contrib/Provete-Estatistica_aplicada.pdf), de onde vieram muitas informações deste roteiro.
+
+
+
+# Algumas Distribuições de Probabilidade
 
 ## Bernouli
 
+Quando jogamos uma moeda, os resultados possíveis são cara ou coroa. Se a moeda não é viciada, a probabilidade de dar cara a mesma probabilidade de dar coroa, ou seja 50%. Neste caso estamos interessados na ocorrência de **sucesso** ou **fracasso**. Assim, podemos definir uma variável aleatória X que assume apenas dois valores: 1 se ocorrer sucesso, 0 se ocorrer fracasso. Seu único parâmetro será _p_ que indica a probabilidade de sucesso. 
+
+Seu valor esperado na distribuição será o próprio _p_
+
+E[X] = p
+
+e a sua variância
+
+var[X] = p(1-p)
+
+
+Usamos a notação X ~ Bernouli(p) para indicar esta variável. 
+
+Um gráfico da função de probabilidade da Bernoulli com p=0.3:
+
+```{r}
+plot(dbinom(0:1, size=1, prob=0.3), 
+    xlim=c(0,3), ylim=c(0,1), 
+    xlab="resultados previstos",
+    ylab="Probabilidade", 
+    main="Distribuição Bernoulli p=0.3",
+    type="h", xaxt="n")
+axis(1, at=c(1,2), labels = c(0,1))
+```
+
+
 ## Binomial
+
+Agora imagine que repetimos um ensaio de bernoulli _n_ vezes. Esta amostra será constituída de uma sequência de sucessos e fracassos.
+A distribuição binomial é a distribuição de probabilidade **discreta** do **número de sucessos** em uma sequência de **n** tentativas tal que:  
+i) as tentativas são independentes;   
+ii) cada tentativa resulta apenas em duas possibilidades, sucesso ou fracasso; e   
+iii) a probabilidade de cada tentativa, *p*, permanece constante.   
+
+Se X ~ B(n, p), isto é, X é uma variável aleatória distribuída binomialmente, então o valor esperado de X é:
+
+E[X] = np 
+
+e a variância é
+
+var[ZX] = np(1-p)
+
+#### Exemplo
+
+Há uma probabilidade de 0,30 de um girino, ao forragear em um corpo d’água, ser predado por uma larva de odonata. Vamos desenhar o histograma das probabilidades de que, dentre seis girinos que estão forrageando no corpo d’água, 0, 1, 2, 3, 5 ou 6 sejam predados.
+
+```{r}
+plot(y=dbinom(0:6, size=6, prob=0.3), 
+    x=c(0:6),
+    xlab="Número de girinos predados",
+    ylab="Probabilidade", 
+    main="Distribuição binomial:  n=6, p=0.3",
+    type="h")
+```
 
 ## Poisson
 
+Na teoria da probabilidade e na estatística, a distribuição de **Poisson** é uma distribuição de probabilidade discreta. Expressa a probabilidade de uma série de eventos ocorrem em um período fixo de tempo, área, volume, quadrante, etc. Esta distribuição segue as mesmas premissas da distribuição binomial:   
+i) as tentativas são independentes;   
+ii) a variável aleatória é o número de eventos em cada amostra; e   
+iii) a probabilidade é constante em cada intervalo.
+
+Se X ~ Pois(λ), isto é, X é uma variável aleatória com distribuição Poisson, então o valor esperado de X é
+
+E[X] = (λ)
+
+e a variância é
+
+var[X] = (λ)
+
+#### Exemplo
+
+Suponha que um pesquisador registrou o número de visitas à flor de uma planta durante um período de 15 minutos. O número médio de borboletas que visitam no período de 15 minutos é 10 (λ). Vamos determinar a probabilidade de que cinco borboletas visitem a flor em 15 minutos. A probabilidade de uma borboleta visitar é a mesma para quaisquer dois períodos de tempo de igual comprimento. Abaixo o histograma dessa distribuição de probabilidade.
+
+```{r}
+#probabilidade de que 5 borboletas visitem a flor:
+dpois(5,10)
+
+# histograma da distribuição
+plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
+     xlab = "Número de visitas", 
+     ylab = "Probabilidade", 
+     main = "Função massa de probabilidade")
+```
+
+
 ## Normal
 
-# Inferência estatística
+A distribuição normal é uma das mais importantes distribuições com probabilidades contínuas. Esta distribuição é inteiramente descrita por parâmetros de média (μ) e desvio padrão (σ), ou seja, conhecendo-se estes parâmetros consegue-se determinar qualquer probabilidade em uma distribuição Normal.  
 
-  - população - amostra - amostragem
+A importância da distribuição normal como um modelo de fenômenos quantitativos é devido em parte ao [**Teorema Central do limite **](https://pt.wikipedia.org/wiki/Teorema_central_do_limite). O teorema afirma que "toda soma de variáveis aleatórias independentes de média finita e variância limitada é aproximadamente Normal, desde que o número de termos da soma seja suficientemente grande". Independentemente do tipo de distribuição da população, na medida em que o tamanho da amostra aumenta, a distribuição das médias amostrais tende a uma distribuição Normal.
 
-  - parâmetros - estimadores
+Variáveis aleatórias com distribuição aproximadamente normal apresentam as seguintes propriedades:  
+– Metade (50%) está acima (e abaixo) da média  
+– Aproximadamente 68% está dentro de 1 desvio padrão da média  
+– Aproximadamente 95% está dentro de 2 desvios padrões da média  
+– Virtualmente todos os valores estão dentro de 3 desvios padrões da média  
 
-  - Intervalo de confiança
+#### Exemplo
+Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais, sabendo que a média da população é 17,1 cm e o desvio padrão é de 1,21 cm? Vamos descobrir usando a função `pnorm` e traçar o histograma dessa distribuição de probabilidade.
 
-# Teste de significância
+```{r}
+# calculando a probabilidade de ter um peixe maior ou igual a 20.15
+prob <- pnorm(q = 20.15, mean=17.1, sd=1.21, lower.tail = F)
+prob
+
+#histograma
+x<-seq(13,22,0.1)
+y=dnorm(x,mean = 17.1, sd=1.21)
+plot(x, y, type="l", lwd=2, col="red", 
+     ylab = "Probabilidade",
+     xlab= "Comprimento dos peixes",
+     main ="Função densidade de probabilidade")
+abline(v=17.1,lty=2)
+abline(v=20.15, lty=3)
+```
+
+
+# Voltando ao nosso problema
+
+
+Voltamos então com nosso exemplo sobre as alturas das árvores de duas espécies em uma floresta.
+```{r}
+arv
+```
+
+Imagine que nós agora queremos saber na verdade se a altura de uma espécie de plantas nessa floresta é diferente da altura de outra espécie. Nós podemos desenhar as distribuições de frequências das alturas separadamente para cada espécie:
+
+
+
+
+Então a nossa dúvida é se a diferença encontrada entre as alturas das árvores da sp1 e da sp2 é suficiente para consideramos que uma das espécies, em média, é maior que a outra. Para saber esta resposta nós modelamos estas populações como se vindas de uma distribuição de frequências teórica como a Normal. Estas distribuições de frequência, ou probabilidade, são distribuições teóricas que nós usamos para "encaixarmos" nossos dados e conseguirmos a partir de seus parâmetros estimados inferir e testar nossas hipóteses sobre a população.
+
+Para sabermos se de fato uma árvore é, em média, mais alta que a outra, procederemos utilizando um teste de significância. Este teste basicamente irá contrastar a probabilidade de que a diferença que você encontrou pode se considerada devido ao acaso ou não. Ou seja, vamos ver se podemos ou não rejeitar a hipótese nula (de que a diferença é ao acaso), baseado em algum limiar 
+
 
   - valor-P
   - teste t
@@ -69,7 +240,7 @@ O termo Variável Aleatória está ligado à Probabilidade
 
 # Modelos lineares generalizados
 
-  - outras distribuições que não a normal
+
   
 ## distribuição Binomial
 
@@ -77,5 +248,6 @@ O termo Variável Aleatória está ligado à Probabilidade
 
 
 # transformação dos dados?
+
 
 
