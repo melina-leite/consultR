@@ -1,0 +1,69 @@
+---
+title: "duvidas ANOVA"
+author: "Melina Leite"
+date: "10 de abril de 2016"
+output: html_document
+---
+```{r, echo=F}
+arv <-read.table("../data/arvores.csv", sep=";", header=T)
+alt.sp3 <- c(36.90076761,33.23131727,32.82767311,24.93410577,31.87626329,
+         28.76824248,26.6436144,31.41238398,27.65383929,31.70425719,
+         33.60752445,28.30263354,29.32210674,23.4790054,22.20793046,
+         18.28797293,23.39044736,28.75820917,29.94344703,34.47430235,
+         32.09820862,26.99845592,27.64858951,31.90557306,33.63236368,
+         25.35966179,35.00885172,32.89125598,18.98802229,30.8516906,
+         22.04191398,35.37232889,35.67150408,34.30257037,24.43038475,
+         20.6274663,31.15717916,23.27023231,36.20568545,34.33068448,
+         28.40769054,31.00578874,29.50989158,31.69915991,37.25975797,
+         30.1279997,38.623371,35.36472829,29.88304259,31.00145491)
+
+sp3 <- data.frame(alt=alt.sp3, sp=rep("sp3",50))
+arv2 <- rbind(arv,sp3)
+
+amostras <- seq(1,150,by=5)
+
+arv3 <- arv2[ amostras, ]
+```
+```{r}
+arv3
+```
+
+### Anova usando aov()
+```{r}
+anova.sps <- aov(alt~sp, data=arv3)
+summary(anova.sps)  # igual a anova(anova.sps)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(anova.sps)
+```
+O plot dos resíduos é o mesmo pra todos os modelos. 
+
+### Anova usando lm()
+```{r}
+lm.anova.sp <- lm(alt~sp, data=arv3)
+summary(lm.anova.sp)
+summary.aov(lm.anova.sp)
+```
+
+
+### Anova usando lm(), sem intercepto
+```{r}
+lm.anova.sp1 <- lm(alt~sp -1, data=arv3)
+summary(lm.anova.sp1)
+```
+
+**Qual a diferença no R2 quando usa o intercepto e quando não usa?**
+
+
+### Comparando o lm() com a tab. anova
+```{r}
+anova(lm.anova.sp)
+```
+
+```{r}
+anova(lm.anova.sp1)
+```
+
+**Porque dá valores diferentes?**
