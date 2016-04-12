@@ -649,19 +649,19 @@ AICtab(m1,m2,m3,m4,m5, base=T, weights=T)
 
 # Modelos lineares generalizados
 
-Os modelos estatísticos que lidamos até agora tem como pressuposto (premissa) a distribuição Normal da variável resposta e homogeneidade de variâncias (tb conhecido como homocedasticidade). No entanto, em muitas situações a suposição de normalidade e varância constante não é plausível. Conseqüentemente, o uso de métodos que assumem a normalidade pode ser insatisfatório e aumentam a probabilidade de cometermos erros inferenciais (erros do Tipo I e II). Nestes casos, outras alternativas que não pressupoem distribuição normal dos dados são atraentes e mais robustas.
+Os modelos estatísticos que lidamos até agora tem como pressupostos a distribuição Normal da variável resposta e homogeneidade de variâncias (tb conhecido como homocedasticidade). No entanto, em muitas situações a suposição de normalidade e varância constante não é plausível. Conseqüentemente, o uso de métodos que assumem a normalidade pode ser insatisfatório e aumentam a probabilidade de cometermos erros inferenciais (erros do Tipo I e II). Nestes casos, outras alternativas que não pressupoem distribuição normal dos dados são atraentes e mais robustas.
 É aí que entram os GLMs para modelar os dados quando a variância não é constante, e/ou quando os erros não são normalmente distribuídos. Muitos tipos de dados têm erros não normais. No passado, as únicas maneiras capazes de lidar com esse problema eram a transformação da variável resposta ou a adoção de métodos não paramétricos. Em GLM, assumimos que cada resultado da variável dependente Y seja gerado a partir de uma variedade de diferentes tipos de distribuições que lidam com esse problema:  
 
 - Poisson – úteis para dados de contagem
 
- - Binomial – úteis para dados com proporções
+- Binomial – úteis para dados com proporções
  
- - Gamma – úteis para dados mostrando um coeficiente constante de variância 
+- Gamma – úteis para dados mostrando um coeficiente constante de variância 
  
 - Exponencial – úteis com dados de análises de sobrevivência
 
-Existem muitas razões para usar GLMs, em vez de regressão linear. Dados de presença-ausência são (geralmente) codificados como 1 e 0, os dados proporcionais são sempre entre 0 e 100%, e os dados de contagem são sempre não-negativos. GLMs usados para 0-1 e dados proporcionais são normalmente baseados em distribuição binomial e para dados de contagem as distribuições de Poisson e binomial negativa são opções comuns. A média, μ, da distribuição depende das variáveis independentes, X, e é calculada através de:
-E[Y]  = 𝜇 = g!𝟏(𝑋𝛽)
+Existem muitas razões para usar GLMs, em vez de regressão linear. Dados de presença-ausência são (geralmente) codificados como 1 e 0, os dados proporcionais são sempre entre 0 e 100%, e os dados de contagem são sempre não-negativos. GLMs usados para 0-1 e dados proporcionais são normalmente baseados em distribuição binomial e para dados de contagem as distribuições de Poisson e binomial negativa são opções comuns. A média, μ da distribuição depende das variáveis independentes, X, e é calculada através de:
+E[Y]  = 𝜇 =g𝟏(𝑋𝛽)
 
 onde E (Y) é o valor esperado de Y;  
 Xβ é o preditor linear, uma combinação linear de parâmetros desconhecidos, β;  
@@ -671,13 +671,78 @@ O GLM consiste em três etapas:
 
 1. Uma hipótese sobre a distribuição da variável resposta Yi. Isso também define a média e a variância de Yi. (e.x., Distribuição Poisson, Binomial, Gamma).
 
-2. Especificação da parte sistemática. Esta é uma função das variáveis explicativas.
-𝑛! = 𝛼 + 𝛽! 𝑋!! + 𝛽! 𝑋!! + ⋯ + 𝛽! 𝑋!!
+2. Especificação da parte sistemática. Esta é uma função das variáveis explicativas. Y ~ a + bx 
 
-3. A relação entre o valor médio de Yi e a parte sistemática. Esta é também chamada de ligação entre a média e a parte sistemática (Tabelas 2 e 3).
-  
+3. A relação entre o valor médio de Yi e a parte sistemática. Esta é também chamada de função de ligação entre a média e a parte sistemática. Ou seja, é a função que lineariza a regressão ( o g(xB) de cima).
 
-VER CAPITULO 13 DO CRAWLEY PRA VE SE ELE EXPLICA MELHOR
+Para cada tipo de distribuição usada no GLM, temos uma função de ligação padrão (escrito em inglês pois serão os nomes dos argumentos no R):
+
+Distribuição | link function
+---------------------------------
+normal | identity
+poisson | log
+binomial | logit
+Gamma | reciprocal
+
+### Exemplo GLM Poisson 
+
+Vamos testar se o número de atropelamentos de uma estrada está relacionado com a distância a um Parque Nacional. Nossa variável resposta será o número de atropelamentos de um local e, portanto, vamos modelá-la como pertencente a uma distribuição de Poisson. 
+
+Dados
+```{r}
+atrop<- read.table("../data/atropela.csv", header = T, sep = ";")
+atrop
+```
+
+Vamos ver o gráfico de dispersão dos dados
+```{r}
+plot(atrop$TOT.N~atrop$D.PARK)
+```
+
+Para modelar os dados vamos então fazer um modelo GLM, colocando como distribuição a Poisson, que tem por padrão a função de ligação "log"
+
+```{r}
+mod <- glm(TOT.N~D.PARK, data = atrop, 
+           family=poisson)
+
+summary(mod)
+```
+
+Vamos testar se este modelos é diferente do modelo nulo
+```{r}
+modnul <- glm(TOT.N ~ 1, data = atrop, 
+           family=poisson)
+
+# comparando com modelo nulo
+anova(mod, test = "Chisq")
+```
+
+Podemos ver que este modelo é significativamente diferente do modelo nulo, portanto, a inclinação da reta da relação entre atropelamentos e distância ao parque é diferente de zero.
+
+Vamos plotar  gráfico de resultado. Devemos lembrar que os coeficientes que aparecem no summary do modelos estão na escala do link function (nesse caso em log), por isso, antes de plotar a reta precisamos des-logaritmizar
+
+```{r}
+coefi<- coef(mod)
+coefi
+
+plot(atrop$TOT.N~atrop$D.PARK,
+     xlim = c(0,25000), ylim = c(0, 110),
+     xlab = "Distância ao parque", ylab = "Número de atropelamentos")
+
+#essa função plota a curva do modelo, colocamos exp para voltar à escala original dos dados
+curve(exp(coefi[1] + coefi[2]*x), 
+      xlim = c(0,25000), ylim = c(0, 110),
+      xlab = "", ylab = "", 
+      add=T, #adicionando a curva no plot já desenhado
+      col="red")
+```
+
+
+
+### Exemplo GLM Binomial
+
+VER NO ZUUR
+
 
 
 
