@@ -669,17 +669,6 @@ anova(alt.sp.nutr3, alt.sp.nutr)
 
 Portanto, o modelo mais parcimonioso para nossa ANCOVA é o modelo aditivo, em que vemos a influência dos nutrientes na altura das árvores assim como a diferença na altura sendo explicada pela espécie de planta.
 
-```{r selecao, echo=F}
-m1 <- lm(alt ~ nutri * sp, data=arv3)
-m2 <- lm(alt ~ nutri + sp, data=arv3)
-m3 <- lm(alt ~ nutri , data=arv3)
-m4 <- lm(alt ~ sp, data=arv3)
-m5 <- lm(alt ~ 1, data=arv3)
-
-library(bbmle)
-
-AICtab(m1,m2,m3,m4,m5, base=T, weights=T)
-```
 
 # Modelos lineares generalizados
 
@@ -724,7 +713,7 @@ Gamma | reciprocal
 
 ## GLM Poisson 
 
-Vamos testar se o número de atropelamentos de uma estrada está relacionado com a distância a um Parque Nacional. Nossa variável resposta será o número de atropelamentos de um local e, portanto, vamos modelá-la como pertencente a uma distribuição de Poisson. 
+Vamos testar se o número de atropelamentos de anuros em uma estrada está relacionado com a distância a um Parque Nacional. Nossa variável resposta será o número de atropelamentos de um local e, portanto, vamos modelá-la como pertencente a uma distribuição de Poisson. 
 
 Dados
 ```{r, echo=F}
