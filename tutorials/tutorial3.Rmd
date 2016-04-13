@@ -274,6 +274,11 @@ Para sabermos se de fato uma árvore é, em média, mais alta que a outra, proce
 
 #### Graus de liberdade
 
+Tamanho da amostra: 100 árvores
+Parâmetros estimados: média e variância: 2
+
+Graus de liberdade: 100-2
+
 Antes de partirmos para o teste t em si, precisamos entender o conceito de **graus de liberdade**. Para encontrar a probabilidade associda com qualquer valor em partircular de uma estatística (no nosso exemplo, a estatística t), precisamos conhecer quantas observações independentes foram usadas para calculá-las. Usualmente se diz que os graus de iberade dos testes estatísticos são o número de observações independentes menos o número de parâmetros estimados. Em nosso exemplo, tínhamos 100 árvores amostradas e estimamos a média e o desvio padrão para construir a distribuição de resultados esperados quando a hipótese nula era verdadeira. Portanto, o grau de liberdade para a estatística t em nosso exemplo é 100-2 = 98.
 
 ## Teste t
