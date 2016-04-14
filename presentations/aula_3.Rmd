@@ -11,7 +11,7 @@ logo: Rgiff.gif
 ---
 
 ```{r, echo=F}
-setwd("~/git_meme/consultR/presentations")
+setwd("~/git-meme/consultR/presentations")
 ```
 
 ## Um problema
@@ -39,12 +39,13 @@ Qual é a alturas média das árvores em uma floresta?
 
 - **Variável Aleatória** de **distribuição de probabilidades Normal** com média (μ) e desvio padrão (σ).
 
+<div align="center">
 ```{r dados importados, echo=F}
 arv <-read.table("../data/arvores.csv", sep=";", header=T)
 hist(arv$alt, main="Altura das árvores, média = 22,7; sd = 5,6")
 mean(arv$alt); var(arv$alt); sd(arv$alt)
 ```
-
+</div>
 
 ## Definindo variáveis aleatórias
 
@@ -58,35 +59,15 @@ b. Número de presas capturadas por um predador em um determinado dia;
 
 c. Comprimento de um peixe adulto selecionado aleatoriamente.
 
-As variáveis aleatórias podem ser discretas ou contínuas.
+As variáveis aleatórias podem ser **discretas** ou **contínuas**.
 
-## **Variável aleatória discreta**
-Número ou a quantidade observada na unidade experimental ou tentativa.
 
-- Representada por números inteiros (0, 1, 2, 3, 4...);  
-
-- Não pode conter números negativos;  
-
-- Número finito de possibilidades;  
-
-- Podemos achar a probabilidade de cada evento.  
-
-## **Variável aleatória contínua**
-Ex: peso, altura, distância, pH, biomassa, etc.  
-
-- Representada por números não inteiros (1.3, - 1.54, - 1.7);  
-
-- Pode conter números negativos;  
-
-- Número infinito de possibilidades;  
-
-- Probabilidade de cada evento é zero.
 
 ## Função de probabilidade 
 
-Associa cada possível valor da variável (X) à sua probabilidade de ocorrência P(X). 
+Função que define as probabilidades P(X) para cada valor possível da variável X.
 
-Quando conhecemos todos os valores de uma variável aleatória, juntamente com suas respectivas probabilidades, temos uma **distribuição de probabilidades**.
+**Distribuição de Probabilidades**.
 
 <div align="center">
 ```{r normal, echo=F}
@@ -110,19 +91,14 @@ abline(v=22.7, lty=2)
 
 # Algumas Distribuições de Probabilidade
 
-## Bernouli: X ~ Bernouli(p) {.columns-2}
+## Bernouli: X ~ Bernouli(p)
 
-- Jogar moedas: cara 0, coroa 1
+- Discreta, valores possíveis 0 e 1 
+- _p_ - probabilidade de sucesso  
+- Jogar moedas: cara - 0, coroa - 1.  
+- Presença/ausência de uma espécie em locais amostrados
 
-- Presença/ ausência de uma espécie em locais amostrados: 0 - 1
-
-- Parâmetro: _p_ - probabilidade de sucesso
-
-E[X] = p
-
-var[X] = p(1-p)
-
-
+<div align="center">
 ```{r bernoulli, echo=F}
 plot(dbinom(0:1, size=1, prob=0.3), 
     xlim=c(0,3), ylim=c(0,1), 
@@ -132,30 +108,24 @@ plot(dbinom(0:1, size=1, prob=0.3),
     type="h", xaxt="n")
 axis(1, at=c(1,2), labels = c(0,1))
 ```
-
+</div>
 
 ## Binomial: X ~ Bin(n, p)
 
-- Distrib. **Discreta** do **número de sucessos** em uma sequência de **n** tentativas 
-
-E[X] = np 
-
-e a variância é
-
-var[X] = np(1-p)
+- Discreta: **número de sucessos** em **n** tentativas . _p_ - prob sucesso.
 
 - Número sementes predadas em cada experimento contendo 20 semente.
 
 - Número de animais infectados em relação ao número de capturados em cada local
 
+
 ## Exemplo Binomial
 
-- Probabilidade de predação de girinos por odonatas. P = 0.30
+- Predação de girinos por odonatas, p = 0.30.   
+Total girinos: 6 num lago. 
+- Qual probabilidades de que 0, 1, 2, 3, 5 ou todos sejam predados?
 
-- Temos 6 girinos num lago. 
-
-- Qual robabilidades de que 0, 1, 2, 3, 5 ou todos sejam predados?
-
+<div class="align">
 ```{r binomial, echo=F}
 plot(y=dbinom(0:6, size=6, prob=0.3), 
     x=c(0:6),
@@ -164,16 +134,13 @@ plot(y=dbinom(0:6, size=6, prob=0.3),
     main="Distribuição binomial:  n=6, p=0.3",
     type="h")
 ```
+</div>
 
 ## Poisson:  X ~ Pois(λ)
 
-- Distribuição de probabilidade **discreta**. 
+- Discreta: Probabilidade de uma série de eventos ocorrem em um período fixo de tempo, área, volume, quadrante, etc. 
 
-- Probabilidade de uma série de eventos ocorrem em um período fixo de tempo, área, volume, quadrante, etc. 
-
-E[X] = (λ)
-
-var[X] = (λ)
+- Dados de contagem
 
 - Abundância de espécies em um local
 
@@ -182,9 +149,9 @@ var[X] = (λ)
 ## Exemplo Poisson
 
 - Número de visitas de borboletas em uma planta em 15 min: 10
-- Probabi
- A probabilidade de uma borboleta visitar é a mesma para quaisquer dois períodos de tempo de igual comprimento. Abaixo o histograma dessa distribuição de probabilidade.
+- Probabilidade de 5 visitas `dpois(5,10)`
 
+<div class="align">
 ```{r poisson, echo=F}
 # histograma da distribuição
 plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
@@ -192,38 +159,28 @@ plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
      ylab = "Probabilidade", 
      main = "Função massa de probabilidade")
 ```
+</div>
 
-
-## Normal: X ~ N(μ, σ)
+## Normal: X ~ N(μ, σ) {.columns-2}
 
 - Simétrica, contínua
 
-– Metade (50%) está acima (e abaixo) da média  
+– Metade (50%) dos dados está acima (e abaixo) da média  
 
-– Aproximadamente 68% está dentro de 1 desvio padrão da média  
+– 68% dados está dentro de 1 desvio padrão da média  
 
-– Aproximadamente 95% está dentro de 2 desvios padrões da média  
+– 95% está dentro de 2 desvios padrões da média  
 
 – Virtualmente todos os valores estão dentro de 3 desvios padrões da média  
 
 ![](./images/paranormal.jpg)
 
 
-## Teorema Central do Limite
-
-"toda soma de variáveis aleatórias independentes de média finita e variância limitada é aproximadamente Normal, desde que o número de termos da soma seja suficientemente grande".
-
-Independentemente do tipo de distribuição da população, na medida em que o tamanho da amostra aumenta, a distribuição das médias amostrais tende a uma distribuição Normal.
-
-
-
 ## Exemplo Normal
 
-- Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais?
+- Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais? Média da população é 17,1 cm e o desvio padrão é 1,21 cm? 
 
-- Média da população é 17,1 cm e o desvio padrão é de 1,21 cm? 
-
-```{r normal2}
+```{r normal2, echo=F}
 prob <- pnorm(q = 20.15, mean = 17.1, sd = 1.21, lower.tail = F)
 prob
 ```
@@ -237,23 +194,36 @@ plot(x, y, type="l", lwd=2, col="red",
      main ="Função densidade de probabilidade")
 abline(v = 17.1, lty=2)
 abline(v = 20.15, lty=3)
+text(x=21,y=0.3, labels="P = 0.006")
+
 ```
 
 
+## Teorema do Limite Central
+
+"Toda soma de variáveis aleatórias independentes de média finita e variância limitada é aproximadamente Normal, desde que o número de termos da soma seja suficientemente grande."
+
+Independentemente do tipo de distribuição da população, na medida em que o **tamanho da amostra** aumenta, a distribuição das médias amostrais tende a uma **distribuição Normal**.
+
+## Exemplo TLC
+<div align="center">
+![](./images/tlc.jpg)
+</div>
+
 ## Voltando ao nosso problema
 
-- Ddados de duas espécies
+- Dados de duas espécies
 ```{r}
 levels(arv$sp)
 ```
 
  Será que a altura média de uma espécie nessa floresta é diferente da altura média da outra espécie? 
  
-Ou seja, será que as espécies pertencem a uma mesma distribuição e as diferenças encontradas são devido ao acaso ou será que cada espécie é uma variável aleatória com médias diferentes?
+Ou seja, será que as espécies possuem uma **mesma distribuição de probabilidades** e as diferenças encontradas são devido ao **acaso** ou será que cada espécie é uma variável aleatória com médias diferentes?
 
 ## Distribuições de frequências das alturas para cada espécie
-
-```{r histograma}
+<div align="center">
+```{r histograma, echo=F}
 library(lattice)
 histogram(~alt|sp, 
           data = arv,
@@ -261,7 +231,7 @@ histogram(~alt|sp,
           strip=F,
           strip.left=T)
 ```
-
+</div>
 
 ## Diferença entre as médias das alturas
 
@@ -271,15 +241,11 @@ mean(arv$alt[arv$sp=="sp2"]) - mean(arv$alt[arv$sp=="sp1"])
 
 Posso afirmar que as médias são diferentes?
 
-
-## Hipóteses sobre as alturas
-
 **H0** - não há diferença entre as alturas das duas espécies. A média da altura da espécie 1 é igual à média da altura da espécie 2 e a diferença observada se deve ao acaso.  
 
 **H1** - há diferença entre as alturas das duas espécies. A média da altura da espécie 1 é diferente da média da altura da espécie 2.
 
 ## Erros associados a escolher cada hipótese como verdadeira
-
 
 AFIRMAÇÃO: não há diferença entre as alturas das espécies,  
 VERDADE: há diferenças.   
@@ -288,12 +254,12 @@ VERDADE: há diferenças.
 AFIRMAÇÃO: há diferença entre as alturas das espécies,  
 VERDADE: não há diferenças.  
 
-## Definição formal dos erros:
+### Definição formal dos erros:
 
 
 **ERRO DO TIPO I (α)**: rejeitar a hipótese nula dada que ela é verdadeira.
 
-**ERRO DO TIPO II**: aceitar a hipótese nula dado que ela é falsa.
+**ERRO DO TIPO II (B)**: aceitar a hipótese nula dado que ela é falsa.
 
 
 ***
@@ -322,8 +288,6 @@ Quantas observações independentes foram usadas para calcular a média e a vari
 
 Não entraremos em detalhes de como se calcula a estatística t e como é a sua distribuição de probabilidades (recomendo ver na [wikipedia](https://pt.wikipedia.org/wiki/Distribui%C3%A7%C3%A3o_t_de_Student)). O importante a saber aqui é que tendo as duas amostras modeladas como uma distribuição normal, calculamos a estatística t e com um certo valor de graus de liberdade, nós podemos recorrer às tabelas da distribuição t para ver qual a probabilidade de se obter aquele valor que obtivemos dada que a hipótese nula é verdadeira. Se esta probabilidade for muito pequena, a chance de estarmos caindo no erro do tipo 1 é pequena.
 
-No R, a função usada para fazer um teste t é `t.test`. 
-
 ```{r teste t}
 t.test(arv$alt~arv$sp, var.equal=T)
 #o argumento var.equa=T diz que as variâncias das duas espécies são as mesmas
@@ -331,8 +295,6 @@ t.test(arv$alt~arv$sp, var.equal=T)
 # usando var.equal=F, isso vai "consumir" graus de liberdade.
 ```
 
-Vamos interpretar este resultado: temos o valor de t calculado e os graus de liberade (já calculado pela gente antes). Com estes 2 valores, o que o R faz é calcular a probabilidade de que a hipótese nula seja verdadeira. Esse é o **valor-p**, que neste exemplo deu um valor beem pequeno.
-Vemos então que podemos rejeitar H0, com uma probabilidade muito baixa de estarmos incorrendo no erro de tipo 1, e desta forma acreditamos que as espécies de árvores tenham distribuições de alturas diferentes (médias diferentes).
 
  
 
