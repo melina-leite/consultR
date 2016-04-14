@@ -19,8 +19,8 @@ setwd("~/git-meme/consultR/presentations")
 <div align="center">
 Qual é a alturas média das árvores em uma floresta?
 
+<img src="./images/forestvirt00.gif" width="520" height="520">
 
-![](./images/forestvirt00.gif)
 </div>
 
 ## Inferência estatística
@@ -93,8 +93,7 @@ abline(v=22.7, lty=2)
 
 ## Bernouli: X ~ Bernouli(p)
 
-- Discreta, valores possíveis 0 e 1 
-- _p_ - probabilidade de sucesso  
+- Discreta, valores possíveis 0 e 1. _p_ - probabilidade de sucesso  
 - Jogar moedas: cara - 0, coroa - 1.  
 - Presença/ausência de uma espécie em locais amostrados
 
@@ -125,7 +124,7 @@ axis(1, at=c(1,2), labels = c(0,1))
 Total girinos: 6 num lago. 
 - Qual probabilidades de que 0, 1, 2, 3, 5 ou todos sejam predados?
 
-<div class="align">
+<div align="center">
 ```{r binomial, echo=F}
 plot(y=dbinom(0:6, size=6, prob=0.3), 
     x=c(0:6),
@@ -151,7 +150,7 @@ plot(y=dbinom(0:6, size=6, prob=0.3),
 - Número de visitas de borboletas em uma planta em 15 min: 10
 - Probabilidade de 5 visitas `dpois(5,10)`
 
-<div class="align">
+<div align="center">
 ```{r poisson, echo=F}
 # histograma da distribuição
 plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
@@ -165,26 +164,27 @@ plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
 
 - Simétrica, contínua
 
-– Metade (50%) dos dados está acima (e abaixo) da média  
+- Metade (50%) dos dados está acima (e abaixo) da média 
 
-– 68% dados está dentro de 1 desvio padrão da média  
+- 68% dados está dentro de 1 desvio padrão da média  
 
-– 95% está dentro de 2 desvios padrões da média  
+- 95% está dentro de 2 desvios padrões da média  
 
-– Virtualmente todos os valores estão dentro de 3 desvios padrões da média  
+- Virtualmente todos os valores estão dentro de 3 desvios padrões da média  
 
 ![](./images/paranormal.jpg)
 
 
 ## Exemplo Normal
 
-- Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais? Média da população é 17,1 cm e o desvio padrão é 1,21 cm? 
+- Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais? Média da população é 17,1 cm, desvio padrão 1,21 cm? 
 
 ```{r normal2, echo=F}
 prob <- pnorm(q = 20.15, mean = 17.1, sd = 1.21, lower.tail = F)
 prob
 ```
 
+<div align="center">
 ```{r, echo=F}
 x<-seq(13, 22, 0.1)
 y=dnorm(x, mean = 17.1, sd=1.21)
@@ -195,9 +195,8 @@ plot(x, y, type="l", lwd=2, col="red",
 abline(v = 17.1, lty=2)
 abline(v = 20.15, lty=3)
 text(x=21,y=0.3, labels="P = 0.006")
-
 ```
-
+</div>
 
 ## Teorema do Limite Central
 
@@ -280,11 +279,11 @@ Podemos ou não rejeitar a hipótese nula (de que a diferença é ao acaso), bas
 
 Quantas observações independentes foram usadas para calcular a média e a variância dos dados sob a hipótese nula?
 
-100 árvores  
-2 parâmetros  
-98 graus de liberdade  
+Nosso exemplo:
+100 árvores  - 2 parâmetros  = 98 graus de liberdade  
 
-## Teste t
+## Estatística t
+
 
 Não entraremos em detalhes de como se calcula a estatística t e como é a sua distribuição de probabilidades (recomendo ver na [wikipedia](https://pt.wikipedia.org/wiki/Distribui%C3%A7%C3%A3o_t_de_Student)). O importante a saber aqui é que tendo as duas amostras modeladas como uma distribuição normal, calculamos a estatística t e com um certo valor de graus de liberdade, nós podemos recorrer às tabelas da distribuição t para ver qual a probabilidade de se obter aquele valor que obtivemos dada que a hipótese nula é verdadeira. Se esta probabilidade for muito pequena, a chance de estarmos caindo no erro do tipo 1 é pequena.
 
@@ -543,8 +542,7 @@ summary(lm.anova.sp)
 
 ## Regressão linear simples
 
-- Y contínuo  
-- X continuo
+- Y contínuo - X continuo
 
 
 ```{r dados regr, echo=F}
@@ -559,9 +557,7 @@ arv3 <-arv3[order(arv3$alt), ]
 
 #colocando no data.frame de dados
 arv3$nutri <- nutri
-```
 
-```{r plot regr}
 plot(arv3$alt ~ nutri)
 ```
 
@@ -574,7 +570,7 @@ summary(alt.nutr)
 
 ## Plot da Regressão
 
-```{r plot regr2}
+```{r plot regr2, echo=F}
 plot(arv3$alt ~ nutri)
 abline(alt.nutr, col = "red") # reta da regressão
 
@@ -586,11 +582,9 @@ abline(h = mean(arv3$alt), col = "blue", lty = 2)
 
 - Y continuo
 
-- X1 contínuo
+- X1 contínuo - X2 categórico
 
-- X2 categórico
-
-```{r}
+```{r, echo=F}
 plot(alt~nutri, data=arv3, col=arv3$sp)
 ```
 
@@ -602,7 +596,7 @@ summary(alt.sp.nutr)
 ```
 
 ## Gráfico ANCOVA aditivo
-
+<div align="center">
 ```{r ancova plot, echo=F}
 # tirando os valores de intercepto do modelo para cada especie
 #coef(alt.sp.nutr)
@@ -619,19 +613,21 @@ abline(a=int.sp2, b=coef(alt.sp.nutr)[2], col="red")
 # reta de regressão para ps 3
 abline(a=int.sp3, b=coef(alt.sp.nutr)[2], col="green")
 ```
-
+</div>
 
 ## Modelo ANCOVA com interação
 
-```{r ancova interativo}
+```{r, echo=F}
 alt.sp.nutr2 <- lm(alt ~ nutri + sp + nutri:sp, data=arv3)
+```
 
+```{r ancova interativo}
 alt.sp.nutr3 <- lm(alt ~ nutri*sp, data=arv3)
 summary(alt.sp.nutr3)
 ```
 
 ## Gráfico ANCOVA com interação
-
+<div align="center"
 ```{r ancova graf, echo=F}
 # interceptos
 int.sp1 <- coef(alt.sp.nutr2)[1]
@@ -649,15 +645,14 @@ abline(a=int.sp1, b=coef.sp1, col="black", xlim=c(0.5))
 abline(a=int.sp2, b=coef.sp2, col="red")
 abline(a=int.sp3, b=coef.sp3, col="green")
 ```
+</div>
 
 ## Tabela de ANOVA do modelo
 ```{r ancova test}
 summary.aov(alt.sp.nutr3)
 ```
 
-
-
-# Modelos lineares generalizados
+## Modelos lineares generalizados
 
 - Outras distribuições de probabilidades além da Normal
 
@@ -700,7 +695,7 @@ Gamma | reciprocal
 atrop <- read.table("../data/atropela.csv", header = T, sep = ";")
 ```
 
-```{r pois plot}
+```{r pois plot, echo=F}
 plot( atrop$TOT.N ~ atrop$D.PARK,
       xlab = " Distância ao parque",
       ylab = "Número de atropelamentos")
@@ -709,9 +704,7 @@ plot( atrop$TOT.N ~ atrop$D.PARK,
 ## Modelo GLM Poisson
 
 ```{r pois mod}
-mod <- glm(TOT.N ~ D.PARK, data = atrop, 
-           family = poisson)
-
+mod <- glm(TOT.N ~ D.PARK, data = atrop, family = poisson)
 summary(mod)
 ```
 
@@ -721,11 +714,12 @@ anova(mod, test = "Chisq")
 ```
 
 ## Gráfico Modelo GLM Poisson
-
-```{r pois plot2, echo=F}
+```{r, echo=F}
 coefi <- coef(mod)
 coefi
-
+```
+<div align="center">
+```{r pois plot2, echo=F}
 plot(atrop$TOT.N~atrop$D.PARK,
      xlim = c(0,25000), ylim = c(0, 110),
      xlab = "Distância ao parque", ylab = "Número de atropelamentos")
@@ -737,7 +731,7 @@ curve(exp(coefi[1] + coefi[2]*x),
       add=T, #adicionando a curva no plot já desenhado
       col="red")
 ```
-
+</div>
 
 
 ## GLM Binomial
@@ -756,7 +750,7 @@ prop.veados <- veados$infectado/veados$amostrado
 prop.veados
 ```
 
-```{r binom plot}
+```{r binom plot, echo=F}
 plot(prop.veados ~ veados$openland,
      ylim=c(0,1),
      xlab = "Porcentagem de vegetação aberta",
@@ -777,27 +771,29 @@ anova(mod.veado, test = "Chisq")
 ```
 
 ## Gráfico GLM binomial
-```{r binom plot2, echo=F}
+```{r}
 # salvando os coeficientes
 coefs <- coef(mod.veado)
 coefs
-
 #lembre que estes coefs foram linearizados com a função de ligação
 # para a binomial a link function é a logit
 # então temos que transformar os y no inverso do logit, a função é essa:
 invlogit = function(x) return(exp(x)/(1+exp(x)))
+```
 
+<div aling="center">
+```{r binom plot2, echo=F}
 plot(prop.veados ~ veados$openland,
      ylim=c(0,1))
 #usando o invlogit para desenhar a curva:
 curve(invlogit(coefs[1] + coefs[2]*x), add=T, col="red")
 ```
-
+</div>
 
 
 # Checando as premissas dos modelos
 
-## Teste de normalidade
+## Teste de normalidade {.columns-2}
 
 Teste de Shapiro-Wilks
 
@@ -817,6 +813,7 @@ Teste de Bartlett:
 bartlett.test(arv3$alt~arv3$sp)
 ```
 
+## Teste homogeneidade de variâncias
 Teste de Levene:
 ```{r, echo=F}
 # carregando o pacote car que tem a função do teste
@@ -842,54 +839,74 @@ resid(anova.sps)
 ```
 
 ## `plot` do modelo 
+<div align="center">
 ```{r res anova, echo=F}
 # separando a área gráfica em 4 espaço para os 4 gráficos
 par(mfrow=c(2,2))
 plot(anova.sps)
 ```
+</div>
 
 ## Resíduos regressão
+<div align="center">
 ```{r res lms}
+par(mfrow=c(2,2))
 # regressão: alt ~ nutri
 plot(alt.nutr)
 ```
+</div>
 
 ## Resíduos ANCOVA aditivo
+<div align="center">
 ```{r}
+par(mfrow=c(2,2))
 # ANCOVA modelo aditivo: alt ~ nutri + sps
 plot(alt.sp.nutr)
 ```
 
 ## Resíduos ANCOVA interativo
+<div align="center">
 ```{r}
+par(mfrow=c(2,2))
 # ANCOVA modelo interativo: alt ~ nutri * sps
 plot(alt.sp.nutr2)
 ```
+</div>
 
 ## Resíduos GLM poisson
+<div align="center">
 ```{r}
+par(mfrow=c(2,2))
 # GLM poisson: atrop ~ dist.park
 plot(mod)
 ```
+</div>
 
 ## Resíduos LM com a poisson
+<div align="center">
 ```{r}
+par(mfrow=c(2,2))
 plot(lm(TOT.N ~ D.PARK, data = atrop))
 ```
-
+</div>
 
 
 ## Resíduos GLM binomial
+<div align="center">
 ```{r}
+par(mfrow=c(2,2))
 # GLM binoimial: prop.infectado ~ openland
 plot( mod.veado)
 ```
+</div>
 
 ## Resíduos LM com a binomial
+<div align="center">
 ```{r}
+par(mfrow=c(2,2))
 plot( lm(prop.veados ~ veados$openland))
 ```
-
+</div>
 
 ```{r, echo=F}
 # para "desligar" o par inicial
