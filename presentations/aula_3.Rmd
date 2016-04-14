@@ -179,7 +179,7 @@ plot(dpois(seq(1,20, by =1), lambda = 10), type ="h",
 
 - Qual é a probabilidade de que um peixe capturado aleatoriamente tenha 20,15 cm ou mais? Média da população é 17,1 cm, desvio padrão 1,21 cm? 
 
-```{r normal2, echo=F}
+```{r normal2, echo=F, results="hide"}
 prob <- pnorm(q = 20.15, mean = 17.1, sd = 1.21, lower.tail = F)
 prob
 ```
@@ -283,35 +283,54 @@ Nosso exemplo:
 100 árvores  - 2 parâmetros  = 98 graus de liberdade  
 
 ## Estatística t
+<div align="center">
+<img src="./images/t-stat.jpg" width="140" height="100">
+</div>
 
+É uma medida que reflete a diferença esperada entre a a situação quando H0 é correta e quando a H1 é a correta.
 
-Não entraremos em detalhes de como se calcula a estatística t e como é a sua distribuição de probabilidades (recomendo ver na [wikipedia](https://pt.wikipedia.org/wiki/Distribui%C3%A7%C3%A3o_t_de_Student)). O importante a saber aqui é que tendo as duas amostras modeladas como uma distribuição normal, calculamos a estatística t e com um certo valor de graus de liberdade, nós podemos recorrer às tabelas da distribuição t para ver qual a probabilidade de se obter aquele valor que obtivemos dada que a hipótese nula é verdadeira. Se esta probabilidade for muito pequena, a chance de estarmos caindo no erro do tipo 1 é pequena.
+Tendo o **t** e os graus de liberdade recorremos à distribuição t para saber a probabilidade de obter o valor observado dado que a H0 é verdade.
+
+Se esta probabilidade for muito pequena, a chance de estarmos caindo no erro do tipo 1 é pequena.
+
+## Teste t
 
 ```{r teste t}
 t.test(arv$alt~arv$sp, var.equal=T)
-#o argumento var.equa=T diz que as variâncias das duas espécies são as mesmas
-# podemos fazer o teste com a premissa de que as variâncias não sejam iguais,
-# usando var.equal=F, isso vai "consumir" graus de liberdade.
 ```
 
+## Probabilidade na distribuição t
+<div align="center">
+```{r, echo=F}
+curve(expr=dt(x, 98),
+      main="Distribuição t (df=98)", 
+      xlab="Valor t",
+      ylab="Densidade Probabilística (dt)",
+      xlim=c(-6,6))
+abline(v=-5.0125, col="red")
 
- 
+text(x= -4, y=0.35 ,paste("p =",
+     round(pt(-5.0125,98),6)), 
+     cex=0.8, col="red")
+```
+</div>
 
 # Modelos lineares
 
-E se tivéssemos na verdade 3 espécies de árvores para compararmos as alturas? Acabamos de ver que o teste t serve apenas para comparar duas amostras. O que chamamos de modelos lineares é uma grande família de modelos estatísticos que modelam uma relação linear entre a variável dependente (Y) e a(s) variável(is) independente(s). Nesta família encontra-se o teste t que acabamos de ver, a Análise de Variânci (ANOVA), a regressão, etc.
+## Modelos lineares
 
-Chamamos de **Modelos Lineare Gerais** (LMs), aqueles que possuem como premissa a variável dependente Y como de distribuição Normal, e de **Modelos Lineares Genearlizados** (GLMs) os que assumem outros tipos de distribuição para a variável dependente (como a Binomial e Poisson). No R, a função que usamos para estes modelos são `lm` e `glm` (há alguns mais específicos como o prórpio `t.test` e o `aov` para ANOVA). O R lida com todos os modelos lineares de maneira similar, e um detalhe importante é que todas as análises desta família devem ser salvas em um objeto, para seu resultado ser apresentado após o comando `summary`.
+Grande família de modelos estatísticos que modelam uma relação linear entre a variável dependente Y e a(s) variável(is) independente(s) X. 
 
-É importante lembrar que neste roteiro estamos lidando com modelos paramétricos, ou seja, que **modela a variável de interesse como uma variável aleatória pertencente a uma certa distribuição de probabilidades**. Existem outras abordagens estatísticas não-paramétricas que fazem testes que não tem como premissa a distribuição de probabilidades. Veja um exemplo de **teste t não paramétrico** neste [roteiro](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:02_tutoriais:tutorial6:start). 
+- teste t, ANOVA, ANCOVA, regressão, etc
 
-Mesmo fazendo parte de uma mesma família de modelos, nas sessões seguintes vamos separar os modelos lineares pelos nomes tradicionais das análises: análise de variância, regressão linear simples e análise de covariância. Depois, veremos alguns exemplos de GLMs aplicáveis a dados ecológicos.
+- LMs: y tem distribuição normal
+
+- GLMs: y tem outra distribuição (binomial, poisson) que é linearizada através de uma funçõa de ligação
 
 
-## ANOVA
+## ANOVA one-way
 
-Vamos então incluir no nosso exemplo inicial uma terceira espécie amostrada (e vamos diminuir o número de amostras por espécie para ficar mais fácil de fazer os cálculos passo a passo):
-```{r dados3}
+```{r dados3, echo=F}
 alt.sp3 <- c(36.90076761,33.23131727,32.82767311,24.93410577,31.87626329,
          28.76824248,26.6436144,31.41238398,27.65383929,31.70425719,
          33.60752445,28.30263354,29.32210674,23.4790054,22.20793046,
@@ -329,55 +348,52 @@ arv2 <- rbind(arv,sp3)
 amostras <- seq(1,150,by=5)
 
 arv3 <- arv2[ amostras, ]
+arv3 <- arv3[order(arv3$sp),]
 ```
 
-Neste exemplo lidaremos com um modelo simples de anova chamado **_one way_ ANOVA**, porque lida apenas com uma variável independente categórica (fator). 
+Comparando alturas de 3 espécies de plantas
 
-A ANOVA testará a hipótese nula de que as médias das alturas das 3 espécies não diferem. 
+H0:  que as médias das alturas das 3 espécies não diferem. 
 
-Faremos agora a ANOVA "na unha", para entendermos melhor cada passo da análise e a interpretação de seus resultados para depois usarmos a função do R que faz esta análise diretamente.
+<div align="center">
+```{r, echo=F}
+boxplot(alt~sp, data=arv3, ylab="Altura árvores")
+points(arv3$alt~arv3$sp)
+```
+</div>
 
-### ANOVA na unha
-
-Vamos calcular os valores da tabela de ANOVA. Começando com os desvios quadráticos, ou seja, quanto os dados desviam da média (idéia parecida com a variância). O ponto importante é que essa variação é aditiva e portanto, pode se decomposta. A variação total é decomposta em variação relacionada ao tratamento (_entre grupos_), no nosso caso às espécies, e uma variação interna dos grupos (chamada de erro). A estatística F é a razão entre essas variaões após dividir cada uma delas pelos seus respectivos graus de liberdade. Complicou? Vamos fazer os cálculos e ver os gráficos para ver se entendemos melhor:
-
-A tabela de ANOVA que vamos construir é essa:
+## ANOVA na unha
 
 ![](../tutorials/images/tab_anova.png)
 
-Primeiro vamos mudar a forma do nosso data frame para facilitar os comandos
-```{r}
+## Soma dos quadrados total
+
+Sutraímos cada altura das árvores pela média geral e elevamos ao quadrado.
+
+```{r, echo=F, results="hide"}
 arv4 <- data.frame(sp1=arv3$alt[arv3$sp=="sp1"],
                    sp2=arv3$alt[arv3$sp=="sp2"],
                    sp3=arv3$alt[arv3$sp=="sp3"])
-arv4
 
-boxplot(arv4)
-```
-Vamos calcular a média geral, as médias para cada espécie, e as diferenças entre a média geral e a média para cada espécie, para chegar ao valor da soma dos quadrados total:
-```{r}
 media.geral <- mean(arv3$alt)
 media.geral
-
 medias.sps <- apply(arv4, 2, mean)
 medias.sps
-
 dif.geral <- arv4 - media.geral
 ss.especies <- dif.geral^2
 ss.especies
-
 ss.total <- sum(ss.especies)
 ss.total
 ```
 
-Para calcular os desvios quadráticos totais, nós subtraímos cada altura das árvores pela média geral e elevamos ao quadrado. Veja o gráfico:
-```{r}
+<div align="center">
+```{r, echo=F}
 vetor.cor <- rep(1:3, each=10) #vetor de cores
 
-plot(x = c(1:30), y = arv3$alt, ylim=c(10,40),
+plot(x = c(1:30), y = arv3$alt, ylim=c(8,40),
      pch=(rep(c(15,16,17), each=10)),
-     col=vetor.cor,
-     ylab="Variável Resposta", xlab="Observações",
+     col=arv3$sp,
+     ylab="Altura árvores", xlab="Observações",
      main="Variação total")
 	for(i in 1:30)
 	{
@@ -385,15 +401,24 @@ plot(x = c(1:30), y = arv3$alt, ylim=c(10,40),
 	}
 	abline(h=media.geral)
 ```
+</div>
 
-
-Agora vamos fazer a somatória dos desvios quadráticos dentro de cada grupo (ss.intra).
-
-O gráfico para entender esse cálculo:
+## Soma dos quadrados total {.columns-2}
 ```{r}
+(media.geral <- mean(arv3$alt))
+(medias.sps <- apply(arv4, 2, mean))
+dif.geral <- arv4 - media.geral
+(ss.especies <- dif.geral^2)
+(ss.total <- sum(ss.especies))
+```
+
+
+## Soma dos quadrados dentro de cada grupo
+
+```{r, echo=F}
 vetor.medias<-rep(medias.sps, each=10)
 
-plot(c(1:30), arv3$alt, ylim=c(10,40),
+plot(c(1:30), arv3$alt, ylim=c(8,40),
      pch=(rep(c(15,16,17),each=10)),
      col=vetor.cor,
      main="Variação Intra Grupos",
@@ -407,21 +432,16 @@ plot(c(1:30), arv3$alt, ylim=c(10,40),
 	lines(c(21,30),c(medias.sps[3],medias.sps[3]),col=3)
 ```
 
-Cálculo dos valores:
+## Soma dos quadrados dentro de cada grupo
 ```{r}
-medias.sps
-ss.sp1=sum((arv4$sp1-medias.sps["sp1"])^2)
-ss.sp1
-ss.sp2=sum((arv4$sp2-medias.sps["sp2"])^2)
-ss.sp2
-ss.sp3=sum((arv4$sp3-medias.sps["sp3"])^2)
-ss.sp3
-ss.intra=ss.sp1+ss.sp2+ss.sp3
-ss.intra
+(ss.sp1=sum((arv4$sp1-medias.sps["sp1"])^2))
+(ss.sp2=sum((arv4$sp2-medias.sps["sp2"])^2))
+(ss.sp3=sum((arv4$sp3-medias.sps["sp3"])^2))
+(ss.intra=ss.sp1+ss.sp2+ss.sp3)
 ```
 
-A soma dos quadrados entre grupos:
-```{r}
+## Soma dos quadrados entre grupos
+```{r, echo=F}
 plot(c(1:30), vetor.medias, ylim=c(10,40), 
   pch=(rep(c(15,16,17),each=10)),
   col=vetor.cor, 
@@ -436,6 +456,7 @@ plot(c(1:30), vetor.medias, ylim=c(10,40),
 	       pch=(rep(c(0,1,2),each=10)), col=vetor.cor, cex=0.5)
 ```
 
+## Soma dos quadrados entre grupos {.columns-2}
 ```{r}
 medias.sps
 media.geral
@@ -447,23 +468,43 @@ ss.intra+ss.entre
 ss.total
 ```
 
-Cálculo do F
+## Desvios médios
+
+Soma dos quadrados / graus de liberdade
+
+graus de liberdade entre grupos = 3 - 1
+
+graus de liberdade dentro dos brupos = 30 - 3
+
 ```{r}
-# Desvios médios
 ms.entre=ss.entre/2
 ms.intra=ss.intra/27
 ms.entre
 ms.intra
 
+
+```
+
+## Cálculo de F
+
+F = desvio médio entre grupos / desvio médio intra grupos
+
+```{r}
 #F - razão das variâncias
 F.sps=ms.entre/ms.intra
 F.sps
 ```
 
-#### Distribuição F
+## Distribuição F 
 
 Vamos ver na distribuição F qual a probabilidade de termos econtrado o valor `F.sps` ao acaso:
-```{r}
+```{r, echo=F, results="hide"}
+p.sps=pf(F.sps, 2, 27, lower.tail=FALSE)
+p.sps
+```
+
+<div align="center">
+```{r, echo=F}
 curve(expr=df(x, 2,27),
       main="Distribuição F de Fisher (df=2,27)", 
       xlab="Valor F",
@@ -480,22 +521,15 @@ text(x= 7,y=0.08,paste("pf(x) =",
      round(pf(F.sps,2,27,lower.tail=F),4)), 
      cex=0.8, col="red")
 ```
+</div>
 
-Cálculo do P
-```{r}
-p.sps=pf(F.sps, 2, 27, lower.tail=FALSE)
-p.sps
-```
-
-Para mais informações sobre o F e as comparações com o teste t, veja esse [roteiro](http://daniellakens.blogspot.com.br/2016/04/one-sided-f-tests-and-halving-p-values.html).
-
-### A tabela final
+## A tabela final
 
 Colocando os dados calculados em nossa tabela de anova
 
 ![](../tutorials/images/tab_anova_final.png)
 
-### ANOVA no R
+## ANOVA no R
 
 A função que constrói esta tabela de ANOVA e faz o teste estatístico é a `aov`. Vamos comparar:
 
@@ -512,30 +546,39 @@ Onde estão as diferenças?
 
 - veja os gráficos
 
-- faça teste à posteriori - Tukey HDS
+- faça teste à posteriori - Tukey HSD
 
+<div align="center">
+```{r, echo=F}
+boxplot(arv4)
+```
+</div>
 
+## Teste Tukey
 ```{r tukey}
 TukeyHSD(anova.sps)
+```
 
+```{r, echo=F, results="hide"}
 #revendo gráfico dos dados
-stripchart( arv3$alt~arv3$sp,
-           vertical = TRUE, pch = 16, 
-           col = c("black", "red", "green"))
-
-#boxplot
-boxplot(arv4)
+#stripchart( arv3$alt~arv3$sp,
+           #vertical = TRUE, pch = 16, 
+           #col = c("black", "red", "green"))
 ```
 
 
-## Outra maneira de fazer a ANOVA no R:
+## Outra maneira de fazer a ANOVA no R 
+
 
 
 ```{r anova lm}
 lm.anova.sp <- lm(alt~sp, data=arv3)
 summary.aov(lm.anova.sp) #mesmo que o summary do aov
+```
 
-# mostra o resultado de forma um pouco diferente, consegue entender?
+## Resultado ANOVA como LM {.smaller}
+
+```{r}
 summary(lm.anova.sp) 
 ```
 
@@ -544,7 +587,7 @@ summary(lm.anova.sp)
 
 - Y contínuo - X continuo
 
-
+<div align="center">
 ```{r dados regr, echo=F}
 # criando a variável nutrientes
 nutri <- c(1.09, 1.73, 1.49, 2.84, 3.08, 8.24, 8.67, 6.10, 8.37, 8.03,
@@ -560,16 +603,17 @@ arv3$nutri <- nutri
 
 plot(arv3$alt ~ nutri)
 ```
+</div>
 
-## Modelo da Regressão
+## Modelo da Regressão {.smaller}
 
 ```{r mod regr}
-alt.nutr <- lm(alt ~ nutri, data = arv3)
-summary(alt.nutr)
+alt.nutr <- lm(alt ~ nutri, data = arv3);     summary(alt.nutr)
 ```
 
 ## Plot da Regressão
 
+<div align="center">
 ```{r plot regr2, echo=F}
 plot(arv3$alt ~ nutri)
 abline(alt.nutr, col = "red") # reta da regressão
@@ -577,22 +621,23 @@ abline(alt.nutr, col = "red") # reta da regressão
 #reta da hipótese nula de ausência de efeito dos nutrientes
 abline(h = mean(arv3$alt), col = "blue", lty = 2)  
 ```
+</div>
 
 ## Análise de Covariância
 
 - Y continuo
 
 - X1 contínuo - X2 categórico
-
+<div align="center">
 ```{r, echo=F}
 plot(alt~nutri, data=arv3, col=arv3$sp)
 ```
+</div>
 
-## Modelo da ANCOVA: aditivo
+## Modelo da ANCOVA: aditivo {.smaller}
 
 ```{r ancova aditivo}
-alt.sp.nutr <- lm(alt ~ nutri + sp, data = arv3)
-summary(alt.sp.nutr)
+alt.sp.nutr <- lm(alt ~ nutri + sp, data = arv3);     summary(alt.sp.nutr)
 ```
 
 ## Gráfico ANCOVA aditivo
@@ -615,19 +660,19 @@ abline(a=int.sp3, b=coef(alt.sp.nutr)[2], col="green")
 ```
 </div>
 
-## Modelo ANCOVA com interação
+## Modelo ANCOVA com interação {.smaller}
 
 ```{r, echo=F}
 alt.sp.nutr2 <- lm(alt ~ nutri + sp + nutri:sp, data=arv3)
 ```
 
 ```{r ancova interativo}
-alt.sp.nutr3 <- lm(alt ~ nutri*sp, data=arv3)
-summary(alt.sp.nutr3)
+alt.sp.nutr3 <- lm(alt ~ nutri*sp, data=arv3);        summary(alt.sp.nutr3)
 ```
 
 ## Gráfico ANCOVA com interação
-<div align="center"
+
+<div align="center">
 ```{r ancova graf, echo=F}
 # interceptos
 int.sp1 <- coef(alt.sp.nutr2)[1]
@@ -694,27 +739,28 @@ Gamma | reciprocal
 ```{r, echo=F}
 atrop <- read.table("../data/atropela.csv", header = T, sep = ";")
 ```
-
+<div align="center">
 ```{r pois plot, echo=F}
 plot( atrop$TOT.N ~ atrop$D.PARK,
       xlab = " Distância ao parque",
       ylab = "Número de atropelamentos")
 ```
+</div>
 
-## Modelo GLM Poisson
+## Modelo GLM Poisson {.smaller}
 
 ```{r pois mod}
 mod <- glm(TOT.N ~ D.PARK, data = atrop, family = poisson)
 summary(mod)
 ```
 
-## Testando contra hipótese nula
+## Testando contra hipótese nula {.smaller}
 ```{r pois test}
 anova(mod, test = "Chisq")
 ```
 
 ## Gráfico Modelo GLM Poisson
-```{r, echo=F}
+```{r, echo=F, results="hide"}
 coefi <- coef(mod)
 coefi
 ```
@@ -740,6 +786,7 @@ curve(exp(coefi[1] + coefi[2]*x),
  
  - X - quantidade de vegetação aberta 
 
+<div align="center">
 ```{r echo=F, results='hide'}
 veados <- read.table("../data/veados_parasitas.csv", header=T, sep=";")
 
@@ -749,18 +796,20 @@ summary(veados)
 prop.veados <- veados$infectado/veados$amostrado
 prop.veados
 ```
+</div>
 
+<div align="center">
 ```{r binom plot, echo=F}
 plot(prop.veados ~ veados$openland,
      ylim=c(0,1),
      xlab = "Porcentagem de vegetação aberta",
      ylab="Proporção de veados infectados")
 ```
+</div>
 
-## Modelo GLM binomial
+## Modelo GLM binomial {.smaller}
 ```{r binom cbind}
-nao.infectado <- veados$amostrado- veados$infectado
-y <- cbind(veados$infectado, nao.infectado)
+y <- cbind(veados$infectado, veados$amostrado - veados$infectado)
 mod.veado <- glm(y ~  openland, data=veados, family="binomial")
 summary(mod.veado)
 ```
@@ -771,7 +820,7 @@ anova(mod.veado, test = "Chisq")
 ```
 
 ## Gráfico GLM binomial
-```{r}
+```{r, echo=F, results="hide"}
 # salvando os coeficientes
 coefs <- coef(mod.veado)
 coefs
@@ -781,7 +830,7 @@ coefs
 invlogit = function(x) return(exp(x)/(1+exp(x)))
 ```
 
-<div aling="center">
+<div align="center">
 ```{r binom plot2, echo=F}
 plot(prop.veados ~ veados$openland,
      ylim=c(0,1))
@@ -838,71 +887,70 @@ resid(anova.sps)
 #residuals(anova.sps) # o mesmo que a função de cima
 ```
 
-## `plot` do modelo 
+## Resíduos ANOVA: alt ~ sp
 <div align="center">
 ```{r res anova, echo=F}
-# separando a área gráfica em 4 espaço para os 4 gráficos
-par(mfrow=c(2,2))
+par(mfrow=c(2,2)) # separando a área gráfica em 4 espaços 
 plot(anova.sps)
 ```
 </div>
 
-## Resíduos regressão
+## Resíduos regressão: alt ~ nutri
 <div align="center">
-```{r res lms}
+```{r res lms, echo=F}
 par(mfrow=c(2,2))
 # regressão: alt ~ nutri
 plot(alt.nutr)
 ```
 </div>
 
-## Resíduos ANCOVA aditivo
+## Resíduos ANCOVA aditivo: alt ~ sp + nutri
 <div align="center">
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 # ANCOVA modelo aditivo: alt ~ nutri + sps
 plot(alt.sp.nutr)
 ```
 
-## Resíduos ANCOVA interativo
+## Resíduos ANCOVA interativo: alt ~ sp * nutri
 <div align="center">
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 # ANCOVA modelo interativo: alt ~ nutri * sps
 plot(alt.sp.nutr2)
 ```
 </div>
 
-## Resíduos GLM poisson
+## Resíduos GLM poisson: atrop ~ dist.park
 <div align="center">
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 # GLM poisson: atrop ~ dist.park
 plot(mod)
 ```
 </div>
 
-## Resíduos LM com a poisson
+## Resíduos LM com a poisson: atrop ~ dist.park
 <div align="center">
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 plot(lm(TOT.N ~ D.PARK, data = atrop))
 ```
 </div>
 
 
-## Resíduos GLM binomial
+## Resíduos GLM binomial: prop.infec ~ openland
 <div align="center">
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 # GLM binoimial: prop.infectado ~ openland
 plot( mod.veado)
 ```
 </div>
 
-## Resíduos LM com a binomial
+## Resíduos LM com a binomial: prop.infec ~ openland
 <div align="center">
-```{r}
+```{r, echo=F}
 par(mfrow=c(2,2))
 plot( lm(prop.veados ~ veados$openland))
 ```
