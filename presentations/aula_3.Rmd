@@ -872,12 +872,24 @@ plot(alt.sp.nutr2)
 plot(mod)
 ```
 
+## Resíduos LM com a poisson
+```{r}
+plot(lm(TOT.N ~ D.PARK, data = atrop))
+```
+
+
+
 ## Resíduos GLM binomial
 ```{r}
 # GLM binoimial: prop.infectado ~ openland
-plot(mod.veado)
-
+plot( mod.veado)
 ```
+
+## Resíduos LM com a binomial
+```{r}
+plot( lm(prop.veados ~ veados$openland))
+```
+
 
 ```{r, echo=F}
 # para "desligar" o par inicial
