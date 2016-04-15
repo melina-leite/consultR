@@ -71,15 +71,16 @@ Função que define as probabilidades P(X) para cada valor possível da variáve
 
 <div align="center">
 ```{r normal, echo=F}
-mean=22.7; sd=5.6
-lb=10; 
+media<-mean(arv$alt) 
+sde=sd(arv$alt)
+lb=10
 ub=40
 
-x <- seq(-4,4,length=100)*sd + mean
-hx <- dnorm(x,mean,sd)
+x <- seq(-4,4,length=100)*sde + media
+hx <- dnorm(x,media,sde)
 
 plot(x, hx, type="n", xlab="X", ylab="Densidade",
-  main="Distribuição Normal, Média = 25, sd= 4", axes=FALSE)
+  main="Distribuição Normal, Média = 22.7, sd= 5.7", axes=FALSE)
 axis(1)
 axis(2)
 i <- x >= lb & x <= ub
@@ -240,9 +241,11 @@ mean(arv$alt[arv$sp=="sp2"]) - mean(arv$alt[arv$sp=="sp1"])
 
 Posso afirmar que as médias são diferentes?
 
-**H0** - não há diferença entre as alturas das duas espécies. A média da altura da espécie 1 é igual à média da altura da espécie 2 e a diferença observada se deve ao acaso.  
+**H0** - não há diferença entre as alturas das duas espécies.  
+A média da altura da espécie 1 é igual à média da altura da espécie 2 e a diferença observada se deve ao acaso.  
 
-**H1** - há diferença entre as alturas das duas espécies. A média da altura da espécie 1 é diferente da média da altura da espécie 2.
+**H1** - há diferença entre as alturas das duas espécies.  
+A média da altura da espécie 1 é diferente da média da altura da espécie 2, elas vem de distribuições diferentes.
 
 ## Erros associados a escolher cada hipótese como verdadeira
 
@@ -262,8 +265,9 @@ VERDADE: não há diferenças.
 
 
 ***
+<div align="center">
 ![](./images/erro.jpg)
-
+</div>
 
 ##  Testando as hipóteses
 
@@ -415,6 +419,7 @@ dif.geral <- arv4 - media.geral
 
 ## Soma dos quadrados dentro de cada grupo
 
+<div align="center">
 ```{r, echo=F}
 vetor.medias<-rep(medias.sps, each=10)
 
@@ -431,6 +436,7 @@ plot(c(1:30), arv3$alt, ylim=c(8,40),
 	lines(c(11,20),c(medias.sps[2],medias.sps[2]),col=2)
 	lines(c(21,30),c(medias.sps[3],medias.sps[3]),col=3)
 ```
+</div>
 
 ## Soma dos quadrados dentro de cada grupo
 ```{r}
@@ -441,6 +447,7 @@ plot(c(1:30), arv3$alt, ylim=c(8,40),
 ```
 
 ## Soma dos quadrados entre grupos
+<div align="center">
 ```{r, echo=F}
 plot(c(1:30), vetor.medias, ylim=c(10,40), 
   pch=(rep(c(15,16,17),each=10)),
@@ -455,6 +462,7 @@ plot(c(1:30), vetor.medias, ylim=c(10,40),
 	points(c(1:30),arv3$alt, ylim=c(10,50), 
 	       pch=(rep(c(0,1,2),each=10)), col=vetor.cor, cex=0.5)
 ```
+</div>
 
 ## Soma dos quadrados entre grupos {.columns-2}
 ```{r}
@@ -540,9 +548,7 @@ summary(anova.sps)
 
 Agora nós sabemos de ondem vem os números nesta tabela e como foi calculado o P, certo?
 
-## Testes à posteriori
-
-Onde estão as diferenças?
+## Testes à posteriori - onde estão as diferenças?
 
 - veja os gráficos
 
@@ -874,7 +880,7 @@ leveneTest(arv3$alt~arv3$sp)
 ```
 
 
-## Checagem do ajuste do modelo - Resíduos
+## Checagem do ajuste do modelo - Resíduos {.smaller}
 
 <div align="center">
 RESÍDUO = Y(observado) - Y(dados ajustados)
