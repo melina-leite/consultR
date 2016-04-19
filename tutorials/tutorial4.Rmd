@@ -1,0 +1,58 @@
+---
+title: 'Roteiro 4 - Análises de Diversidade'
+author: "Melina Leite"
+date: "Departamento de Ecologia IB-USP"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+---
+
+```{r setup, echo = F, message = F, cache = F}
+knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALSE, cache=FALSE, warning=FALSE)
+
+#global options que vieram no rmdformats de html
+library(knitr)
+library(rmdformats)
+library(lattice)
+options(max.print="75")
+opts_knit$set(width=75)
+```
+
+```{r setwd, echo=F}
+setwd("../consultR/tutorials")
+```
+
+# Análises de composição e diversidade em comunidades
+
+## Índices de diversidade
+
+- Begon pg 471
+- ver os indices do relatorio que a camilla passou
+- vignete vegan - diversity
+- aula adriana - indices de diversidade!!
+
+## Curva do coletor
+
+## Rarefação
+
+- artigo pacote Rich
+
+## Estimadores de riqueza
+
+
+# Análises multivariadas
+
+## Análise de componentes principais (PCA)
+
+## Escalonamento multidimensional não paramétrico (NMDS)
+
+# Material Extra:
+
+- Roteiros sobre PCA no R, [aqui](http://www.dataperspective.info/2016/02/principal-component-analysis-using-r.html), [aqui](https://tgmstat.wordpress.com/2013/11/21/introduction-to-principal-component-analysis-pca/) e [aqui](https://tgmstat.wordpress.com/2013/11/28/computing-and-visualizing-pca-in-r/).
+
+- [Roteiro](https://dl.dropboxusercontent.com/u/6511995/veganbird.pdf) do pacote vegan sobre ordenação e análise de dissimilaridade.
+
+- 
