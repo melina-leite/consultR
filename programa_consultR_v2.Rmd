@@ -1,8 +1,9 @@
 ---
-title: "Introdução ao R para Análises de Dados em Consultoria Ambiental"
-author: "Melina Leite"
+title: "Curso: Introdução ao R para Análises de Dados em Consultoria Ambiental"
+author: "Melina de Souza Leite"
 output:
-  html_document: 
+  pdf_document: default
+  html_document:
     theme: cerulean
 ---
 
@@ -13,7 +14,10 @@ output:
 **Forma de execução**: 4 aulas de 3h cada. Ao final de cada módulo serão passados roteiros de fixação e estudo do conteúdo abordado, assim como informações (pdfs, linques) adicionais para aprofundamento. Todo o material do curso (apresentações e roteiros) será disponibilizado aos participantes. Este material estará disponível no site http://melinatarituba.github.io/consultR_curso em formato HTML e também em código (.R e .Rmd).
 
 
-**Datas sugeridas**:  31 de março, 7, 14 e 28 de abril. Das 18h às 21h.
+**Data**:  31 de março, 7, 14 e 28 de abril. Das 18h às 21h.
+
+
+
 
 ### Programação:  
 
@@ -60,6 +64,8 @@ output:
     +	Curva do coletor
     + Rarefação
     + Estimadores de riqueza
-* Análises multivariadas
-        +	Análise de componentes principais (PCA)
-        +	Escalonamento multidimensional não paramétrico (NMDS)
+    
+* Análises multivariadas  
+    + Análise de componentes principais (PCA)  
+    + Escalonamento multidimensional não paramétrico (NMDS)  
+    
