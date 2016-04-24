@@ -27,7 +27,7 @@ setwd("../consultR/tutorials")
 
 # Análises da riqueza de espécies
 
-Uma forma de caracterizar uma comunidade é simplesemtne contar ou listar as espécies presentes. Parece um procedimento fácil e objetivo descrever e comparar comunidades por meio de suas 'riquezas' em espécies. Na prática, entretanto, isso é surpreendentemente difícil, porque em geral apenas um subamostra dos organismos em uma área pode ser contada. O número de espécies depende do número de amostrar obtidas, então quando devemos cessar a amostragem? Idealmente até que o número de espécies alcance um platô. A riqueza de espécies em diferentes comunidades deve ser comparada usando-se um mesmo tamanho de amostragem.
+Uma forma de caracterizar uma comunidade é simplesmente contar ou listar as espécies presentes. Parece um procedimento fácil e objetivo descrever e comparar comunidades por meio de suas 'riquezas' em espécies. Na prática, entretanto, isso é surpreendentemente difícil, porque em geral apenas um subamostra dos organismos em uma área pode ser contada. O número de espécies depende do número de amostrar obtidas, então quando devemos cessar a amostragem? Idealmente até que o número de espécies alcance um platô. A riqueza de espécies em diferentes comunidades deve ser comparada usando-se um mesmo tamanho de amostragem.
 
 
 ## Tabelas de dados
@@ -55,7 +55,7 @@ str(dune.env)
 Nunca se esqueça de fazer uma inspeção nas tabelas de dados. Reveja o [roteiro 2](https://melinatarituba.github.io/consultR/tutorials/tutorial2) sobre análises exploratórias de dados para inspecionar e visualizar graficamente seus dados.
 
 
-## Construindo a curva de acumulação de espécies
+## Curva de acumulação de espécies
 
 Curvas de acumulação de espécies, algumas vezes chamadas de **curva do coletor**, são representações gráficas que demonstram o número acumulado de espécies registradas (S) em função do esforço amostral (n). O **esforço amostral** pode ser o número de indivíduos coletados, ou uma medida tal como o número de amostras (e.g., quadrados) ou tempo amostral (e.g., meses). Se as curvas de acumulação de espécies atingem um ponto em que o aumento do esforço de coleta não implica num aumento no número de espécies, isto significa que aproximadamente toda a riqueza da área foi amostrada.
 
@@ -63,7 +63,7 @@ Dependendo do protocolo de amostragem usado para o levantamento da riqueza de es
 
 Para construir a curva do coletor vamos usar o pacote `BiodiversityR`, que além de poder ser usado diretamente no R, tem também uma interface amigável através do pacote `Rcmdr`. Veja o manual do pacote [aqui](http://www.worldagroforestry.org/downloads/Publications/PDFS/b13695.pdf). 
 
-Abaixo a curva do coletor (**baseada em amostra**) para os dados de vegetação das dunas:
+Abaixo a curva do coletor **baseada em amostra** para os dados de vegetação das dunas:
 ```{r}
 library(BiodiversityR)
 Accum <- accumresult(dune, method='collector')
@@ -71,7 +71,7 @@ Accum
 accumplot(Accum)
 ```
 
-A curva acima pode se considerada a curva "bruta", onde a riqueza de espécies foi plotada de acordo com a ordem dos locais amostrados. 
+[Gotelli & Colwell (2001)](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) descrevem dois tipos de curva, a **curva de acumulação** e a **curva de rarefação**. A curva acima é curva de acumulação, onde a riqueza de espécies foi plotada de acordo com a ordem dos locais amostrados. 
 
 [Colwell & Coddington (1994)](http://staff.washington.edu/mchd/FISH513/Papers/Colwell_Coddington_94.pdf) sugeriram um método que consiste em montar várias curvas adicionando-se as amostras em uma ordem aleatória. Após construir várias curvas com este método, pode-se calcular uma curva do coletor média (baseada na riqueza média para cada número de amostra) e expressar a variação possível em torno dessa média. Isso pode ser feito de duas maneiras. A primeira é utilizando a riqueza média agrupada quando 1,2... todos os locais são combinados juntos. A razão para calcular a **riqueza agrupada média de espécies** é que diferentes combinações vão ter diferentes riquezas. Por exemplo, nestes dados o local 1 contém 5 espécies, enquanto que o local 2 e 3 contém 10 espécies. Em outras palavras, nao existe um valor único para a riqueza de espécies em UM local e por isso, o valor médio é calculado. 
 
@@ -83,17 +83,24 @@ accumplot(Accum.1)
 
 O resultado de `Accum.1` mostra que a riqueza média para todas as possíveis combinações de 14 locais é 28.85, equanto que para todas as possíveis combinações de 17 locais é 29.51. O `sd` indica o desvio padrão observado, já que algumas combinações de locais contém menores número de espécies e outras combinações maiores. 
 
-Os resultados acima são baseados nos cálculos exatos da riqueza de espécies média para combinações de locais. Outra forma de fazer isso é aproximar essa riqueza média de espécies em uma abordagem de aleatorização. Por exemplo, para encontrar uma estimativa da riqueza média para 3 locais, selecionamos 3 locais aleatoriamente de todos os 30 locais. Calcumamos a riqueza de espécies e então selecionamos outros 3 locais aleatoriamente. Repetimos isso umas 1000 vezes e pegamos a média de todas estas estimativas. 
+Os resultados acima são baseados nos cálculos exatos da riqueza de espécies média para combinações de locais (`method= "exact"`), como sugerido por Colwell & Coddington (1994). Outra forma de fazer isso é aproximar essa riqueza média de espécies em uma abordagem de aleatorização (também chamao de 'rarefação' por Gotelli & Colwell 2001). Por exemplo, para encontrar uma estimativa da riqueza média para 3 locais, selecionamos 3 locais aleatoriamente de todos os 30 locais. Calcumamos a riqueza de espécies e então selecionamos outros 3 locais aleatoriamente. Repetimos isso umas 1000 vezes e pegamos a média de todas estas estimativas. 
 
 Os resultados da curva de acumulação de espécies baseado nesta aleatorização para as espécies das dunas será:
 
 ```{r}
+# usando method="random"
 Accum.2 <- accumresult(dune, method='random', permutations=1000)
 Accum.2
 accumplot(Accum.2)
+
+# usando method = "rarefaction"
+
+Accum.21 <- accumresult(dune, method='rarefaction')
+Accum.21
+accumplot(Accum.21)
 ```
 
-Para alguns conjuntos de dados, a informação não é coletada por local, e sim por indivíduo observado. Frequentemente, levantamentos de vertebrados são obtidos dessa maneira, registrando as informações das espécies para cada indivíduo observado sequencialmente. Neste caso devemos calcular a curva de acumulação **baseada em indivíduo**. 
+Para alguns conjuntos de dados, a informação não é coletada por local, e sim por indivíduo observado. Frequentemente, levantamentos de vertebrados são obtidos dessa maneira, registrando as informações das espécies para cada indivíduo observado sequencialmente. Entretanto, se dados baseados em amostra estão disponíveis, podmeos fazer curvas de rarefação baseadas tanto em **indivíduos** quanto baseadas em **amostras**.
 
 Vejamos a curva **baseada em indivíduo** para os dados das dunas:
 ```{r}
@@ -106,11 +113,14 @@ Accum.5
 accumplot(Accum.5, xlab='pooled individuals')
 ```
 
-Neste gráfico percebemos que os resultados não indicam todas as 685 possíveis combinações de indivíduos. Os resultados foram reportados apenas para o número médio de indivíduos em cada local, 685/20 = 34.25 (arredondando para 34 indivíduos). 
+Neste gráfico percebemos que os resultados não indicam todas as 685 possíveis combinações de indivíduos (número total de indivíduos amostrados). Os resultados foram reportados apenas para o número médio de indivíduos em cada local, 685/20 = 34.25 (arredondando para 34 indivíduos). Neste exemplo, nós re-escalonamos o eixo x para número de indivíduos baeado no tamanho médio de indivíduos por amostra. Quando usamos as curvas de rarefação baseadas em amostra para comparar riqueza de espécies em níveis comparativos de esforço amostral, o número de espécies deve ser plotado como uma função do número acumulado de indivíduos (como feito no gráfico acima), porque os conjuntos de dados podem diferir quanto ao número médio de indivíduos por amostra (Gotelli & Colwell 2001).
 
-## Usando a curva de acumulação de espécies para comparar riqueza total de subgrupos de dados
 
-As curvas de acumulação de espécies são especialmente úteis quando comparamos a riqueza de espécies para subgrupos nos dados quando os tamanhos amostrais são diferentes destes subgrupos.
+
+## Usando a curva de acumulação de espécies para comparar riqueza em subgrupos de dados
+
+
+As curvas de acumulação de espécies (usando método de rarefação) são especialmente úteis quando comparamos a riqueza de espécies para subgrupos nos dados quando os tamanhos amostrais são diferentes destes subgrupos.
 
 Quando calculamos a curva de acumulação de espécies para cada categoria de manejo dos dados das dunas (tabela de variáveis ambientais, coluna `management`):
 ```{r}
@@ -120,12 +130,35 @@ Accum.6
 
 Olhando para o gráfico acima, podemos observar uma riqueza de espécies de 16 para um tamanho amostral de 3 locais no manejo o "BF", e uma riqueza total de 21 para um tamanho amostral de 5 locais para o manejo "HF". Os resultados agora permitem comparar a riqueza de espécies em um mesmo tamanho amostral. Por exemplo, quando comparamos as 4 categorias de manejo no tamanho amostral 3, vemos que HF tem uma maior riqueza de espécies do que as outras 3 categorias. 
 
+### Mais sobre o método de rarefação
+
+Esse método nos permite comparar o número de espécies entre comunidades quando o tamanho da amostra ou o número de indivíduos (abundância) não são iguais. A rarefação calcula o número esperado de espécies em cada comunidade tendo como base comparativa um valor em que todas as amostras atinjam um tamanho padrão, ou comparações baseadas na menor amostra ou com menos indivíduos (dentre todas amostras possíveis). 
+Gotelli & Collwel (2001) descrevem este método e discutem em detalhes as restrições sobre seu uso na ecologia: 
+
+1) as amostras a serem comparados devem ser consistentes do ponto de vista taxonômico, ou seja, todos os indivíduos devem pertencer ao mesmo grupo taxonômico; 
+
+2) as comparações devem ser realizadas somente entre amostras com as mesmas técnicas de coleta; 
+
+3) os tipos de hábitat onde as amostras são obtidas devem ser semelhantes; e 
+
+iv) é um método para estimar a riqueza de espécies em uma amostra menor – não pode ser usado para extrapolar e estimar riqueza.
+
+Veremos a seguir métodos de extrapolação para estimar o número total de espécies na sua amostra.
+
 
 ## Estimando o número total de espécies da área
 
 Na maioria das situações, nós registramos o número de espécies de uma quantitade de locais que não cobre toda a área que estamos interessados. Nós não saberemos a composição de espécies das áreas que não amostramos.
 
-Diversas fórmulas já foram desenvolvidas para estimar o número total de espécies de uma área. Em termo de curvas de acumulação de espécies, nós precisamos extrapolar a curva até o ponto do eixo x que corresponde ao tamanho total da área. Estes métodos de estimação são baseados em diferentes premissas sobre como as espécies se acumulam além da área amostrada. Provavelmente um método vai ser ais preciso e uma situação, e outro em outra. 
+Diversas fórmulas já foram desenvolvidas para estimar o número total de espécies de uma área. Em termo de curvas de acumulação de espécies, nós precisamos extrapolar a curva até o ponto do eixo x que corresponde ao tamanho total da área. Estes métodos de estimação são baseados em diferentes premissas sobre como as espécies se acumulam além da área amostrada. Provavelmente um método vai ser mais preciso e uma situação, e outro em outra. 
+
+Vejamos as propriedades de alguns estimadores (para mais detalhes ver [Santos 2003](https://www.dropbox.com/s/8mzru9p4whvoo00/Santos_2003_Estimativas%20de%20riqueza%20em%20especies.pdf?dl=0):
+
+- **Jackniffe 1 e 2**: estimam a riqueza total somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
+
+- **Chao 1 e 2**: a riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (singletons), dividido pelo dobro do número de espécies com apenas dois indivíduos (doubletons). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (uniques e duplicates - chao 2).
+
+- **Bootstrap**: se difere dos demais por utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. É calculada somando-se a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies. 
 
 Se queremos fazer esta extrapolação, então a melhor abordagem é reportar a variação nos valores obtidos com os diferentes métodos e esperar que o valor total correto esteja dentro desse intervalo. 
 
@@ -207,7 +240,7 @@ divers.all
 
 Um outro índice frequentemente utilizado e que possui essencialmente as mesmas propriedades é o de **Shannon**, $H$. 
 
-$$diversidade  H = -\sum{i=1}^S P_i lnP_i $$
+$$ H = -\sum{i=1}^S P_i lnP_i $$
 
 Cuja equabilidade é:
 
@@ -299,43 +332,22 @@ Para calcular a diversidade das diferentes categorias de manejo dos dados das du
 
 Para comparar a diversidade entre subgrupos dos dados usando o perfil de Rényi:
 ```{r}
-Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management', permutations = 100, legend = F)
+Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
+                     permutations = 100, legend = F)
 Renyi.3
 ```
 
 
 
 
-
-
-
-
-
-
-## Rarefação
-
-- artigo pacote Rich
-
-( apostila UNESP:)
-Esse método nos permite comparar o número de espécies entre comunidades quando o tamanho da amostra ou o número de indivíduos (abundância) não são iguais. A rarefação calcula o número esperado de espécies em cada comunidade tendo como base comparativa um valor em que todas as amostras atinjam um tamanho padrão, ou comparações baseadas na menor amostra ou com menos indivíduos (dentre todas amostras possíveis). Se considerarmos n indivíduos (n < N) para cada comunidade, quantas espécies iríamos registrar?
-!(!)= 1− (!− !!)/! !/!
-Onde:
-E(S) = Número de espécies esperado
-N = Número total de indivíduos na amostra
-Ni = Número de indivíduos da iésima espécie
-n = tamanho da amostra padronizada (menor amostra)
-Gotelli & Collwel (2001) descrevem este método e discutem em detalhes as restrições sobre seu uso na ecologia: i) as amostras a serem comparados devem ser consistentes do ponto de vista taxonômico, ou seja, todos os indivíduos devem pertencer ao mesmo grupo taxonômico; ii) as comparações devem ser realizadas somente entre amostras com as mesmas técnicas de coleta; iii) os tipos de hábitat onde as amostras são obtidas devem ser semelhantes; e iv) é um método para estimar a riqueza de espécies em uma amostra menor – não pode ser usado para extrapolar e estimar riqueza.
-
-
-
-
-
 # Análises das diferenças na composição de espécies
 
-Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. 
+Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. Essa matriz de distância é a base para as análises multivariadas de composição de espécies que veremos em sequência, o PCA e o NMDS. 
+
+
 ## Distância Ecológica
 
-Uma boa medida de distância ecológica descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena. Existe na literatura uma grande variedade de distâncias, apresentamos aqui as mais utilizadas para dados ecológicos.
+Uma boa medida de distância ecológica entre comunidades (locais) descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena. Existe na literatura uma grande variedade de métodos para calcular estas distâncias, apresentamos aqui as mais utilizadas para dados ecológicos.
 
 ### Distância Euclidiana
 
@@ -343,11 +355,132 @@ A distância euclidiana é calculada usando cada espécie como um eixo diferente
 
 A distância euclidiana não é uma boa distância ecológica para dados brutos da matriz de espécie - com as abundâncias de cada espécie em cada local. Portanto, o que se recomenda é transformar a matriz de espécies, por exemplo padronizando os dados antes de calcular as distâncias. 
 
+Vejamos o seguinte exemplo:
+```{r}
+# matriz de espécies por locais
+mat <- matrix(c(1,5,0,1,5,0,0,0,1), nrow=3, dimnames = list(c("A","B","C"), c("sp1","sp2","sp3")))
+
+#vendo a matriz de distância entre os locais
+dist(mat, method = "euclidean")
+
+#usando pacote vegan que contém mais métodos de distância
+vegdist(mat, method="euclidean")
+```
+
+Plotando o gráfico 3D com as espécies nos eixos podemos ver as distâncias euclidianas entre os locais:
+```{r}
+scatter3D(x = mat[,1], y = mat[,2], z = mat[,3], 
+          xlim = c(0, 6), ylim = c(0, 6), zlim = c(0, 4),
+          xlab = "sp1", ylab = "sp2", zlab = "sp3", 
+          colkey = F, ticktype = "detailed", phi = 10, 
+          pch = 16, cex=2)
+
+text3D(x = mat[ , 1] + 0.2, y = mat[ , 2] + 0.2, 
+       z = mat[ , 3] + 0.3, labels = c("A", "B", "C"), add = T)
+
+lines3D(mat [ , 1], mat[ , 2], mat[ , 3], add = T, colkey = F)
+lines3D(mat[-2,1], mat[-2, 2], mat[-2, 3], add = T, colkey = F)
+```
+
+Vemos aqui que a distância euclidiana dos dados brutos não foi capaz de descrever as distâncias ecológicas muito bem. Vemos que os locais A e B tem as mesmas espécies (mas com abundâncias diferentes), enquanto que o local C tem uma espécie diferente. 
+A distância euclidiana depende muito das abundâncias em de cada espécie e não apenas das espécies que são compartilhadas. A e B, que compartilham as mesmas espécies, estão distantes pela distância euclidiana porque o local A tem 2 indivíduos e o local B tem 10. 
+
+Embora a distância euclidiana não seja tão boa para investigar como as espécies são compartilhdas entre os locais, ela ainda é usada em algumas técnicas de ordenação e agrupamento. Uma das soluções para dar maior peso às diferenças na composição de espécies é calcular a proporção de espécies em cada local, ou seja, dividindo as abundâncias das espécies pela abundância total do local (cada linha). Outro método seria usar a matriz de presença-ausência.
+
+```{r}
+#abundância total por local
+abund.t <- apply(mat, 1, sum)
+
+#matriz transformada para abundancias relativas
+mat2 <- mat /abund.t
+mat2
+
+#distância euclidiana
+dist(mat2)
+```
+
+Com os dados transformados vemos que a distância entre o local A e B agora é zero, pois os locais tem as mesmas espécies em igual proporção.
+
+
+
+### Distância de Bray-Curtis
+
+A distância de Bray-Curtis é muito utilizada em dados ecológicos e seus valores estão restritos entre 0 e 1. Quando a distância é zero, os dois locais são completamente similar. Quando é 1 eles são totalmente dissimilares, significando que os locais não possuem nenhuma espécie em comum.
+
+Vejamos as distância pra nossa matriz:
+```{r}
+vegdist(mat)
+```
+
+Podemos ver agora que a distância entre o local C e os locais A e B é 1, pois este local não compartilha nenhuma espécie com os demais locais. 
+
+Existem muitos outro métodos para calcular a distância ecológica entre o comunidades e também formas de transformar os dados antes de calcular as distâncias, mas este não é o foco deste roteiro. Veja mais alguns exemplos no Capítulo 8 do manual do pacote [BiodiversityR](http://www.worldagroforestry.org/downloads/Publications/PDFS/b13695.pdf). 
+
+
+## Análise da distância ecológica por Ordenação
+
+Os métodos de ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas. O resultado da ordenação é geralmente visualizado como um gráfico de duas dimensões. Nestes gráficos, cada local é apresentado e os locais próximos são interpetados como tendo composição de espécies similar, enquanto que locais afastados contém composição de espécies diferente.
+
+Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restringidos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies. Também veremos , um método restringido (_'constrained"_") que usa as variáveis ambientais para guiar a ordenação.  
+
 
 ## Análise de componentes principais (PCA)
 
+A análise de componentes principais utiliza as distâncias euclidianas para investigar a distância ecológica entre os locais.  
+
+Voltamos com os dados da vegetação de dunas e vamos calcular o PCA:
+```{r}
+pca1 <- rda(dune)
+summary(pca1)
+
+plot1 <- ordiplot(pca1, scaling=1, type="text")
+plot2 <- ordiplot(pca1, scaling=2, type="text")
+```
+
+
+
+
+
+```{r}
+#Calculating the variance of each species of the species matrix
+inertcomp(pca1, display='species', statistic="explained", proportional = F)
+```
+
+```{r}
+#Calculating the proportion of variance explained for an ordination graph
+goodness(pca1, display='site', choices = c(1:2), statistic = 'explained')
+```
+```{r}
+#Adding a vector and perpendicular lines for a particular species to an ordination plot
+ordivector(plot1, "Agrostol", lty=2)
+```
+
+```{r}
+# Calculating correlation among vectors
+cor.test(dune[,"Alopgeni"], dune[,"Agrostol"])
+```
+
+```{r}
+#Calculating the number of ecological meaningful principal components
+PCAsignificance(pca1, axes=30)
+```
+```{r}
+#drawing an equilibrium circle
+ordiequilibriumcircle(pca1,plot1)
+```
+
+
+
 ## Escalonamento multidimensional não paramétrico (NMDS)
 
+```{r}
+distmatrix <- vegdist(dune, method = 'bray')
+initNMS <- NMSrandom(distmatrix, perm=100, k=2)
+model1 <- postMDS(initNMS, distmatrix)
+model1 <- add.spec.scores(model1, dune, method='wa.scores')
+model1
+plot5 <- ordiplot(model1)
+```
 
 
 # Material Extra:
