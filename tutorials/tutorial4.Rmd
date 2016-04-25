@@ -152,11 +152,11 @@ Na maioria das situações, nós registramos o número de espécies de uma quant
 
 Diversas fórmulas já foram desenvolvidas para estimar o número total de espécies de uma área. Em termo de curvas de acumulação de espécies, nós precisamos extrapolar a curva até o ponto do eixo x que corresponde ao tamanho total da área. Estes métodos de estimação são baseados em diferentes premissas sobre como as espécies se acumulam além da área amostrada. Provavelmente um método vai ser mais preciso e uma situação, e outro em outra. 
 
-Vejamos as propriedades de alguns estimadores (para mais detalhes ver [Santos 2003](https://www.dropbox.com/s/8mzru9p4whvoo00/Santos_2003_Estimativas%20de%20riqueza%20em%20especies.pdf?dl=0):
+Vejamos as propriedades de alguns estimadores (para mais detalhes ver [Santos 2003](https://www.dropbox.com/s/8mzru9p4whvoo00/Santos_2003_Estimativas%20de%20riqueza%20em%20especies.pdf?dl=0) e [Provete et al. 2011)](https://cran.r-project.org/doc/contrib/Provete-Estatistica_aplicada.pdf):
 
 - **Jackniffe 1 e 2**: estimam a riqueza total somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
 
-- **Chao 1 e 2**: a riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (singletons), dividido pelo dobro do número de espécies com apenas dois indivíduos (doubletons). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (uniques e duplicates - chao 2).
+- **Chao 1 e 2**: estimadores baseados no número de espécies aras dentro de uma amostra. A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (singletons), dividido pelo dobro do número de espécies com apenas dois indivíduos (doubletons). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (uniques e duplicates - chao 2). Chao 1 requer dados de abundância das espécies, enquanto chao 2 trabalha com dados de presença/ausência. 
 
 - **Bootstrap**: se difere dos demais por utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. É calculada somando-se a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies. 
 
@@ -342,7 +342,8 @@ Renyi.3
 
 # Análises das diferenças na composição de espécies
 
-Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. Essa matriz de distância é a base para as análises multivariadas de composição de espécies que veremos em sequência, o PCA e o NMDS. 
+Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. Essa matriz de distância é a base para as análises multivariadas de ordenação de composição de espécies que veremos em sequência, o PCA e o NMDS. 
+É importante ressaltar que as análises multivariadas podem ser divididas em dois tipos: análise de agrupamento e ordenação. **Análises de agrupamento** em geral tentam agrupar objetos (observações) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. Por outro lado, a **análise de ordenação** é uma operação pela qual os objetos (ou descritores) são posicionados num espaço que contém menos dimensões que o conjunto de dados original; a posição dos objetos ou descritores em relação aos outros também podem ser usadas para agrupá-los. Não veremos as análises de agrupamento neste roteiro, mas as medidas de distância ecológica tratadas abaixo também se aplicam a estas análises.
 
 
 ## Distância Ecológica
@@ -421,12 +422,19 @@ Existem muitos outro métodos para calcular a distância ecológica entre o comu
 
 Os métodos de ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas. O resultado da ordenação é geralmente visualizado como um gráfico de duas dimensões. Nestes gráficos, cada local é apresentado e os locais próximos são interpetados como tendo composição de espécies similar, enquanto que locais afastados contém composição de espécies diferente.
 
-Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restringidos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies. Também veremos , um método restringido (_'constrained"_") que usa as variáveis ambientais para guiar a ordenação.  
+Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies. 
 
 
 ## Análise de componentes principais (PCA)
 
-A análise de componentes principais utiliza as distâncias euclidianas para investigar a distância ecológica entre os locais.  
+A análise de componentes principais (PCA) é principalmente usada para reduzir a dimensionalidade dos dados, e também verificar como as amostras se relacionam, ou seja, quão semelhante são segundo as variáveis utilizadas. O resultado prático é produzir um diagrama de ordenação que sintetize os dados, no qual os objetos mais próximos são mais semelhantes. Diferentemente de outras análises de ordenação, só é possível usar a distância euclidiana como coeficiente de similaridade na PCA. Logo, é mais recomendado usá-la para analisar variáveis ambientais ou medidas morfológicas.
+
+
+A APOSTILA UNESP FAZ PCA PARA DADOS DAS VARIAVEIS AMBIENTAIS
+
+O MANULA DO BIOD. FAZ PCA PARA DADOS DAS ESPECIES...
+
+
 
 Voltamos com os dados da vegetação de dunas e vamos calcular o PCA:
 ```{r}
