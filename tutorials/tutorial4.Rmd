@@ -1,5 +1,5 @@
 ---
-title: 'Roteiro 4 - Análises de Diversidade'
+title: 'Roteiro 4 - Análises de Comunidades'
 author: "Melina Leite"
 date: "Departamento de Ecologia IB-USP"
 output:
@@ -420,31 +420,214 @@ Existem muitos outro métodos para calcular a distância ecológica entre o comu
 
 ## Análise da distância ecológica por Ordenação
 
-Os métodos de ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas. O resultado da ordenação é geralmente visualizado como um gráfico de duas dimensões. Nestes gráficos, cada local é apresentado e os locais próximos são interpetados como tendo composição de espécies similar, enquanto que locais afastados contém composição de espécies diferente.
+Os métodos de ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas. O resultado da ordenação é geralmente visualizado como um gráfico de duas dimensões. Nestes gráficos, cada local é apresentado e os locais próximos são interpetados como tendo composição de espécies similar, enquanto que locais afastados contém composição de espécies diferente. Técnicas de ordenação são particularmente bem adaptadas para analisar dados de comunidades ecológicas, que estão geralmente estruturadas em gradientes (muitas vezes não percebidos pelos pesquisadores).
 
-Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies. 
+As análises de ordenação sempre seguem os mesmos passos:
+
+1. Os dados podem ser transformados e o tipo de transformação depende da questão formulada e análise a ser realizada.
+
+2. É construída uma matriz de associação das distâncias entre os objetos (locais no nosso caso).
+
+3. O "programa" então arranja os objeos ao longo de um ou mais eixos (usualmente dois eixos ou duas dimensões) que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas que causaram os padrões nos dados. 
+
+Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies (ou apenas na matriz de variáveis ambientais). 
+
+
+## Escalonamento multidimensional não paramétrico (NMDS)
+
+O escalonamento multidimensional não paramétrico (NMDS) pode ser considerado uma análise indireta de gradiente, ou seja, útil para abordar a questão se há padrões nos dados.
+
+Se a prioridade do pesquisador é representar tão bem quanto possível a relação ordenada entre os objetos (locais) e um número pequeno de eixos, o NMDS pode ser a solução. O NMDS pode produzir a ordenação de objetos de qualquer matriz de distâncias. 
+
+Comecemos com um exemplo, temos uma tabela de dados com as abundâncias das espécies em 12 locais. Estes dados foram criados para que haja uma relação entre as espécies e a precipitação de cada local propositalmente. Entretanto, vamos fingir que não sabemos da existência desse gradiente de precipitação que está estruturando as comunidades e ver se o NMDS é capaz de capturar este padrão nos dados.
+```{r}
+tab <- matrix(c(9,0,0,0,4,0,8,6,2,0,0,10,
+              1,1,0,2,0,1,0,0,0,2,0,0,
+              0,0,0,1,0,0,0,0,2,1,4,0,
+              0,0,0,1,0,0,0,0,2,1,4,0,
+              0,0,4,0,6,0,7,3,3,0,1,1,
+              0,1,0,2,0,0,0,0,1,1,0,0),
+              nrow=12)
+colnames(tab) <- c("spA", "spB", "spC", "spD", "spE","spF")
+tab
+
+# dados de precipitação
+prec <- c(270, 315, 200, 255, 190, 290, 150, 125, 230, 290, 240, 100)
+```
+
+Então o objetivo de nossa nálise é descrever o padrão apresentado pelas seis espécies, em menos dimensões do que a tabela de dados (lógico!). Lembremos que cada espécie representa uma dimensão. Como sabemos que existe um gradiente de chuva, vamos fazer uma ordenação dos "objetos" que em nossa análise são os locais, em relação aos "atributos", as espécies.
+
+Vamos utilizar a matriz de distância de bray-curtis como medida de associação entre os locais, esta nos dará a informação de quão distante cada local está dos outros em relação à composição de espécies.
+
+```{r}
+distmatrix <- vegdist(tab, method = 'bray')
+```
+
+Vamos agora usar a análise de NMDS para ordernar os locais ao longo de um único eixo, de forma tal que, tanto quanto possível, as distâncias entre os locais ao longo do eixo sejam proporcionais às distâncias da nossa matriz de distâncias. O computador vai usar uma matemática complicada para reordenar os locais e verificar o quanto as distâncias entre eles ficaram proporcionais às da matriz de distâncias. Em seguida ele vai re-arranjar os pontos e verificar se o resultado melhorou, até que não possa chegar mais perto das proporções originais. 
+
+Vamos fazer o NMDS no R (pacote `BidiversityR`) escolhendo duas dimensões (podemos escolher o número de dimensões pretendido), pois a princípio não sabemos que nossos dados tem apenas um padrão de gradiente (precipitação, uma dimensão).
+
+```{r}
+initNMS <- NMSrandom(distmatrix, perm=100, k=2)
+model1 <- postMDS(initNMS, distmatrix)
+
+# adicionando os escores das espécies no modelo 
+model1 <- add.spec.scores(model1, tab, method='wa.scores')
+# permite colocar a ordenação das espécies no mesmo gráfico
+
+model1$stress
+#esses valor de stress está em % porcentagem
+
+
+#plotando o NMDS
+plot5 <- ordiplot(spe, type='text')
+```
+
+Vejamos o plot do NMDS com os dados de precipitação categorizados (A - alta; B - baixa), para visualisarmos se o eixo MDS1 (primeira dimensão do NMDS) foi capaz de capturar esse padrão:
+
+```{r}
+# categorizando os dados de precipitação 
+prec.cat <- c("A","A","B","A","B","A",
+              "B","B","B","A","A","B")
+
+plot6 <- ordiplot(model1, type='none')
+text(x=model1$points[,1], y=model1$points[,2],
+     labels=prec.cat)
+text(x=model1$cproj[,1], y=model1$cproj[,2],
+     labels=colnames(tab), col='red' )
+```
+
+Parece que o MDS1 foi capaz de representar bem a precipitação, embora nenhuma observação direta da chuva tenha sido usada na ordenação. A análise fez isso usando somente as distâncias (ou dissimilaridades) entre os locais em termos de abundância de espécies. 
+
+Se colocarmos em um gráfico o gradiente verdadeiro (precipitação) contra o gradiente predito pela análise NMDS, veremos que o eixo hipotético conseguiu predizer cerca de 67% (R² da regressão) da variação da precipitação.
+
+```{r}
+m<-lm(prec~model1$points[,1])
+summary(m)
+
+plot(x=model1$points[,1], y=prec)
+abline(m, col='red')
+```
+
+É importante dizer que em análises de NMDS é muito raro que um padrão possa ser discernível em mais do que duas dimensões, e permanecer com muitas dimensões contraria o propósito primário da análise, que é reduzir a dimensionalidade. Frequentemente se diz que os eixos de NMDS não têm interpretação lógica, e por isso podemos girar os eixos para qualquer posição no plano dos dados, sem mudar a distância relativa entre os pontos. Usando a função `postMDS`, nós giramos os eixos para obter a maior correlação entre as variáveis originais e o primeiro eixo MDS1. O gradiente de precipitação nesta imagem (`plot5`)  parece correr como uma diagonal através do espaço bidimensional determinado pelos eixos MDS. 
+
+O **STRESS** (Standard Residuals Sum of Squares) reportado nas análsies é uma medida do quanto as posições de objetos e uma configuração tridimensional desviam-se das distâncias originais (a matriz de distâncias). O valor de stress é dado em porcentagem e dependendo da função usada pode ir de 0 - 100 ou 0 - 1. Logo, o stress pode ser usado como uma medida de quão adequada a análise é. Uma regra geral sugere que:
+
+- stress < 0.05 representação excelente;
+
+- stress <0.01 boa ordenação
+
+- stress < 0.2 ordenação razoável
+
+- stress >0.02 ordenação inviável (interpretação pode ficar comprometida)
+
+Uma outra maneira de acessar a adequação da análise é comaprar as distâncias entre objetos na ordenação com as distâncias originais, chamado de _Shepard diagram_. Usando a função `stressplot` nós obtemos o gráfico e o ajuste à ordenação medido em R² tanto para uma regressão linear quanto para não linear das distâncias do NMDS para as distâncias originais.
+
+```{r}
+# NMDS usando as funções do pacote vegan
+spe <- metaMDS(tab, distance = 'bray',k=2)
+spe
+
+spe$stress
+# esse valor de stress está entre 0 e 1
+
+plot6 <- ordiplot(spe, type='text')
+
+# Shepard diagram
+stressplot(spe)
+```
 
 
 ## Análise de componentes principais (PCA)
 
-A análise de componentes principais (PCA) é principalmente usada para reduzir a dimensionalidade dos dados, e também verificar como as amostras se relacionam, ou seja, quão semelhante são segundo as variáveis utilizadas. O resultado prático é produzir um diagrama de ordenação que sintetize os dados, no qual os objetos mais próximos são mais semelhantes. Diferentemente de outras análises de ordenação, só é possível usar a distância euclidiana como coeficiente de similaridade na PCA. Logo, é mais recomendado usá-la para analisar variáveis ambientais ou medidas morfológicas.
+A análise de componentes principais (PCA) é principalmente usada para reduzir a dimensionalidade dos dados, e também verificar como as amostras se relacionam, ou seja, quão semelhante são segundo as variáveis utilizadas. O resultado prático é produzir um diagrama de ordenação que sintetize os dados, no qual os objetos mais próximos são mais semelhantes. Diferentemente de outras análises de ordenação, só é possível usar a distância euclidiana como coeficiente de similaridade na PCA. 
+
+A principal aplicação do PCA em ecologia é a ordenação dos locais com base nas variáveis ambientais quantitativas. Embora a PCA tenha um longo histórico de método para analisar variáveis ambientais, a recente introduçao dos dados de espécies pré-transformados permitiram usar esta técnica para análise de dados da comunidade.
+
+A PCA tem como principal vantagem retirar a multicolinearidade das variáveis, pois permite transformar um conjunto de variáveis originais intercorrelacionadas em um novo conjunto de variáveis não correlacionadas (os componentes principais). 
 
 
-A APOSTILA UNESP FAZ PCA PARA DADOS DAS VARIAVEIS AMBIENTAIS
+Veremo adiante como fazer e como interpretar os resutaldos da PCA aplicada tanto para a matriz das variáveis ambientais quanto de espécies. 
 
-O MANULA DO BIOD. FAZ PCA PARA DADOS DAS ESPECIES...
+O primeiro passo é extrair a matriz de distância euclidiana dos dados, mas se os dados estiverem em escalas/unidades diferentes precisamos primeiro padronizá-los. Ou seja, o PCA deve ser computado em uma tabela de variáveis dimensionalmente homogêneas. A razão apra isso é que é a soma das variâncais que são particionadas nos autovalores (veja abaixo significado). Assim, as variáveis precisam estar na mesma unidade física para produzir uma soma de variâncias com significado, ou então os dados devem estar sem dimensão, qu eé o caso da padronização das variáveis.
+
+Antes de partir para as análises vejamos alguns conceitos importantes:
+
+- **Combinações lineares**: equação que agrupa as diferentes variáveis, como em uma regressão múltipla.
+
+- **Componentes principais**: são as combinações lineares das variáveis, eixos ortogonais (independentes) que resumem (explicam) a variação dos objetos, e como tal podem ser consideradas como “novas” variáveis e usadas em análises posteriores. O número de componentes principais é igual ao número de variáveis. O primeiro componente principal resume a maior variação dos dados, o segundo, a segunda direção de maior variação dos dados e asim por diante.
+
+- **Autovalores (eigenvalues)**: esses valores representam a medida de importância (variância) dos componentes principais (eixos) e traz a porcentagem de explicação de cada eixo. O número de autovalores é o mesmo do número de variáveis. Os autovalores serão maiores para aquelas variáveis que forem mais importantes na formação do eixo.
+
+- **Autovetores (eigenvectors)**: o mesmo que **Loading**, ou seja, coeficientes de combinação linear. Os autovetores são os eixos principais de dispersão da matriz e medem a importância de uma variável em cada eixo. Desse modo, representam o peso de uma variável para a construção de um eixo e variam de -1 a 1 (correlação de Pearson).
+
+- **Escores (Z1, Z2, Zn)**: posição das unidades amostrais ao longo de um eixo de ordenação, pode se referir tanto à unidades mostrais quanto à variáveis. Escores são fornecidos pela substituição dos valores assumidos pelas variáveis originais nas combinações lineares. São utilizados para ordenar as unidades amostrais em um diagrama uni, bi ou tridimensional.
+
+- **Inércia**: a soma de todas as correlações das variáveis com elas mesmas, mede a quantidade de variância total que é explicada por um eixo.
+
+- **Loadings (coeficiente de estrutura)**: correlação de Pearson entre os escores e as variáveis.
 
 
-
-Voltamos com os dados da vegetação de dunas e vamos calcular o PCA:
+Vamos utilizar os dados de abundância de peixes e das variáveis ambientais em 30 pontos no rio Doubs (Europa). A matriz de peixes possuim 27 espécies e a de variáveis ambientais por local 11 variáveis. 
+```{r, echo=F}
+spe <- read.csv("../data/DoubsSpe.csv", row.names=1)
+env <- read.csv("../data/DoubsEnv.csv", row.names=1)
+```
 ```{r}
-pca1 <- rda(dune)
-summary(pca1)
-
-plot1 <- ordiplot(pca1, scaling=1, type="text")
-plot2 <- ordiplot(pca1, scaling=2, type="text")
+spe <- read.csv("DoubsSpe.csv", row.names=1)
+env <- read.csv("DoubsEnv.csv", row.names=1)
 ```
 
+Existem diversas funções que fazem PCA no R, neste exemplo vamos utiliza a função `rda` (e outras acessórias) do `vegan`.
+
+Vamos começar fazendo uma PCA para a matriz de variáveis ambientais:
+
+```{r}
+pca1 <- rda(env, scale=TRUE)
+# o argumento scale=T padroniza os dados antes de fazer a análise
+
+summary(pca1)
+```
+
+Alguns vocabulários extra do `summary`:
+
+- **Species scores**: coordenadas das pontas das setas das variáveis. Por razões históricas, as variáveis resposta são sempre chamadas de 'species' no `vegan` , não importando o que representam (nesse caso as variáeis ambientais).
+
+- **Site scores**: coordenadas dos locais no diagrama de ordenação. Os objetos são sempre chamados de 'sites' no `vegan`, e nesse caso são os locais mesmo (mas poderiam ser outras coisas).
+
+#### Os autovalores
+
+O próximo passo é selecionar quais são os eixos que foram os mais importantes, ou seja, aquele que resumem a maior quantitade de variação dos dados. A decisão pode ser arbitrária, por exemplo interpretar o número de eixos necessários para representar 75% da variação dos dados, ou seguindo algum método mais objetivo. Existem diversos métodos, porém vamos focar no chamado _Broken Stick_ que sugere considerar apenas os eixoes maiores que o valor predito pelo modelo de Broken Stick. Este modelo divide aleatoriamente um "bastão" em tantos pedaços quanto eixos do PCA, e depois ordena os pedaços em comprimente decrescente. Vejamos como fazer:
+
+```{r}
+screeplot(pca1)
+points(bstick(pca1), col="red", type='o')
+
+# também compara os eixos com o bstick
+PCAsignificance(pca1) # pacote BidiversityR
+```
+
+Usando o método do Broken Stick para decidir quantos eixos são importantes, escolhemos os dois primeiros, que acumulam cerca de 75% da variabilidade dos dados. 
+
+#### plotando os resultados da PCA
+
+Existem duas escalas usadas para plotar os gráficos da PCA:
+- escala 1 (_scaling 1_): ótima para observar as relações entre os objetos (locais). As distâncias entre os objetos no biplot são aproximações das distâncias euclidianas no espaço multidimensional.
+
+- escala 2 (_scaling 2_) ótima para observar as relações entre as variáveis. Os ângulos entre as variáveis no biplot reflete suas correlações. 
+
+```{r}
+pcplot1 <- biplot(pca1, scaling=1, type="text")
+pcplot2 <- biplot(pca1, scaling=2)
+
+pcplot1 <- ordiplot(pca1, scaling=1, type="text")
+ordiequilibriumcircle(pca1, pcplot1 , col='red')
+```
+
+**OBS**: uma outra forma de fazer os plots acima em um só comando é usando a função `cleanplot.pca` disponível nesse [arquivo](https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0). Baixe o arquivo e coloque ele na pasta da sua área de trabalho:
+```{r}
+cleanplot.pca(pca1)
+```
 
 
 
@@ -479,16 +662,6 @@ ordiequilibriumcircle(pca1,plot1)
 
 
 
-## Escalonamento multidimensional não paramétrico (NMDS)
-
-```{r}
-distmatrix <- vegdist(dune, method = 'bray')
-initNMS <- NMSrandom(distmatrix, perm=100, k=2)
-model1 <- postMDS(initNMS, distmatrix)
-model1 <- add.spec.scores(model1, dune, method='wa.scores')
-model1
-plot5 <- ordiplot(model1)
-```
 
 
 # Material Extra:

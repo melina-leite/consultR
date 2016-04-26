@@ -94,8 +94,9 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
       </ul></li>
       <li><a href="#analises-das-diferencas-na-composicao-de-especies">Análises das diferenças na composição de espécies</a><ul>
       <li><a href="#distancia-ecologica">Distância Ecológica</a></li>
-      <li><a href="#analise-de-componentes-principais-pca">Análise de componentes principais (PCA)</a></li>
+      <li><a href="#analise-da-distancia-ecologica-por-ordenacao">Análise da distância ecológica por Ordenação</a></li>
       <li><a href="#escalonamento-multidimensional-nao-parametrico-nmds">Escalonamento multidimensional não paramétrico (NMDS)</a></li>
+      <li><a href="#analise-de-componentes-principais-pca">Análise de componentes principais (PCA)</a></li>
       </ul></li>
       <li><a href="#material-extra">Material Extra:</a></li>
       </ul>  
@@ -185,10 +186,10 @@ Accum<span class="fl">.6</span></code></pre></div>
 <h2>Estimando o número total de espécies da área</h2>
 <p>Na maioria das situações, nós registramos o número de espécies de uma quantitade de locais que não cobre toda a área que estamos interessados. Nós não saberemos a composição de espécies das áreas que não amostramos.</p>
 <p>Diversas fórmulas já foram desenvolvidas para estimar o número total de espécies de uma área. Em termo de curvas de acumulação de espécies, nós precisamos extrapolar a curva até o ponto do eixo x que corresponde ao tamanho total da área. Estes métodos de estimação são baseados em diferentes premissas sobre como as espécies se acumulam além da área amostrada. Provavelmente um método vai ser mais preciso e uma situação, e outro em outra.</p>
-<p>Vejamos as propriedades de alguns estimadores (para mais detalhes ver <a href="https://www.dropbox.com/s/8mzru9p4whvoo00/Santos_2003_Estimativas%20de%20riqueza%20em%20especies.pdf?dl=0">Santos 2003</a>:</p>
+<p>Vejamos as propriedades de alguns estimadores (para mais detalhes ver <a href="https://www.dropbox.com/s/8mzru9p4whvoo00/Santos_2003_Estimativas%20de%20riqueza%20em%20especies.pdf?dl=0">Santos 2003</a> e <a href="https://cran.r-project.org/doc/contrib/Provete-Estatistica_aplicada.pdf">Provete et al. 2011)</a>:</p>
 <ul>
 <li><p><strong>Jackniffe 1 e 2</strong>: estimam a riqueza total somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara.</p></li>
-<li><p><strong>Chao 1 e 2</strong>: a riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (singletons), dividido pelo dobro do número de espécies com apenas dois indivíduos (doubletons). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (uniques e duplicates - chao 2).</p></li>
+<li><p><strong>Chao 1 e 2</strong>: estimadores baseados no número de espécies aras dentro de uma amostra. A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (singletons), dividido pelo dobro do número de espécies com apenas dois indivíduos (doubletons). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (uniques e duplicates - chao 2). Chao 1 requer dados de abundância das espécies, enquanto chao 2 trabalha com dados de presença/ausência.</p></li>
 <li><p><strong>Bootstrap</strong>: se difere dos demais por utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. É calculada somando-se a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies.</p></li>
 </ul>
 <p>Se queremos fazer esta extrapolação, então a melhor abordagem é reportar a variação nos valores obtidos com os diferentes métodos e esperar que o valor total correto esteja dentro desse intervalo.</p>
@@ -306,25 +307,161 @@ Renyi<span class="fl">.3</span></code></pre></div>
 </div>
 <div id="analises-das-diferencas-na-composicao-de-especies" class="section level1">
 <h1>Análises das diferenças na composição de espécies</h1>
-<p>Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais.</p>
+<p>Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. Essa matriz de distância é a base para as análises multivariadas de ordenação de composição de espécies que veremos em sequência, o PCA e o NMDS. É importante ressaltar que as análises multivariadas podem ser divididas em dois tipos: análise de agrupamento e ordenação. <strong>Análises de agrupamento</strong> em geral tentam agrupar objetos (observações) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. Por outro lado, a <strong>análise de ordenação</strong> é uma operação pela qual os objetos (ou descritores) são posicionados num espaço que contém menos dimensões que o conjunto de dados original; a posição dos objetos ou descritores em relação aos outros também podem ser usadas para agrupá-los. Não veremos as análises de agrupamento neste roteiro, mas as medidas de distância ecológica tratadas abaixo também se aplicam a estas análises.</p>
 <div id="distancia-ecologica" class="section level2">
 <h2>Distância Ecológica</h2>
-<p>Uma boa medida de distância ecológica descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena. Existe na literatura uma grande variedade de distâncias, apresentamos aqui as mais utilizadas para dados ecológicos.</p>
+<p>Uma boa medida de distância ecológica entre comunidades (locais) descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena. Existe na literatura uma grande variedade de métodos para calcular estas distâncias, apresentamos aqui as mais utilizadas para dados ecológicos.</p>
 <div id="distancia-euclidiana" class="section level3">
 <h3>Distância Euclidiana</h3>
 <p>A distância euclidiana é calculada usando cada espécie como um eixo diferente em um gráfico (número de dimensões igual à riqueza total). Os locais são plotados neste gráfico multidimensional para que as distâncias entre os locais sejam calculadas.</p>
 <p>A distância euclidiana não é uma boa distância ecológica para dados brutos da matriz de espécie - com as abundâncias de cada espécie em cada local. Portanto, o que se recomenda é transformar a matriz de espécies, por exemplo padronizando os dados antes de calcular as distâncias.</p>
+<p>Vejamos o seguinte exemplo:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># matriz de espécies por locais</span>
+mat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">dimnames =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;C&quot;</span>), <span class="kw">c</span>(<span class="st">&quot;sp1&quot;</span>,<span class="st">&quot;sp2&quot;</span>,<span class="st">&quot;sp3&quot;</span>)))
+
+<span class="co">#vendo a matriz de distância entre os locais</span>
+<span class="kw">dist</span>(mat, <span class="dt">method =</span> <span class="st">&quot;euclidean&quot;</span>)
+
+<span class="co">#usando pacote vegan que contém mais métodos de distância</span>
+<span class="kw">vegdist</span>(mat, <span class="dt">method=</span><span class="st">&quot;euclidean&quot;</span>)</code></pre></div>
+<p>Plotando o gráfico 3D com as espécies nos eixos podemos ver as distâncias euclidianas entre os locais:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">scatter3D</span>(<span class="dt">x =</span> mat[,<span class="dv">1</span>], <span class="dt">y =</span> mat[,<span class="dv">2</span>], <span class="dt">z =</span> mat[,<span class="dv">3</span>], 
+          <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">6</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">6</span>), <span class="dt">zlim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">4</span>),
+          <span class="dt">xlab =</span> <span class="st">&quot;sp1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;sp2&quot;</span>, <span class="dt">zlab =</span> <span class="st">&quot;sp3&quot;</span>, 
+          <span class="dt">colkey =</span> F, <span class="dt">ticktype =</span> <span class="st">&quot;detailed&quot;</span>, <span class="dt">phi =</span> <span class="dv">10</span>, 
+          <span class="dt">pch =</span> <span class="dv">16</span>, <span class="dt">cex=</span><span class="dv">2</span>)
+
+<span class="kw">text3D</span>(<span class="dt">x =</span> mat[ , <span class="dv">1</span>] +<span class="st"> </span><span class="fl">0.2</span>, <span class="dt">y =</span> mat[ , <span class="dv">2</span>] +<span class="st"> </span><span class="fl">0.2</span>, 
+       <span class="dt">z =</span> mat[ , <span class="dv">3</span>] +<span class="st"> </span><span class="fl">0.3</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>), <span class="dt">add =</span> T)
+
+<span class="kw">lines3D</span>(mat [ , <span class="dv">1</span>], mat[ , <span class="dv">2</span>], mat[ , <span class="dv">3</span>], <span class="dt">add =</span> T, <span class="dt">colkey =</span> F)
+<span class="kw">lines3D</span>(mat[-<span class="dv">2</span>,<span class="dv">1</span>], mat[-<span class="dv">2</span>, <span class="dv">2</span>], mat[-<span class="dv">2</span>, <span class="dv">3</span>], <span class="dt">add =</span> T, <span class="dt">colkey =</span> F)</code></pre></div>
+<p>Vemos aqui que a distância euclidiana dos dados brutos não foi capaz de descrever as distâncias ecológicas muito bem. Vemos que os locais A e B tem as mesmas espécies (mas com abundâncias diferentes), enquanto que o local C tem uma espécie diferente. A distância euclidiana depende muito das abundâncias em de cada espécie e não apenas das espécies que são compartilhadas. A e B, que compartilham as mesmas espécies, estão distantes pela distância euclidiana porque o local A tem 2 indivíduos e o local B tem 10.</p>
+<p>Embora a distância euclidiana não seja tão boa para investigar como as espécies são compartilhdas entre os locais, ela ainda é usada em algumas técnicas de ordenação e agrupamento. Uma das soluções para dar maior peso às diferenças na composição de espécies é calcular a proporção de espécies em cada local, ou seja, dividindo as abundâncias das espécies pela abundância total do local (cada linha). Outro método seria usar a matriz de presença-ausência.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#abundância total por local</span>
+abund.t &lt;-<span class="st"> </span><span class="kw">apply</span>(mat, <span class="dv">1</span>, sum)
+
+<span class="co">#matriz transformada para abundancias relativas</span>
+mat2 &lt;-<span class="st"> </span>mat /abund.t
+mat2
+
+<span class="co">#distância euclidiana</span>
+<span class="kw">dist</span>(mat2)</code></pre></div>
+<p>Com os dados transformados vemos que a distância entre o local A e B agora é zero, pois os locais tem as mesmas espécies em igual proporção.</p>
 </div>
 <div id="distancia-de-bray-curtis" class="section level3">
 <h3>Distância de Bray-Curtis</h3>
+<p>A distância de Bray-Curtis é muito utilizada em dados ecológicos e seus valores estão restritos entre 0 e 1. Quando a distância é zero, os dois locais são completamente similar. Quando é 1 eles são totalmente dissimilares, significando que os locais não possuem nenhuma espécie em comum.</p>
+<p>Vejamos as distância pra nossa matriz:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vegdist</span>(mat)</code></pre></div>
+<p>Podemos ver agora que a distância entre o local C e os locais A e B é 1, pois este local não compartilha nenhuma espécie com os demais locais.</p>
+<p>Existem muitos outro métodos para calcular a distância ecológica entre o comunidades e também formas de transformar os dados antes de calcular as distâncias, mas este não é o foco deste roteiro. Veja mais alguns exemplos no Capítulo 8 do manual do pacote <a href="http://www.worldagroforestry.org/downloads/Publications/PDFS/b13695.pdf">BiodiversityR</a>.</p>
 </div>
 </div>
-<div id="analise-de-componentes-principais-pca" class="section level2">
-<h2>Análise de componentes principais (PCA)</h2>
-<p>usa distância euclidiana</p>
+<div id="analise-da-distancia-ecologica-por-ordenacao" class="section level2">
+<h2>Análise da distância ecológica por Ordenação</h2>
+<p>Os métodos de ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas. O resultado da ordenação é geralmente visualizado como um gráfico de duas dimensões. Nestes gráficos, cada local é apresentado e os locais próximos são interpetados como tendo composição de espécies similar, enquanto que locais afastados contém composição de espécies diferente. Técnicas de ordenação são particularmente bem adaptadas para analisar dados de comunidades ecológicas, que estão geralmente estruturadas em gradientes (muitas vezes não percebidos pelos pesquisadores).</p>
+<p>As análises de ordenação sempre seguem os mesmos passos:</p>
+<ol style="list-style-type: decimal">
+<li><p>Os dados podem ser transformados e o tipo de transformação depende da questão formulada e análise a ser realizada.</p></li>
+<li><p>É construída uma matriz de associação das distâncias entre os objetos (locais no nosso caso).</p></li>
+<li><p>O “programa” então arranja os objeos ao longo de um ou mais eixos (usualmente dois eixos ou duas dimensões) que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas que causaram os padrões nos dados.</p></li>
+</ol>
+<p>Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (<em>‘unconstrained’</em> em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies (ou apenas na matriz de variáveis ambientais).</p>
 </div>
 <div id="escalonamento-multidimensional-nao-parametrico-nmds" class="section level2">
 <h2>Escalonamento multidimensional não paramétrico (NMDS)</h2>
+<p>O escalonamento multidimensional não paramétrico (NMDS) pode ser considerado uma análise indireta de gradiente, ou seja, útil para abordar a questão se há padrões nos dados.</p>
+<p>Se a prioridade do pesquisador é representar tão bem quanto possível a relação ordenada entre os objetos (locais) e um número pequeno de eixos, o NMDS pode ser a solução. O NMDS pode produzir a ordenação de objetos de qualquer matriz de distâncias.</p>
+<p>Comecemos com um exemplo, temos uma tabela de dados com as abundâncias das espécies em 12 locais. Estes dados foram criados para que haja uma relação entre as espécies e a precipitação de cada local propositalmente. Entretanto, vamos fingir que não sabemos da existência desse gradiente de precipitação que está estruturando as comunidades e ver se o NMDS é capaz de capturar este padrão nos dados.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tab &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">9</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">0</span>,<span class="dv">8</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">10</span>,
+              <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>,
+              <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">0</span>,
+              <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">0</span>,
+              <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">0</span>,<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">7</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,
+              <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>),
+              <span class="dt">nrow=</span><span class="dv">12</span>)
+<span class="kw">colnames</span>(tab) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;spA&quot;</span>, <span class="st">&quot;spB&quot;</span>, <span class="st">&quot;spC&quot;</span>, <span class="st">&quot;spD&quot;</span>, <span class="st">&quot;spE&quot;</span>,<span class="st">&quot;spF&quot;</span>)
+tab
+
+<span class="co"># dados de precipitação</span>
+prec &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">270</span>, <span class="dv">315</span>, <span class="dv">200</span>, <span class="dv">255</span>, <span class="dv">190</span>, <span class="dv">290</span>, <span class="dv">150</span>, <span class="dv">125</span>, <span class="dv">230</span>, <span class="dv">290</span>, <span class="dv">240</span>, <span class="dv">100</span>)</code></pre></div>
+<p>Então o objetivo de nossa nálise é descrever o padrão apresentado pelas seis espécies, em menos dimensões do que a tabela de dados (lógico!). Lembremos que cada espécie representa uma dimensão. Como sabemos que existe um gradiente de chuva, vamos fazer uma ordenação dos “objetos” que em nossa análise são os locais, em relação aos “atributos”, as espécies.</p>
+<p>Vamos utilizar a matriz de distância de bray-curtis como medida de associação entre os locais, esta nos dará a informação de quão distante cada local está dos outros em relação à composição de espécies.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">distmatrix &lt;-<span class="st"> </span><span class="kw">vegdist</span>(tab, <span class="dt">method =</span> <span class="st">'bray'</span>)</code></pre></div>
+<p>Vamos agora usar a análise de NMDS para ordernar os locais ao longo de um único eixo, de forma tal que, tanto quanto possível, as distâncias entre os locais ao longo do eixo sejam proporcionais às distâncias da nossa matriz de distâncias. O computador vai usar uma matemática complicada para reordenar os locais e verificar o quanto as distâncias entre eles ficaram proporcionais às da matriz de distâncias. Em seguida ele vai re-arranjar os pontos e verificar se o resultado melhorou, até que não possa chegar mais perto das proporções originais.</p>
+<p>Vamos fazer o NMDS no R (pacote <code>BidiversityR</code>) escolhendo duas dimensões (podemos escolher o número de dimensões pretendido), pois a princípio não sabemos que nossos dados tem apenas um padrão de gradiente (precipitação, uma dimensão).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">initNMS &lt;-<span class="st"> </span><span class="kw">NMSrandom</span>(distmatrix, <span class="dt">perm=</span><span class="dv">100</span>, <span class="dt">k=</span><span class="dv">2</span>)
+model1 &lt;-<span class="st"> </span><span class="kw">postMDS</span>(initNMS, distmatrix)
+
+<span class="co"># adicionando os escores das espécies no modelo </span>
+model1 &lt;-<span class="st"> </span><span class="kw">add.spec.scores</span>(model1, tab, <span class="dt">method=</span><span class="st">'wa.scores'</span>)
+<span class="co"># isso vai permitir colocar a ordenação das espécies (atributos) no mesmo gráfico</span>
+
+model1$stress
+<span class="co">#esses valor de stress está em % porcentagem</span>
+
+
+<span class="co">#plotando o NMDS</span>
+plot5 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(spe, <span class="dt">type=</span><span class="st">'text'</span>)</code></pre></div>
+<p>Vejamos o plot do NMDS com os dados de precipitação categorizados (A - alta; B - baixa), para visualisarmos se o eixo MDS1 (primeira dimensão do NMDS) foi capaz de capturar esse padrão:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># categorizando os dados de precipitação </span>
+prec.cat &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;A&quot;</span>,<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>)
+
+plot6 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(model1, <span class="dt">type=</span><span class="st">'none'</span>)
+<span class="kw">text</span>(<span class="dt">x=</span>model1$points[,<span class="dv">1</span>], <span class="dt">y=</span>model1$points[,<span class="dv">2</span>], <span class="dt">labels=</span>prec.cat)
+<span class="kw">text</span>(<span class="dt">x=</span>model1$cproj[,<span class="dv">1</span>], <span class="dt">y=</span>model1$cproj[,<span class="dv">2</span>], <span class="dt">labels=</span><span class="kw">colnames</span>(tab), <span class="dt">col=</span><span class="st">'red'</span> )</code></pre></div>
+<p>Parece que o MDS1 foi capaz de representar bem a precipitação, embora nenhuma observação direta da chuva tenha sido usada na ordenação. A análise fez isso usando somente as distâncias (ou dissimilaridades) entre os locais em termos de abundância de espécies.</p>
+<p>Se colocarmos em um gráfico o gradiente verdadeiro (precipitação) contra o gradiente predito pela análise NMDS, veremos que o eixo hipotético conseguiu predizer cerca de 67% (R² da regressão) da variação da precipitação.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m&lt;-<span class="kw">lm</span>(prec~model1$points[,<span class="dv">1</span>])
+<span class="kw">summary</span>(m)
+
+<span class="kw">plot</span>(<span class="dt">x=</span>model1$points[,<span class="dv">1</span>], <span class="dt">y=</span>prec)
+<span class="kw">abline</span>(m, <span class="dt">col=</span><span class="st">'red'</span>)</code></pre></div>
+<p>É importante dizer que em análises de NMDS é muito raro que um padrão possa ser discernível em mais do que duas dimensões, e permanecer com muitas dimensões contraria o propósito primário da análise, que é reduzir a dimensionalidade. Frequentemente se diz que os eixos de NMDS não têm interpretação lógica, e por isso podemos girar os eixos para qualquer posição no plano dos dados, sem mudar a distância relativa entre os pontos. Usando a função <code>postMDS</code>, nós giramos os eixos para obter a maior correlação entre as variáveis originais e o primeiro eixo MDS1. O gradiente de precipitação nesta imagem (<code>plot5</code>) parece correr como uma diagonal através do espaço bidimensional determinado pelos eixos MDS.</p>
+<p>O <strong>STRESS</strong> (Standard Residuals Sum of Squares) reportado nas análsies é uma medida do quanto as posições de objetos e uma configuração tridimensional desviam-se das distâncias originais (a matriz de distâncias). O valor de stress é dado em porcentagem e dependendo da função usada pode ir de 0 - 100 ou 0 - 1. Logo, o stress pode ser usado como uma medida de quão adequada a análise é. Uma regra geral sugere que:</p>
+<ul>
+<li><p>stress &lt; 0.05 representação excelente;</p></li>
+<li><p>stress &lt;0.01 boa ordenação</p></li>
+<li><p>stress &lt; 0.2 ordenação razoável</p></li>
+<li><p>stress &gt;0.02 ordenação inviável (interpretação pode ficar comprometida)</p></li>
+</ul>
+<p>Uma outra maneira de acessar a adequação da análise é comaprar as distâncias entre objetos na ordenação com as distâncias originais, chamado de <em>Shepard diagram</em>. Usando a função <code>stressplot</code> nós obtemos o gráfico e o ajuste à ordenação medido em R² tanto para uma regressão linear quanto para não linear das distâncias do NMDS para as distâncias originais.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># abaixo vai o código das mesmas análises usando as funções do pacote `vegan`</span>
+spe &lt;-<span class="st"> </span><span class="kw">metaMDS</span>(tab, <span class="dt">distance =</span> <span class="st">'bray'</span>,<span class="dt">k=</span><span class="dv">2</span>)
+spe
+
+spe$stress
+<span class="co"># esse valor de stress está entr 0 e 1</span>
+
+plot6 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(spe, <span class="dt">type=</span><span class="st">'text'</span>)
+
+<span class="co"># Shepard diagram</span>
+<span class="kw">stressplot</span>(spe)</code></pre></div>
+</div>
+<div id="analise-de-componentes-principais-pca" class="section level2">
+<h2>Análise de componentes principais (PCA)</h2>
+<p>A análise de componentes principais (PCA) é principalmente usada para reduzir a dimensionalidade dos dados, e também verificar como as amostras se relacionam, ou seja, quão semelhante são segundo as variáveis utilizadas. O resultado prático é produzir um diagrama de ordenação que sintetize os dados, no qual os objetos mais próximos são mais semelhantes. Diferentemente de outras análises de ordenação, só é possível usar a distância euclidiana como coeficiente de similaridade na PCA. Logo, é mais recomendado usá-la para analisar variáveis ambientais ou medidas morfológicas.</p>
+<p>A APOSTILA UNESP FAZ PCA PARA DADOS DAS VARIAVEIS AMBIENTAIS</p>
+<p>O MANULA DO BIOD. FAZ PCA PARA DADOS DAS ESPECIES…</p>
+<p>Voltamos com os dados da vegetação de dunas e vamos calcular o PCA:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pca1 &lt;-<span class="st"> </span><span class="kw">rda</span>(dune)
+<span class="kw">summary</span>(pca1)
+
+plot1 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(pca1, <span class="dt">scaling=</span><span class="dv">1</span>, <span class="dt">type=</span><span class="st">&quot;text&quot;</span>)
+plot2 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(pca1, <span class="dt">scaling=</span><span class="dv">2</span>, <span class="dt">type=</span><span class="st">&quot;text&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Calculating the variance of each species of the species matrix</span>
+<span class="kw">inertcomp</span>(pca1, <span class="dt">display=</span><span class="st">'species'</span>, <span class="dt">statistic=</span><span class="st">&quot;explained&quot;</span>, <span class="dt">proportional =</span> F)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Calculating the proportion of variance explained for an ordination graph</span>
+<span class="kw">goodness</span>(pca1, <span class="dt">display=</span><span class="st">'site'</span>, <span class="dt">choices =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">statistic =</span> <span class="st">'explained'</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Adding a vector and perpendicular lines for a particular species to an ordination plot</span>
+<span class="kw">ordivector</span>(plot1, <span class="st">&quot;Agrostol&quot;</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculating correlation among vectors</span>
+<span class="kw">cor.test</span>(dune[,<span class="st">&quot;Alopgeni&quot;</span>], dune[,<span class="st">&quot;Agrostol&quot;</span>])</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Calculating the number of ecological meaningful principal components</span>
+<span class="kw">PCAsignificance</span>(pca1, <span class="dt">axes=</span><span class="dv">30</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#drawing an equilibrium circle</span>
+<span class="kw">ordiequilibriumcircle</span>(pca1,plot1)</code></pre></div>
 </div>
 </div>
 <div id="material-extra" class="section level1">
