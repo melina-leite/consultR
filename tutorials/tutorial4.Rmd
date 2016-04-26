@@ -618,23 +618,63 @@ Existem duas escalas usadas para plotar os gráficos da PCA:
 
 ```{r}
 pcplot1 <- biplot(pca1, scaling=1, type="text")
-pcplot2 <- biplot(pca1, scaling=2)
+pcplot2 <- biplot(pca1, scaling=2, type="text")
 
 pcplot1 <- ordiplot(pca1, scaling=1, type="text")
 ordiequilibriumcircle(pca1, pcplot1 , col='red')
 ```
 
 **OBS**: uma outra forma de fazer os plots acima em um só comando é usando a função `cleanplot.pca` disponível nesse [arquivo](https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0). Baixe o arquivo e coloque ele na pasta da sua área de trabalho:
+```{r, echo=F}
+source("../data/cleanplot.pca.r")
+```
+
 ```{r}
+source("cleanplot.pca.r") # para carregar a função no seu workspace
+
 cleanplot.pca(pca1)
 ```
 
+Agora vamos interpretar os resultados. Primeiro a proporção de variância acumulada para os dois primeiro eixos é de 0.74 ou 74%. Este valor alto nos faz confiantes de que nossa interpretação do primeiro par de eixos extra a informação mais relevante dos dados. 
 
+No primeiro biplot, o _círculo da contribuição do equilíbrio_ significa um comprimento de vetor representando uma variável que contribuiria igualmente com todas as dimensões do PCA. As variáveis que tem vetore mais longos que o raio do círculo contribuem mais do que a média e podem ser interpretadas com segurança.
+
+O primeiro biplot mostra um gradiente da esquerda para a direita começando com um grupo formado pelos locais 1-10 que apresentam os maiore valores de altitude (alt) e inclinação (pen), e os menore valores em descarga do rio (deb), e distância da fonte (das) e dureza (dur). Podemos continuar a interpretação desse plot observando a formação de grupos de locais e quais variáveis ambientais estão relaciondas com estes. 
+
+O segundo biplot mostra que as variáveis também estão relacionadas em grupos. Por exemplo o canto inferior esquerdo mostra que a altitude e a inclinação são altamente e positivamente correlacionadas, e que estas duas são altamente negativamente correlacionadas com os vetores das variáveis que vão em direção oposta (deb, dur, das). Cabe observar que nitrato (nit) e pH tem setas praticamente ortogonais (ângulo de 90 graus) indicando uma correlação próxima à zero.
+
+Este exemplo mostra quão útil uma representação do biplot pode ser em sumarizar as características principais dos dados. Podemos ver agrupamentos e gradientes, assim com as correlações entre as variáveis. 
+
+### PCA nos dados de espécies tranformados
+
+A PCA, por ser um método que utiliza as distâncias euclidianas entre os locais, não é naturalmente adaptada à análise de dados de abundâncias de espécies. Entretanto, hoje em dia aplica-se a transformação dos dados para poder realizar a PCA. A pré-transormação assegura que os dados de espéies sejam tratados de acordo com sua especificidade, ou seja, sem dar importância indevida a espécies com zeros. Um exemplo de transformação muito utilizada é a transformação de _Hellinger_ antes de fazer as análises.
+
+Vejamos como fazer com os dados de abundâncias de peixes>
+```{r}
+# Transformando os dados
+spe.h <- decostand(spe, "hellinger")
+
+spe.h.pca <- rda(spe.h)
+
+summary(spe.h.pca)
+
+screeplot(spe.h.pca)
+points(bstick(spe.h.pca), col="red", type='o')
+
+cleanplot.pca(spe.h.pca)
+```
+
+Vemos aqui que as espécies não formam grupos claros como as variáveis ambientais. Vemos que 8 espécies estão contribuindo mais fortemente nos eixos 1 e 2 (as setas que estão para fora do círculo). O biplot 1 nos revela um gradiente por trás estruturando a comunidade, os locais são ordenados ao longo dos eixos de acordo com suas posições ao longo do gradiente. O biplot2 nos mostra a relação entre as espécies.  
+
+Cabe ressaltra que a PCA pode ser aplicado a dados binários de presença/ausência, sendo estes transformados pela transformação de Hellinger também.
 
 
 ```{r}
+ord.mod<-rda(dune)
+summary(ord.mod)
+ord.mod
 #Calculating the variance of each species of the species matrix
-inertcomp(pca1, display='species', statistic="explained", proportional = F)
+inertcomp(ord.mod, display='species', statistic="explained", proportional = F)
 ```
 
 ```{r}
@@ -643,7 +683,7 @@ goodness(pca1, display='site', choices = c(1:2), statistic = 'explained')
 ```
 ```{r}
 #Adding a vector and perpendicular lines for a particular species to an ordination plot
-ordivector(plot1, "Agrostol", lty=2)
+ordivector(pcplot1, "Agrostol", lty=2)
 ```
 
 ```{r}
@@ -674,3 +714,4 @@ ordiequilibriumcircle(pca1,plot1)
 
 - Roteiros sobre PCA no R, [aqui](http://www.dataperspective.info/2016/02/principal-component-analysis-using-r.html), [aqui](https://tgmstat.wordpress.com/2013/11/21/introduction-to-principal-component-analysis-pca/) e [aqui](https://tgmstat.wordpress.com/2013/11/28/computing-and-visualizing-pca-in-r/).
 
+- livro numerical ecology with R.
