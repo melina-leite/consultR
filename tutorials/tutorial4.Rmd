@@ -27,12 +27,20 @@ setwd("../consultR/tutorials")
 
 # Análises da riqueza de espécies
 
-Uma forma de caracterizar uma comunidade é simplesmente contar ou listar as espécies presentes. Parece um procedimento fácil e objetivo descrever e comparar comunidades por meio de suas 'riquezas' em espécies. Na prática, entretanto, isso é surpreendentemente difícil, porque em geral apenas um subamostra dos organismos em uma área pode ser contada. O número de espécies depende do número de amostrar obtidas, então quando devemos cessar a amostragem? Idealmente até que o número de espécies alcance um platô. A riqueza de espécies em diferentes comunidades deve ser comparada usando-se um mesmo tamanho de amostragem.
+Uma forma de caracterizar uma comunidade é simplesmente contar ou listar as espécies presentes. Parece um procedimento fácil e objetivo descrever e comparar comunidades por meio de suas riquezas em espécies. Na prática, entretanto, isso é surpreendentemente difícil, porque em geral apenas um subamostra dos organismos em uma área pode ser contada. Se o número de espécies depende do número de amostrar obtidas, então quando devemos cessar a amostragem? Idealmente até que o número de espécies alcance um platô. A riqueza de espécies em diferentes comunidades deve ser comparada usando-se um mesmo tamanho de amostragem. 
+
+Nesse roteiro abordaremos alguns tipos de análises realizados par entender os padrões de diversidade e composição das espécies em diferentes comunidades. O roteiro é útil para uma visão geral dos métodos mais comuns utilizados em ecologia e como são empregados no R, mas não pretende se aprofundar em nenhum destes métodos. Para entender mais de algum método específico, sugerimos buscar informações adicionais nos links de material extra no final do roteiro.
 
 
 ## Tabelas de dados
 
 Diferentes programas estatísticos requerem dados em diferentes formatos. Neste roteiro, iremos utilizar alguns pacotes (`BiodiversityR` e `vegan`) para análises de diversidade que requerem um formato específico para os dados de abundâncias de espécies (a matriz de espécies por local) e os dados de características ambientais dos locais (a matriz das variáveis de local).
+
+```{r}
+install.packages("vegan")
+install.package("BiodiversityR")
+```
+
 
 Para a matriz de espécies, colocamos os locais em linhas e as espécies nas colunas.
 
@@ -647,9 +655,9 @@ Este exemplo mostra quão útil uma representação do biplot pode ser em sumari
 
 ### PCA nos dados de espécies tranformados
 
-A PCA, por ser um método que utiliza as distâncias euclidianas entre os locais, não é naturalmente adaptada à análise de dados de abundâncias de espécies. Entretanto, hoje em dia aplica-se a transformação dos dados para poder realizar a PCA. A pré-transormação assegura que os dados de espéies sejam tratados de acordo com sua especificidade, ou seja, sem dar importância indevida a espécies com zeros. Um exemplo de transformação muito utilizada é a transformação de _Hellinger_ antes de fazer as análises.
+A PCA, por ser um método que utiliza as distâncias euclidianas entre os locais, não é naturalmente adaptada à análise de dados de abundâncias de espécies. Entretanto, hoje em dia aplica-se a transformação dos dados para poder realizar a PCA. A pré-transormação assegura que os dados de espéies sejam tratados de acordo com sua especificidade, ou seja, sem dar importância indevida a espécies com zeros. Um exemplo de transformação muito utilizada é a transformação de _Hellinger_ (que é o mesmo que usar as distâncias de Hellinger) antes de fazer as análises.
 
-Vejamos como fazer com os dados de abundâncias de peixes>
+Vejamos como fazer com os dados de abundâncias de peixes.
 ```{r}
 # Transformando os dados
 spe.h <- decostand(spe, "hellinger")
@@ -667,41 +675,6 @@ cleanplot.pca(spe.h.pca)
 Vemos aqui que as espécies não formam grupos claros como as variáveis ambientais. Vemos que 8 espécies estão contribuindo mais fortemente nos eixos 1 e 2 (as setas que estão para fora do círculo). O biplot 1 nos revela um gradiente por trás estruturando a comunidade, os locais são ordenados ao longo dos eixos de acordo com suas posições ao longo do gradiente. O biplot2 nos mostra a relação entre as espécies.  
 
 Cabe ressaltra que a PCA pode ser aplicado a dados binários de presença/ausência, sendo estes transformados pela transformação de Hellinger também.
-
-
-```{r}
-ord.mod<-rda(dune)
-summary(ord.mod)
-ord.mod
-#Calculating the variance of each species of the species matrix
-inertcomp(ord.mod, display='species', statistic="explained", proportional = F)
-```
-
-```{r}
-#Calculating the proportion of variance explained for an ordination graph
-goodness(pca1, display='site', choices = c(1:2), statistic = 'explained')
-```
-```{r}
-#Adding a vector and perpendicular lines for a particular species to an ordination plot
-ordivector(pcplot1, "Agrostol", lty=2)
-```
-
-```{r}
-# Calculating correlation among vectors
-cor.test(dune[,"Alopgeni"], dune[,"Agrostol"])
-```
-
-```{r}
-#Calculating the number of ecological meaningful principal components
-PCAsignificance(pca1, axes=30)
-```
-```{r}
-#drawing an equilibrium circle
-ordiequilibriumcircle(pca1,plot1)
-```
-
-
-
 
 
 # Material Extra:

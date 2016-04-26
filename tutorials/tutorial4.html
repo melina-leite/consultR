@@ -495,20 +495,32 @@ pcplot2 &lt;-<span class="st"> </span><span class="kw">biplot</span>(pca1, <span
 pcplot1 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(pca1, <span class="dt">scaling=</span><span class="dv">1</span>, <span class="dt">type=</span><span class="st">&quot;text&quot;</span>)
 <span class="kw">ordiequilibriumcircle</span>(pca1, pcplot1 , <span class="dt">col=</span><span class="st">'red'</span>)</code></pre></div>
 <p><strong>OBS</strong>: uma outra forma de fazer os plots acima em um só comando é usando a função <code>cleanplot.pca</code> disponível nesse <a href="https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0">arquivo</a>. Baixe o arquivo e coloque ele na pasta da sua área de trabalho:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;cleanplot.pca.r&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;cleanplot.pca.r&quot;</span>) <span class="co"># para carregar a função no seu workspace</span>
+
 <span class="kw">cleanplot.pca</span>(pca1)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Calculating the variance of each species of the species matrix</span>
-<span class="kw">inertcomp</span>(pca1, <span class="dt">display=</span><span class="st">'species'</span>, <span class="dt">statistic=</span><span class="st">&quot;explained&quot;</span>, <span class="dt">proportional =</span> F)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Calculating the proportion of variance explained for an ordination graph</span>
-<span class="kw">goodness</span>(pca1, <span class="dt">display=</span><span class="st">'site'</span>, <span class="dt">choices =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">statistic =</span> <span class="st">'explained'</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Adding a vector and perpendicular lines for a particular species to an ordination plot</span>
-<span class="kw">ordivector</span>(plot1, <span class="st">&quot;Agrostol&quot;</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculating correlation among vectors</span>
-<span class="kw">cor.test</span>(dune[,<span class="st">&quot;Alopgeni&quot;</span>], dune[,<span class="st">&quot;Agrostol&quot;</span>])</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Calculating the number of ecological meaningful principal components</span>
-<span class="kw">PCAsignificance</span>(pca1, <span class="dt">axes=</span><span class="dv">30</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#drawing an equilibrium circle</span>
-<span class="kw">ordiequilibriumcircle</span>(pca1,plot1)</code></pre></div>
+<p>Agora vamos interpretar os resultados. Primeiro a proporção de variância acumulada para os dois primeiro eixos é de 0.74 ou 74%. Este valor alto nos faz confiantes de que nossa interpretação do primeiro par de eixos extra a informação mais relevante dos dados.</p>
+<p>No primeiro biplot, o <em>círculo da contribuição do equilíbrio</em> significa um comprimento de vetor representando uma variável que contribuiria igualmente com todas as dimensões do PCA. As variáveis que tem vetore mais longos que o raio do círculo contribuem mais do que a média e podem ser interpretadas com segurança.</p>
+<p>O primeiro biplot mostra um gradiente da esquerda para a direita começando com um grupo formado pelos locais 1-10 que apresentam os maiore valores de altitude (alt) e inclinação (pen), e os menore valores em descarga do rio (deb), e distância da fonte (das) e dureza (dur). Podemos continuar a interpretação desse plot observando a formação de grupos de locais e quais variáveis ambientais estão relaciondas com estes.</p>
+<p>O segundo biplot mostra que as variáveis também estão relacionadas em grupos. Por exemplo o canto inferior esquerdo mostra que a altitude e a inclinação são altamente e positivamente correlacionadas, e que estas duas são altamente negativamente correlacionadas com os vetores das variáveis que vão em direção oposta (deb, dur, das). Cabe observar que nitrato (nit) e pH tem setas praticamente ortogonais (ângulo de 90 graus) indicando uma correlação próxima à zero.</p>
+<p>Este exemplo mostra quão útil uma representação do biplot pode ser em sumarizar as características principais dos dados. Podemos ver agrupamentos e gradientes, assim com as correlações entre as variáveis.</p>
+</div>
+<div id="pca-nos-dados-de-especies-tranformados" class="section level3">
+<h3>PCA nos dados de espécies tranformados</h3>
+<p>A PCA, por ser um método que utiliza as distâncias euclidianas entre os locais, não é naturalmente adaptada à análise de dados de abundâncias de espécies. Entretanto, hoje em dia aplica-se a transformação dos dados para poder realizar a PCA. A pré-transormação assegura que os dados de espéies sejam tratados de acordo com sua especificidade, ou seja, sem dar importância indevida a espécies com zeros. Um exemplo de transformação muito utilizada é a transformação de <em>Hellinger</em> (que é o mesmo que usar as distâncias de Hellinger) antes de fazer as análises.</p>
+<p>Vejamos como fazer com os dados de abundâncias de peixes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Transformando os dados</span>
+spe.h &lt;-<span class="st"> </span><span class="kw">decostand</span>(spe, <span class="st">&quot;hellinger&quot;</span>)
+
+spe.h.pca &lt;-<span class="st"> </span><span class="kw">rda</span>(spe.h)
+
+<span class="kw">summary</span>(spe.h.pca)
+
+<span class="kw">screeplot</span>(spe.h.pca)
+<span class="kw">points</span>(<span class="kw">bstick</span>(spe.h.pca), <span class="dt">col=</span><span class="st">&quot;red&quot;</span>, <span class="dt">type=</span><span class="st">'o'</span>)
+
+<span class="kw">cleanplot.pca</span>(spe.h.pca)</code></pre></div>
+<p>Vemos aqui que as espécies não formam grupos claros como as variáveis ambientais. Vemos que 8 espécies estão contribuindo mais fortemente nos eixos 1 e 2 (as setas que estão para fora do círculo). O biplot 1 nos revela um gradiente por trás estruturando a comunidade, os locais são ordenados ao longo dos eixos de acordo com suas posições ao longo do gradiente. O biplot2 nos mostra a relação entre as espécies.</p>
+<p>Cabe ressaltra que a PCA pode ser aplicado a dados binários de presença/ausência, sendo estes transformados pela transformação de Hellinger também.</p>
 </div>
 </div>
 </div>
@@ -519,6 +531,7 @@ pcplot1 &lt;-<span class="st"> </span><span class="kw">ordiplot</span>(pca1, <sp
 <li><p><a href="https://cran.r-project.org/web/packages/vegan/vignettes/diversity-vegan.pdf">Roteiro</a> do pacote <code>vegan</code> sobre Diversidade Ecológica, contendo os índices, as curvas de acumulação de espécies e rarefação.</p></li>
 <li><p><a href="https://dl.dropboxusercontent.com/u/6511995/veganbird.pdf">Roteiro</a> do pacote vegan sobre ordenação e análise de dissimilaridade.</p></li>
 <li><p>Roteiros sobre PCA no R, <a href="http://www.dataperspective.info/2016/02/principal-component-analysis-using-r.html">aqui</a>, <a href="https://tgmstat.wordpress.com/2013/11/21/introduction-to-principal-component-analysis-pca/">aqui</a> e <a href="https://tgmstat.wordpress.com/2013/11/28/computing-and-visualizing-pca-in-r/">aqui</a>.</p></li>
+<li><p>livro numerical ecology with R.</p></li>
 </ul>
 </div>
 </div>
