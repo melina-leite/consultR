@@ -32,22 +32,23 @@ Uma forma de caracterizar uma comunidade é simplesmente contar ou listar as esp
 Nesse roteiro abordaremos alguns tipos de análises realizados par entender os padrões de diversidade e composição das espécies em diferentes comunidades. O roteiro é útil para uma visão geral dos métodos mais comuns utilizados em ecologia e como são empregados no R, mas não pretende se aprofundar em nenhum destes métodos. Para entender mais de algum método específico, sugerimos buscar informações adicionais nos links de material extra no final do roteiro.
 
 
-## Tabelas de dados
+## Pacotes e formatos de dados
 
-Diferentes programas estatísticos requerem dados em diferentes formatos. Neste roteiro, iremos utilizar alguns pacotes (`BiodiversityR` e `vegan`) para análises de diversidade que requerem um formato específico para os dados de abundâncias de espécies (a matriz de espécies por local) e os dados de características ambientais dos locais (a matriz das variáveis de local).
+Existem diversos pacotes no R que fazem análises de dados em comunidades. Neste roteiro, iremos utilizar dois dos principais pacotes (`BiodiversityR` e `vegan`) para análises de diversidade que requerem um formato específico para os dados de abundâncias de espécies (a matriz de espécies por local) e os dados de características ambientais dos locais (a matriz das variáveis por local).
 
 ```{r}
 install.packages("vegan")
 install.package("BiodiversityR")
+
+library(vegan)
+library(BiodiversityR)
 ```
 
-
-Para a matriz de espécies, colocamos os locais em linhas e as espécies nas colunas.
+Em ambas as matrizes, os locais ficam nas linhas, enquanto nas colunas ficam as espécies para a matriz de abundâncias e as variáveis ambientais para a matriz de caraterísticas ambientais.
 
 Vamos usar os dados de vegetação de dunas disponíveis no pacote vegan:
 ```{r}
-library(vegan)
-data(dune)
+data("dune")
 dune
 ```
 
@@ -73,13 +74,12 @@ Para construir a curva do coletor vamos usar o pacote `BiodiversityR`, que além
 
 Abaixo a curva do coletor **baseada em amostra** para os dados de vegetação das dunas:
 ```{r}
-library(BiodiversityR)
 Accum <- accumresult(dune, method='collector')
 Accum
 accumplot(Accum)
 ```
 
-[Gotelli & Colwell (2001)](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) descrevem dois tipos de curva, a **curva de acumulação** e a **curva de rarefação**. A curva acima é curva de acumulação, onde a riqueza de espécies foi plotada de acordo com a ordem dos locais amostrados. 
+[Gotelli & Colwell (2001)](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) descrevem dois tipos de curva, a **curva de acumulação** e a **curva de rarefação**. A curva acima é curva de acumulação, onde a riqueza de espécies foi plotada de acordo com a ordem dos locais amostrados (argumento `method="collector"). 
 
 [Colwell & Coddington (1994)](http://staff.washington.edu/mchd/FISH513/Papers/Colwell_Coddington_94.pdf) sugeriram um método que consiste em montar várias curvas adicionando-se as amostras em uma ordem aleatória. Após construir várias curvas com este método, pode-se calcular uma curva do coletor média (baseada na riqueza média para cada número de amostra) e expressar a variação possível em torno dessa média. Isso pode ser feito de duas maneiras. A primeira é utilizando a riqueza média agrupada quando 1,2... todos os locais são combinados juntos. A razão para calcular a **riqueza agrupada média de espécies** é que diferentes combinações vão ter diferentes riquezas. Por exemplo, nestes dados o local 1 contém 5 espécies, enquanto que o local 2 e 3 contém 10 espécies. Em outras palavras, nao existe um valor único para a riqueza de espécies em UM local e por isso, o valor médio é calculado. 
 
@@ -91,7 +91,7 @@ accumplot(Accum.1)
 
 O resultado de `Accum.1` mostra que a riqueza média para todas as possíveis combinações de 14 locais é 28.85, equanto que para todas as possíveis combinações de 17 locais é 29.51. O `sd` indica o desvio padrão observado, já que algumas combinações de locais contém menores número de espécies e outras combinações maiores. 
 
-Os resultados acima são baseados nos cálculos exatos da riqueza de espécies média para combinações de locais (`method= "exact"`), como sugerido por Colwell & Coddington (1994). Outra forma de fazer isso é aproximar essa riqueza média de espécies em uma abordagem de aleatorização (também chamao de 'rarefação' por Gotelli & Colwell 2001). Por exemplo, para encontrar uma estimativa da riqueza média para 3 locais, selecionamos 3 locais aleatoriamente de todos os 30 locais. Calcumamos a riqueza de espécies e então selecionamos outros 3 locais aleatoriamente. Repetimos isso umas 1000 vezes e pegamos a média de todas estas estimativas. 
+Os resultados acima são baseados nos cálculos exatos da riqueza de espécies média para combinações de locais (`method= "exact"`), como sugerido por Colwell & Coddington (1994). A segunda forma de fazer isso é aproximar essa riqueza média de espécies em uma abordagem de aleatorização (também chamao de 'rarefação' por Gotelli & Colwell 2001). Por exemplo, para encontrar uma estimativa da riqueza média para 3 locais, selecionamos 3 locais aleatoriamente de todos os 30 locais. Calcumamos a riqueza de espécies e então selecionamos outros 3 locais aleatoriamente. Repetimos isso umas 1000 vezes e pegamos a média de todas estas estimativas. 
 
 Os resultados da curva de acumulação de espécies baseado nesta aleatorização para as espécies das dunas será:
 
@@ -102,13 +102,14 @@ Accum.2
 accumplot(Accum.2)
 
 # usando method = "rarefaction"
-
 Accum.21 <- accumresult(dune, method='rarefaction')
 Accum.21
 accumplot(Accum.21)
 ```
 
-Para alguns conjuntos de dados, a informação não é coletada por local, e sim por indivíduo observado. Frequentemente, levantamentos de vertebrados são obtidos dessa maneira, registrando as informações das espécies para cada indivíduo observado sequencialmente. Entretanto, se dados baseados em amostra estão disponíveis, podmeos fazer curvas de rarefação baseadas tanto em **indivíduos** quanto baseadas em **amostras**.
+**OBS**: para ver os diferentes métodos de criação das curvas de acumulação, veja o argumento `method` em `help(accumresult)`.
+
+Para alguns conjuntos de dados, a informação não é coletada por local, e sim por indivíduo observado. Frequentemente, levantamentos de vertebrados são obtidos dessa maneira, registrando as informações das espécies para cada indivíduo observado sequencialmente. Entretanto, há dados baseados em amostra que podem ser usados para fazer curvas de acumulação baseadas tanto em **indivíduos** quanto em **amostras**.
 
 Vejamos a curva **baseada em indivíduo** para os dados das dunas:
 ```{r}
@@ -121,7 +122,7 @@ Accum.5
 accumplot(Accum.5, xlab='pooled individuals')
 ```
 
-Neste gráfico percebemos que os resultados não indicam todas as 685 possíveis combinações de indivíduos (número total de indivíduos amostrados). Os resultados foram reportados apenas para o número médio de indivíduos em cada local, 685/20 = 34.25 (arredondando para 34 indivíduos). Neste exemplo, nós re-escalonamos o eixo x para número de indivíduos baeado no tamanho médio de indivíduos por amostra. Quando usamos as curvas de rarefação baseadas em amostra para comparar riqueza de espécies em níveis comparativos de esforço amostral, o número de espécies deve ser plotado como uma função do número acumulado de indivíduos (como feito no gráfico acima), porque os conjuntos de dados podem diferir quanto ao número médio de indivíduos por amostra (Gotelli & Colwell 2001).
+Neste gráfico percebemos que os resultados não indicam todas as 685 possíveis combinações de indivíduos (número total de indivíduos amostrados). Os resultados foram reportados apenas para o número médio de indivíduos em cada local, 685/20 = 34.25 (arredondando para 34 indivíduos). Neste exemplo, nós re-escalonamos o eixo x para número de indivíduos baseado no tamanho médio de indivíduos por amostra. Quando usamos as curvas de rarefação baseadas em amostra para comparar riqueza de espécies em níveis comparativos de esforço amostral, o número de espécies deve ser plotado como uma função do número acumulado de indivíduos (como feito no gráfico acima), porque os conjuntos de dados podem diferir quanto ao número médio de indivíduos por amostra (Gotelli & Colwell 2001).
 
 
 
@@ -149,7 +150,7 @@ Gotelli & Collwel (2001) descrevem este método e discutem em detalhes as restri
 
 3) os tipos de hábitat onde as amostras são obtidas devem ser semelhantes; e 
 
-iv) é um método para estimar a riqueza de espécies em uma amostra menor – não pode ser usado para extrapolar e estimar riqueza.
+4) é um método para estimar a riqueza de espécies em uma amostra menor – **não pode ser usado para extrapolar e estimar riqueza.**
 
 Veremos a seguir métodos de extrapolação para estimar o número total de espécies na sua amostra.
 
@@ -164,7 +165,7 @@ Vejamos as propriedades de alguns estimadores (para mais detalhes ver [Santos 20
 
 - **Jackniffe 1 e 2**: estimam a riqueza total somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
 
-- **Chao 1 e 2**: estimadores baseados no número de espécies aras dentro de uma amostra. A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (singletons), dividido pelo dobro do número de espécies com apenas dois indivíduos (doubletons). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (uniques e duplicates - chao 2). Chao 1 requer dados de abundância das espécies, enquanto chao 2 trabalha com dados de presença/ausência. 
+- **Chao 1 e 2**: estimadores baseados no número de espécies raras dentro de uma amostra. A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (_singletons_), dividido pelo dobro do número de espécies com apenas dois indivíduos (_doubletons_). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (_uniques_ e _duplicates_ - chao 2). Chao 1 requer dados de abundância das espécies, enquanto chao 2 trabalha com dados de presença/ausência. 
 
 - **Bootstrap**: se difere dos demais por utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. É calculada somando-se a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies. 
 
@@ -186,20 +187,27 @@ Diversity.8 <- diversityresult(dune, index='boot')
 Diversity.8
 ```
 
-Podemos ver que as estimativas foram similares, variando entre 31-34 espécies. Isso não nos surpreende, pois já vimos que o formato da nossa curva de acumulação de espécies praticamente atingia um platô, sugerindo que a amostragtem conseguiu capturar quase toda as espécies da área de estudo. 
+Podemos ver que as estimativas foram similares, variando entre 31-34 espécies. Isso não nos surpreende, pois já vimos que o formato da nossa curva de acumulação de espécies praticamente atingia um platô, sugerindo que a amostragem conseguiu capturar quase toda as espécies da área de estudo. 
 
 
 
 
 # Análises de diversidade em comunidades
 
-Um aspecto importante da estrutura de comunidades é completamente ignorado quando a composição da comunidade é descrita simplesemente em termos do número de espécies (riqueza). Ignora-se a informação de que algumas espécies são raras outra bem comuns. A diversidade, através de índices, incorpora a riqueza, dominância e raridade na comunidade. 
+Um aspecto importante da estrutura de comunidades é completamente ignorado quando a composição da comunidade é descrita simplesemente em termos do número de espécies (riqueza). Ignora-se a informação de que algumas espécies são raras e outra bem comuns. A diversidade, através de índices, incorpora a riqueza, dominância e raridade na comunidade. 
 
 Muitas vezes estamos interessados em comparar a diversidade em diferentes locais, por exemplo saber a se a diversidade é maior no local A em relação ao local B. Para isso geralmente utilizamos índices de diversidade que seja capazes de capturar a riqueza e a equabilidade das espécies na comunidade em um único valor.
 
 Vejamos um exemplo: o local A tem 3 espécies, enquanto o local B tem 5 espécies, logo local B tem maior riqueza de espécies do que o A. Agora imagine os locais C e D, ambos com 3 espécies. Porém o local C contém 4 indivíduos da espécie 1, 1 da espécie 2 e 1 da espécie 3, enquanto que o local D tem 2 indivíduos de cada espécie. Nessa situação D tem maior equabilidade, o que significa que a proporção de indivíduos nas espécies é mais similar.
 
-
+<div align="center">
+Local | sp1 | sp2 | sp3 | sp4 | sp5
+------|-----|-----|-----|-----|-----
+A     | 1   | 1   | 1   | 0   | 0
+B     | 1   | 1   | 1   | 1   | 1
+C     | 4   | 2   | 1   | 0   | 0
+D     | 2   | 2   | 2   | 0   | 0
+</div>
 
 ## Índice de Simpson
 
@@ -213,14 +221,14 @@ $$ D_2 = \frac{1}{\sum_{i=1}^S P_i^2} $$
 
 em que $S$ é a riqueza de espécies na comunidade. Para uma dada riqueza, $D$ aumenta com a equabilidade (ou equitabilidade, o contrário de dominância), e para uma dada equabilidade, $D$ aumenta com a riqueza. 
 
-A equabilidade também pode ser quantificada (entre 0 e 1), obtendo-se a proporção entre o índice de Simpson e o valor máximo que este assumiria caso os indivíduos fossem distribuídos uniformemente entre as espécies. $D_max = S$, portanto:
+A equabilidade também pode ser quantificada (entre 0 e 1), obtendo-se a proporção entre o índice de Simpson e o valor máximo que este assumiria caso os indivíduos fossem distribuídos uniformemente entre as espécies. $D_{max} = S$, portanto:
 
 $$ E = \frac{D} {D_{max}} = \frac{1}{\sum_{i=1}^S P_i^2} x \frac{1}{S}$$
 
 O índice de Simpson também é conhecido como índice de Dominância. Sua interpretação é simples e ele significa a probabilidade de 2 indivíduos sorteados de uma comunidade pertencerem à mesma espécie. É considerado um índice robustro e significartivo, captura bem a variação das distribuições de abundância e ele estabiliza com menores tamanhos amostrais. Porém é um índice que não dá muito peso à espécies raras, portanto inadequado para comunidades com muitas espécies raras (geralmente o caso dos ambientes tropicais).
 
 
-No R podemos usar a função `diversity` do pacote `vegan`, ou `diversityresult` do pacote `BiodiversityR` (que é mais diverso mas também usa a função `diversity`). Abaixo, colocando a matriz de espécies obtemos um índice para cada local:
+No R podemos usar a função `diversity` do pacote `vegan`, ou `diversityresult` do pacote `BiodiversityR` (que é mais diverso, mas também usa a função `diversity`). Abaixo, colocando a matriz de espécies obtemos um índice para cada local:
 ```{r}
 # Simpson 1-D
 diversity.simp <- diversity(dune, index='simpson')
@@ -248,11 +256,11 @@ divers.all
 
 Um outro índice frequentemente utilizado e que possui essencialmente as mesmas propriedades é o de **Shannon**, $H$. 
 
-$$ H = -\sum{i=1}^S P_i lnP_i $$
+$$ H = -\sum_{i=1}^S P_i lnP_i $$
 
 Cuja equabilidade é:
 
-$$J = \frac{H} {H_{max}} = \frac{-\sum{i=1}^S P_i lnP_i} {lnS} $$
+$$J = \frac{H} {H_{max}} = \frac{-\sum_{i=1}^S P_i lnP_i} {lnS} $$
 
 onde $ln$ significa o logarítimo de base natural $e$. 
 
@@ -285,7 +293,7 @@ diversity.shaE
 ```
 
 
-## Índice de Dominância de Berger-Parker ($d$)
+## Índice de Dominância de Berger-Parker 
 
 Este índice é geralmente recomendado por ser intuitivamente simples e fácil de calcular e por significado biológico:
 
@@ -305,8 +313,7 @@ diversity.ber
 
 ## Perfil de diversidade de Rényi
 
-Perfis de diversidade de Rényi são curvas que provém informação sobre a riqueza e equabilidade das espécies. Esta é uma técnica de ordenação da diversidade.   
-O formato da curva é o indicativo da equabilidade. Uma linha horizontal indica que todas as espécies tem o mesmo número de indivíduos. Quanto menos horizontal um perfil é, menos equitativa é a distribuição das espécies. O início da curva à esquerda é um indicativo da riqueza de espécies. Perfis que iniciam em um alto nível tem maior riqueza.  
+Perfis de diversidade de Rényi são curvas que provém informação sobre a riqueza e equabilidade das espécies. Esta é uma técnica de ordenação da diversidade. O formato da curva é o indicativo da equabilidade. Uma linha horizontal indica que todas as espécies tem o mesmo número de indivíduos. Quanto menos horizontal um perfil é, menos equitativa é a distribuição das espécies. O início da curva à esquerda é um indicativo da riqueza de espécies. Perfis que iniciam em um alto nível tem maior riqueza.  
 
 Uma vantagem do perfi de Rényi é que os locais podem ser facilmente ordenados da maior para a menor diversidade. Se o perfil de um local está sempre acima de outro, então este é mais diverso que o segundo. Mas se os perfis se cruzam, é provável que um local tenha mais riqueza, enquanto outro mais equabilidade. 
 
@@ -346,12 +353,11 @@ Renyi.3
 ```
 
 
-
-
 # Análises das diferenças na composição de espécies
 
-Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. Essa matriz de distância é a base para as análises multivariadas de ordenação de composição de espécies que veremos em sequência, o PCA e o NMDS. 
-É importante ressaltar que as análises multivariadas podem ser divididas em dois tipos: análise de agrupamento e ordenação. **Análises de agrupamento** em geral tentam agrupar objetos (observações) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. Por outro lado, a **análise de ordenação** é uma operação pela qual os objetos (ou descritores) são posicionados num espaço que contém menos dimensões que o conjunto de dados original; a posição dos objetos ou descritores em relação aos outros também podem ser usadas para agrupá-los. Não veremos as análises de agrupamento neste roteiro, mas as medidas de distância ecológica tratadas abaixo também se aplicam a estas análises.
+Veremos a partir de agora como as diferenças na composição de espécies pode ser investigada através do cálculo das distâncias ecológicas entre dois locais. Os métodos podem ser aplicados à matriz inteira de espécies, resultando então em uma outra matriz de distância (ou similaridade) entre os pares de locais. Essa matriz de distância é a base para as análises multivariadas de ordenação que veremos em sequência, o PCA e o NMDS. 
+
+É importante ressaltar que as análises multivariadas podem ser divididas em dois tipos: análise de agrupamento e ordenação. **Análises de agrupamento** em geral tentam agrupar objetos (observações) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. Por outro lado, a **análise de ordenação** é uma operação pela qual os objetos são posicionados num espaço que contém menos dimensões que o conjunto de dados original; a posição dos objetos em relação aos outros também podem ser usadas para agrupá-los. Não veremos as análises de agrupamento neste roteiro, mas as medidas de distância ecológica tratadas abaixo também se aplicam a estas análises.
 
 
 ## Distância Ecológica
@@ -362,14 +368,16 @@ Uma boa medida de distância ecológica entre comunidades (locais) descreve a di
 
 A distância euclidiana é calculada usando cada espécie como um eixo diferente em um gráfico (número de dimensões igual à riqueza total). Os locais são plotados neste gráfico multidimensional para que as distâncias entre os locais sejam calculadas. 
 
-A distância euclidiana não é uma boa distância ecológica para dados brutos da matriz de espécie - com as abundâncias de cada espécie em cada local. Portanto, o que se recomenda é transformar a matriz de espécies, por exemplo padronizando os dados antes de calcular as distâncias. 
+A distância euclidiana não é uma boa distância ecológica para dados brutos da matriz de espécie - com as abundâncias de cada espécie em cada local. Portanto, o que se recomenda é transformar a matriz de espécies, por exemplo padronizando os dados antes de calcular as distâncias (veja roteiro PCA com um exemplo de transformação). 
 
 Vejamos o seguinte exemplo:
 ```{r}
 # matriz de espécies por locais
-mat <- matrix(c(1,5,0,1,5,0,0,0,1), nrow=3, dimnames = list(c("A","B","C"), c("sp1","sp2","sp3")))
+mat <- matrix(c(1,5,0,1,5,0,0,0,1), nrow=3,
+              dimnames = list(c("A","B","C"), c("sp1","sp2","sp3")))
+mat
 
-#vendo a matriz de distância entre os locais
+#matriz de distância entre os locais
 dist(mat, method = "euclidean")
 
 #usando pacote vegan que contém mais métodos de distância
@@ -378,6 +386,10 @@ vegdist(mat, method="euclidean")
 
 Plotando o gráfico 3D com as espécies nos eixos podemos ver as distâncias euclidianas entre os locais:
 ```{r}
+#pacote usado
+#install.packages("plot3D")
+library(plot3D)
+
 scatter3D(x = mat[,1], y = mat[,2], z = mat[,3], 
           xlim = c(0, 6), ylim = c(0, 6), zlim = c(0, 4),
           xlab = "sp1", ylab = "sp2", zlab = "sp3", 
@@ -418,7 +430,7 @@ A distância de Bray-Curtis é muito utilizada em dados ecológicos e seus valor
 
 Vejamos as distância pra nossa matriz:
 ```{r}
-vegdist(mat)
+vegdist(mat, method = 'bray')
 ```
 
 Podemos ver agora que a distância entre o local C e os locais A e B é 1, pois este local não compartilha nenhuma espécie com os demais locais. 
@@ -688,3 +700,11 @@ Cabe ressaltra que a PCA pode ser aplicado a dados binários de presença/ausên
 - Roteiros sobre PCA no R, [aqui](http://www.dataperspective.info/2016/02/principal-component-analysis-using-r.html), [aqui](https://tgmstat.wordpress.com/2013/11/21/introduction-to-principal-component-analysis-pca/) e [aqui](https://tgmstat.wordpress.com/2013/11/28/computing-and-visualizing-pca-in-r/).
 
 - livro numerical ecology with R.
+
+- [Gotelli & Colwell. 2001. Quantifying biodiversity: procedures and pitfalls in the measurement and comparison of species richness. ](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) 
+
+- [Colwell & Coddington. 1994. Models and estimators linking individual-based and sample-based rarefaction, extrapolation and comparison of assemblages. ](http://staff.washington.edu/mchd/FISH513/Papers/Colwell_Coddington_94.pdf)
+
+- [Santos. 2003. Estimativas de Riqueza em Espécies.](https://www.dropbox.com/s/8mzru9p4whvoo00/Santos_2003_Estimativas%20de%20riqueza%20em%20especies.pdf?dl=0) 
+
+- [Provete et al. 2011. Estatística aplicada à Ecologia usando o R. ](https://cran.r-project.org/doc/contrib/Provete-Estatistica_aplicada.pdf)
