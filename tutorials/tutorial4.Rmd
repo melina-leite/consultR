@@ -362,13 +362,13 @@ Veremos a partir de agora como as diferenças na composição de espécies pode 
 
 ## Distância Ecológica
 
-Uma boa medida de distância ecológica entre comunidades (locais) descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena. Existe na literatura uma grande variedade de métodos para calcular estas distâncias, apresentamos aqui as mais utilizadas para dados ecológicos.
+Uma boa medida de distância ecológica entre comunidades (locais) descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena. Existe na literatura uma grande variedade de métodos para calcular estas distâncias, apresentamos aqui duas das mais utilizadas para dados ecológicos.
 
 ### Distância Euclidiana
 
-A distância euclidiana é calculada usando cada espécie como um eixo diferente em um gráfico (número de dimensões igual à riqueza total). Os locais são plotados neste gráfico multidimensional para que as distâncias entre os locais sejam calculadas. 
+A distância euclidiana aplicada à matriz de espécies é calculada usando cada espécie como um eixo diferente em um gráfico (número de dimensões igual à riqueza total). Os locais são plotados neste gráfico multidimensional para que as distâncias entre os locais sejam calculadas. 
 
-A distância euclidiana não é uma boa distância ecológica para dados brutos da matriz de espécie - com as abundâncias de cada espécie em cada local. Portanto, o que se recomenda é transformar a matriz de espécies, por exemplo padronizando os dados antes de calcular as distâncias (veja roteiro PCA com um exemplo de transformação). 
+A distância euclidiana não é uma boa distância ecológica para dados brutos da matriz de espécie - com as abundâncias de cada espécie em cada local. Portanto, o que se recomenda é transformar a matriz de espécies, por exemplo padronizando os dados antes de calcular as distâncias (veja abaixo roteiro PCA com um exemplo de transformação). 
 
 Vejamos o seguinte exemplo:
 ```{r}
@@ -384,10 +384,10 @@ dist(mat, method = "euclidean")
 vegdist(mat, method="euclidean")
 ```
 
-Plotando o gráfico 3D com as espécies nos eixos podemos ver as distâncias euclidianas entre os locais:
+Vamos plotar o gráfico 3D dos dados com as espécies nos eixos para ver as distâncias euclidianas entre os locais:
 ```{r}
 #pacote usado
-#install.packages("plot3D")
+install.packages("plot3D")
 library(plot3D)
 
 scatter3D(x = mat[,1], y = mat[,2], z = mat[,3], 
@@ -406,7 +406,7 @@ lines3D(mat[-2,1], mat[-2, 2], mat[-2, 3], add = T, colkey = F)
 Vemos aqui que a distância euclidiana dos dados brutos não foi capaz de descrever as distâncias ecológicas muito bem. Vemos que os locais A e B tem as mesmas espécies (mas com abundâncias diferentes), enquanto que o local C tem uma espécie diferente. 
 A distância euclidiana depende muito das abundâncias em de cada espécie e não apenas das espécies que são compartilhadas. A e B, que compartilham as mesmas espécies, estão distantes pela distância euclidiana porque o local A tem 2 indivíduos e o local B tem 10. 
 
-Embora a distância euclidiana não seja tão boa para investigar como as espécies são compartilhdas entre os locais, ela ainda é usada em algumas técnicas de ordenação e agrupamento. Uma das soluções para dar maior peso às diferenças na composição de espécies é calcular a proporção de espécies em cada local, ou seja, dividindo as abundâncias das espécies pela abundância total do local (cada linha). Outro método seria usar a matriz de presença-ausência.
+Embora a distância euclidiana não seja tão boa para investigar como as espécies são compartilhadas entre os locais, ela ainda é usada em algumas técnicas de ordenação e agrupamento (p.ex. PCA). Uma das soluções para dar maior peso às diferenças na composição de espécies é calcular a proporção de espécies em cada local, ou seja, dividindo as abundâncias das espécies pela abundância total do local (cada linha). Outro método seria usar a matriz de presença-ausência. Veremos na PCA uma outra transformação mais apropriada para dados de abundância (transformação de _Hellinger_)
 
 ```{r}
 #abundância total por local
@@ -448,19 +448,20 @@ As análises de ordenação sempre seguem os mesmos passos:
 
 2. É construída uma matriz de associação das distâncias entre os objetos (locais no nosso caso).
 
-3. O "programa" então arranja os objeos ao longo de um ou mais eixos (usualmente dois eixos ou duas dimensões) que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas que causaram os padrões nos dados. 
+3. O "programa" então arranja os objetos ao longo de um ou mais eixos (usualmente dois eixos ou duas dimensões) que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas (ou espécies) que causaram os padrões nos dados. 
 
-Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies (ou apenas na matriz de variáveis ambientais). 
+Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies (ou apenas na matriz de variáveis ambientais para PCA com dados ambientais). 
 
 
 ## Escalonamento multidimensional não paramétrico (NMDS)
 
-O escalonamento multidimensional não paramétrico (NMDS) pode ser considerado uma análise indireta de gradiente, ou seja, útil para abordar a questão se há padrões nos dados.
+O escalonamento multidimensional não paramétrico (NMDS) pode ser considerado uma análise indireta de gradiente, ou seja, útil para tentar se há padrões nos dados.
 
-Se a prioridade do pesquisador é representar tão bem quanto possível a relação ordenada entre os objetos (locais) e um número pequeno de eixos, o NMDS pode ser a solução. O NMDS pode produzir a ordenação de objetos de qualquer matriz de distâncias. 
+Se a prioridade do pesquisador é representar tão bem quanto possível a relação ordenada entre os objetos (locais) e um número pequeno de eixos, o NMDS pode ser a solução. O NMDS pode produzir a ordenação de objetos de qualquer matriz de distâncias (ou seja usando qualquer medida de distância). 
 
 Comecemos com um exemplo, temos uma tabela de dados com as abundâncias das espécies em 12 locais. Estes dados foram criados para que haja uma relação entre as espécies e a precipitação de cada local propositalmente. Entretanto, vamos fingir que não sabemos da existência desse gradiente de precipitação que está estruturando as comunidades e ver se o NMDS é capaz de capturar este padrão nos dados.
 ```{r}
+# dados fictícios
 tab <- matrix(c(9,0,0,0,4,0,8,6,2,0,0,10,
               1,1,0,2,0,1,0,0,0,2,0,0,
               0,0,0,1,0,0,0,0,2,1,4,0,
@@ -475,17 +476,17 @@ tab
 prec <- c(270, 315, 200, 255, 190, 290, 150, 125, 230, 290, 240, 100)
 ```
 
-Então o objetivo de nossa nálise é descrever o padrão apresentado pelas seis espécies, em menos dimensões do que a tabela de dados (lógico!). Lembremos que cada espécie representa uma dimensão. Como sabemos que existe um gradiente de chuva, vamos fazer uma ordenação dos "objetos" que em nossa análise são os locais, em relação aos "atributos", as espécies.
+O objetivo de nossa nálise é descrever o padrão apresentado pelas seis espécies, em menos dimensões do que a tabela de dados (lógico!). Lembremos que cada espécie representa uma dimensão. Como sabemos que existe um gradiente de chuva, vamos fazer uma ordenação dos "objetos" que em nossa análise são os locais, em relação aos "atributos", as espécies.
 
-Vamos utilizar a matriz de distância de bray-curtis como medida de associação entre os locais, esta nos dará a informação de quão distante cada local está dos outros em relação à composição de espécies.
+Vamos utilizar a matriz de distância de bray-curtis como medida de associação entre os locais. Esta nos dará a informação de quão distante cada local está dos outros em relação à composição de espécies.
 
 ```{r}
 distmatrix <- vegdist(tab, method = 'bray')
 ```
 
-Vamos agora usar a análise de NMDS para ordernar os locais ao longo de um único eixo, de forma tal que, tanto quanto possível, as distâncias entre os locais ao longo do eixo sejam proporcionais às distâncias da nossa matriz de distâncias. O computador vai usar uma matemática complicada para reordenar os locais e verificar o quanto as distâncias entre eles ficaram proporcionais às da matriz de distâncias. Em seguida ele vai re-arranjar os pontos e verificar se o resultado melhorou, até que não possa chegar mais perto das proporções originais. 
+Vamos agora usar a análise de NMDS para ordernar os locais ao longo de dois eixos, de forma tal que, tanto quanto possível, as distâncias entre os locais ao longo dos eixos sejam proporcionais às distâncias da nossa matriz de distâncias. O computador vai usar uma matemática complicada para reordenar os locais e verificar o quanto as distâncias entre eles ficaram proporcionais às da matriz de distâncias. Em seguida ele vai re-arranjar os pontos e verificar se o resultado melhorou, até que não possa chegar mais perto das proporções originais. 
 
-Vamos fazer o NMDS no R (pacote `BidiversityR`) escolhendo duas dimensões (podemos escolher o número de dimensões pretendido), pois a princípio não sabemos que nossos dados tem apenas um padrão de gradiente (precipitação, uma dimensão).
+Vamos fazer o NMDS no R (pacote `BidiversityR`) escolhendo duas dimensões (podemos escolher quantas dimensões queremos), pois a princípio não sabemos que nossos dados tem apenas um padrão de gradiente (precipitação, uma dimensão) e geralmente duas dimensões é a mais recomendável.
 
 ```{r}
 initNMS <- NMSrandom(distmatrix, perm=100, k=2)
@@ -503,7 +504,7 @@ model1$stress
 plot5 <- ordiplot(spe, type='text')
 ```
 
-Vejamos o plot do NMDS com os dados de precipitação categorizados (A - alta; B - baixa), para visualisarmos se o eixo MDS1 (primeira dimensão do NMDS) foi capaz de capturar esse padrão:
+Vejamos abaixo um gráfico do NMDS com os dados de precipitação categorizados (A - alta; B - baixa), para visualisarmos se o eixo MDS1 (primeira dimensão do NMDS) foi capaz de capturar o padrão existente nos dados:
 
 ```{r}
 # categorizando os dados de precipitação 
@@ -531,7 +532,7 @@ abline(m, col='red')
 
 É importante dizer que em análises de NMDS é muito raro que um padrão possa ser discernível em mais do que duas dimensões, e permanecer com muitas dimensões contraria o propósito primário da análise, que é reduzir a dimensionalidade. Frequentemente se diz que os eixos de NMDS não têm interpretação lógica, e por isso podemos girar os eixos para qualquer posição no plano dos dados, sem mudar a distância relativa entre os pontos. Usando a função `postMDS`, nós giramos os eixos para obter a maior correlação entre as variáveis originais e o primeiro eixo MDS1. O gradiente de precipitação nesta imagem (`plot5`)  parece correr como uma diagonal através do espaço bidimensional determinado pelos eixos MDS. 
 
-O **STRESS** (Standard Residuals Sum of Squares) reportado nas análsies é uma medida do quanto as posições de objetos e uma configuração tridimensional desviam-se das distâncias originais (a matriz de distâncias). O valor de stress é dado em porcentagem e dependendo da função usada pode ir de 0 - 100 ou 0 - 1. Logo, o stress pode ser usado como uma medida de quão adequada a análise é. Uma regra geral sugere que:
+O **STRESS** (Standard Residuals Sum of Squares) reportado nas análises é uma medida do quanto as posições de objetos e uma configuração tridimensional desviam-se das distâncias originais (a matriz de distâncias). O valor de stress é dado em porcentagem e dependendo da função usada pode ir de 0 - 100 ou 0 - 1. Logo, o stress pode ser usado como uma medida de quão adequada a análise é. Uma regra geral sugere que:
 
 - stress < 0.05 representação excelente;
 
@@ -539,9 +540,9 @@ O **STRESS** (Standard Residuals Sum of Squares) reportado nas análsies é uma 
 
 - stress < 0.2 ordenação razoável
 
-- stress >0.02 ordenação inviável (interpretação pode ficar comprometida)
+- stress >0.2 ordenação inviável (interpretação pode ficar comprometida)
 
-Uma outra maneira de acessar a adequação da análise é comaprar as distâncias entre objetos na ordenação com as distâncias originais, chamado de _Shepard diagram_. Usando a função `stressplot` nós obtemos o gráfico e o ajuste à ordenação medido em R² tanto para uma regressão linear quanto para não linear das distâncias do NMDS para as distâncias originais.
+Uma outra maneira de acessar a adequação da análise é comparar as distâncias entre objetos na ordenação com as distâncias originais, chamado de _Shepard diagram_. Usando a função `stressplot` nós obtemos o gráfico e o ajuste à ordenação medido em R² tanto para uma regressão linear quanto para não linear das distâncias do NMDS para as distâncias originais.
 
 ```{r}
 # NMDS usando as funções do pacote vegan
@@ -560,16 +561,14 @@ stressplot(spe)
 
 ## Análise de componentes principais (PCA)
 
-A análise de componentes principais (PCA) é principalmente usada para reduzir a dimensionalidade dos dados, e também verificar como as amostras se relacionam, ou seja, quão semelhante são segundo as variáveis utilizadas. O resultado prático é produzir um diagrama de ordenação que sintetize os dados, no qual os objetos mais próximos são mais semelhantes. Diferentemente de outras análises de ordenação, só é possível usar a distância euclidiana como coeficiente de similaridade na PCA. 
+A análise de componentes principais (PCA) é principalmente usada para reduzir a dimensionalidade dos dados, e também verificar como as amostras se relacionam, ou seja, quão semelhante são segundo as variáveis utilizadas. Diferentemente de outras análises de ordenação, só é possível usar a distância euclidiana como coeficiente de similaridade na PCA. 
 
-A principal aplicação do PCA em ecologia é a ordenação dos locais com base nas variáveis ambientais quantitativas. Embora a PCA tenha um longo histórico de método para analisar variáveis ambientais, a recente introduçao dos dados de espécies pré-transformados permitiram usar esta técnica para análise de dados da comunidade.
+A principal aplicação do PCA em ecologia é a ordenação dos locais com base nas variáveis ambientais quantitativas. Embora a PCA tenha um longo histórico de método para analisar variáveis ambientais, a recente introduçao dos dados de espécies pré-transformados permitiram usar esta técnica para análise de dados da comunidade (veremos adiante como fazer).
 
 A PCA tem como principal vantagem retirar a multicolinearidade das variáveis, pois permite transformar um conjunto de variáveis originais intercorrelacionadas em um novo conjunto de variáveis não correlacionadas (os componentes principais). 
 
 
-Veremo adiante como fazer e como interpretar os resutaldos da PCA aplicada tanto para a matriz das variáveis ambientais quanto de espécies. 
-
-O primeiro passo é extrair a matriz de distância euclidiana dos dados, mas se os dados estiverem em escalas/unidades diferentes precisamos primeiro padronizá-los. Ou seja, o PCA deve ser computado em uma tabela de variáveis dimensionalmente homogêneas. A razão apra isso é que é a soma das variâncais que são particionadas nos autovalores (veja abaixo significado). Assim, as variáveis precisam estar na mesma unidade física para produzir uma soma de variâncias com significado, ou então os dados devem estar sem dimensão, qu eé o caso da padronização das variáveis.
+O primeiro passo é extrair a matriz de distância euclidiana dos dados, mas se os dados estiverem em escalas/unidades diferentes precisamos primeiro padronizá-los. Ou seja, o PCA deve ser computado em uma tabela de variáveis dimensionalmente homogêneas. A razão para isso é que é a soma das variâncias que são particionadas nos autovalores (veja abaixo significado). Assim, as variáveis precisam estar na mesma unidade física para produzir uma soma de variâncias com significado, ou então os dados devem estar sem dimensão, que é o caso da padronização das variáveis.
 
 Antes de partir para as análises vejamos alguns conceitos importantes:
 
@@ -581,24 +580,27 @@ Antes de partir para as análises vejamos alguns conceitos importantes:
 
 - **Autovetores (eigenvectors)**: o mesmo que **Loading**, ou seja, coeficientes de combinação linear. Os autovetores são os eixos principais de dispersão da matriz e medem a importância de uma variável em cada eixo. Desse modo, representam o peso de uma variável para a construção de um eixo e variam de -1 a 1 (correlação de Pearson).
 
-- **Escores (Z1, Z2, Zn)**: posição das unidades amostrais ao longo de um eixo de ordenação, pode se referir tanto à unidades mostrais quanto à variáveis. Escores são fornecidos pela substituição dos valores assumidos pelas variáveis originais nas combinações lineares. São utilizados para ordenar as unidades amostrais em um diagrama uni, bi ou tridimensional.
+- **Escores (Z1, Z2, Zn)**: posição das unidades amostrais ao longo de um eixo de ordenação, pode se referir tanto à unidades amostrais quanto à variáveis. Escores são fornecidos pela substituição dos valores assumidos pelas variáveis originais nas combinações lineares. São utilizados para ordenar as unidades amostrais em um diagrama uni, bi ou tridimensional.
 
 - **Inércia**: a soma de todas as correlações das variáveis com elas mesmas, mede a quantidade de variância total que é explicada por um eixo.
 
 - **Loadings (coeficiente de estrutura)**: correlação de Pearson entre os escores e as variáveis.
 
 
-Vamos utilizar os dados de abundância de peixes e das variáveis ambientais em 30 pontos no rio Doubs (Europa). A matriz de peixes possuim 27 espécies e a de variáveis ambientais por local 11 variáveis. 
+Vamos utilizar os dados de abundância de peixes e das variáveis ambientais em 30 pontos no rio Doubs (Europa). Esses dados foram tirados do material do livro "**Numerical Ecology with R**" (link para o pdf em Material Extra) A matriz de peixes possuim 27 espécies e a de variáveis ambientais 11 variáveis. 
 ```{r, echo=F}
 spe <- read.csv("../data/DoubsSpe.csv", row.names=1)
 env <- read.csv("../data/DoubsEnv.csv", row.names=1)
 ```
 ```{r}
+#matriz de abundâncias por local
 spe <- read.csv("DoubsSpe.csv", row.names=1)
+
+# matriz de variáveis ambientais por local
 env <- read.csv("DoubsEnv.csv", row.names=1)
 ```
 
-Existem diversas funções que fazem PCA no R, neste exemplo vamos utiliza a função `rda` (e outras acessórias) do `vegan`.
+Existem diversas funções que fazem PCA no R, neste exemplo vamos utiliza a função `rda` (e outras acessórias) do `vegan`. Para exemplos com outras funções, veja os links para roteiros online em Material Extra.
 
 Vamos começar fazendo uma PCA para a matriz de variáveis ambientais:
 
@@ -611,7 +613,7 @@ summary(pca1)
 
 Alguns vocabulários extra do `summary`:
 
-- **Species scores**: coordenadas das pontas das setas das variáveis. Por razões históricas, as variáveis resposta são sempre chamadas de 'species' no `vegan` , não importando o que representam (nesse caso as variáeis ambientais).
+- **Species scores**: coordenadas das pontas das setas das variáveis. Por razões históricas, as variáveis resposta são sempre chamadas de 'species' no `vegan` , não importando o que representam (nesse caso as variáveis ambientais).
 
 - **Site scores**: coordenadas dos locais no diagrama de ordenação. Os objetos são sempre chamados de 'sites' no `vegan`, e nesse caso são os locais mesmo (mas poderiam ser outras coisas).
 
@@ -627,11 +629,12 @@ points(bstick(pca1), col="red", type='o')
 PCAsignificance(pca1) # pacote BidiversityR
 ```
 
-Usando o método do Broken Stick para decidir quantos eixos são importantes, escolhemos os dois primeiros, que acumulam cerca de 75% da variabilidade dos dados. 
+Usando o método do **Broken Stick** para decidir quantos eixos são importantes, escolhemos os dois primeiros, que acumulam cerca de 75% da variabilidade dos dados. 
 
-#### plotando os resultados da PCA
+#### Plotando os resultados da PCA
 
 Existem duas escalas usadas para plotar os gráficos da PCA:
+
 - escala 1 (_scaling 1_): ótima para observar as relações entre os objetos (locais). As distâncias entre os objetos no biplot são aproximações das distâncias euclidianas no espaço multidimensional.
 
 - escala 2 (_scaling 2_) ótima para observar as relações entre as variáveis. Os ângulos entre as variáveis no biplot reflete suas correlações. 
@@ -644,7 +647,7 @@ pcplot1 <- ordiplot(pca1, scaling=1, type="text")
 ordiequilibriumcircle(pca1, pcplot1 , col='red')
 ```
 
-**OBS**: uma outra forma de fazer os plots acima em um só comando é usando a função `cleanplot.pca` disponível nesse [arquivo](https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0). Baixe o arquivo e coloque ele na pasta da sua área de trabalho:
+**OBS**: uma outra forma de fazer os plots acima em um só comando é usando a função `cleanplot.pca` disponível nesse [arquivo](https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0) (também retirada do livro "Numerical Ecology with R". Baixe o arquivo e coloque ele na pasta da sua área de trabalho:
 ```{r, echo=F}
 source("../data/cleanplot.pca.r")
 ```
@@ -655,19 +658,19 @@ source("cleanplot.pca.r") # para carregar a função no seu workspace
 cleanplot.pca(pca1)
 ```
 
-Agora vamos interpretar os resultados. Primeiro a proporção de variância acumulada para os dois primeiro eixos é de 0.74 ou 74%. Este valor alto nos faz confiantes de que nossa interpretação do primeiro par de eixos extra a informação mais relevante dos dados. 
+Agora vamos interpretar os resultados. Primeiro a proporção de variância acumulada para os dois primeiro eixos é de 0.74 ou 74%. Este valor alto nos faz confiantes de que nossa interpretação do primeiro par de eixos extrai a informação mais relevante dos dados. 
 
-No primeiro biplot, o _círculo da contribuição do equilíbrio_ significa um comprimento de vetor representando uma variável que contribuiria igualmente com todas as dimensões do PCA. As variáveis que tem vetore mais longos que o raio do círculo contribuem mais do que a média e podem ser interpretadas com segurança.
+No primeiro biplot, o **_círculo da contribuição do equilíbrio_** significa um comprimento de vetor representando uma variável que contribuiria igualmente com todas as dimensões do PCA. As variáveis que tem vetores (setas) mais longos que o raio do círculo contribuem mais do que a média e podem ser interpretadas com segurança.
 
 O primeiro biplot mostra um gradiente da esquerda para a direita começando com um grupo formado pelos locais 1-10 que apresentam os maiore valores de altitude (alt) e inclinação (pen), e os menore valores em descarga do rio (deb), e distância da fonte (das) e dureza (dur). Podemos continuar a interpretação desse plot observando a formação de grupos de locais e quais variáveis ambientais estão relaciondas com estes. 
 
-O segundo biplot mostra que as variáveis também estão relacionadas em grupos. Por exemplo o canto inferior esquerdo mostra que a altitude e a inclinação são altamente e positivamente correlacionadas, e que estas duas são altamente negativamente correlacionadas com os vetores das variáveis que vão em direção oposta (deb, dur, das). Cabe observar que nitrato (nit) e pH tem setas praticamente ortogonais (ângulo de 90 graus) indicando uma correlação próxima à zero.
+O segundo biplot mostra que as variáveis também estão relacionadas em grupos, assim como os locais analisados pelo biplot 1. Por exemplo o canto inferior esquerdo mostra que a altitude e a inclinação são altamente e positivamente correlacionadas, e que estas duas são altamente negativamente correlacionadas com os vetores das variáveis que vão em direção oposta (deb, dur, das). Cabe observar que nitrato (nit) e pH tem setas praticamente ortogonais (ângulo de 90 graus) indicando uma correlação próxima à zero.
 
 Este exemplo mostra quão útil uma representação do biplot pode ser em sumarizar as características principais dos dados. Podemos ver agrupamentos e gradientes, assim com as correlações entre as variáveis. 
 
 ### PCA nos dados de espécies tranformados
 
-A PCA, por ser um método que utiliza as distâncias euclidianas entre os locais, não é naturalmente adaptada à análise de dados de abundâncias de espécies. Entretanto, hoje em dia aplica-se a transformação dos dados para poder realizar a PCA. A pré-transormação assegura que os dados de espéies sejam tratados de acordo com sua especificidade, ou seja, sem dar importância indevida a espécies com zeros. Um exemplo de transformação muito utilizada é a transformação de _Hellinger_ (que é o mesmo que usar as distâncias de Hellinger) antes de fazer as análises.
+A PCA, por ser um método que utiliza as distâncias euclidianas entre os locais, não é naturalmente adaptada à análise de dados de abundâncias de espécies. Entretanto, hoje em dia aplica-se a transformação dos dados para poder realizar a PCA. A pré-transormação assegura que os dados de espéies sejam tratados de acordo com sua especificidade, ou seja, sem dar importância indevida a presenças de muitos zeros ou abundância muito grandes. Um exemplo de transformação muito utilizada é a transformação de _Hellinger_, que nada mais é do que dividir as abundâncias de cada espécie em um local pela abundância total do local (linhas) e então fazer a raiz quadrada deste valor. Esta transformação reduz o a importância de grandes abundâncias no cálculo da distância euclidiana.
 
 Vejamos como fazer com os dados de abundâncias de peixes.
 ```{r}
@@ -684,12 +687,12 @@ points(bstick(spe.h.pca), col="red", type='o')
 cleanplot.pca(spe.h.pca)
 ```
 
-Vemos aqui que as espécies não formam grupos claros como as variáveis ambientais. Vemos que 8 espécies estão contribuindo mais fortemente nos eixos 1 e 2 (as setas que estão para fora do círculo). O biplot 1 nos revela um gradiente por trás estruturando a comunidade, os locais são ordenados ao longo dos eixos de acordo com suas posições ao longo do gradiente. O biplot2 nos mostra a relação entre as espécies.  
+Vemos aqui que as espécies não formam grupos claros como visto para as variáveis ambientais. Vemos que 8 espécies estão contribuindo mais fortemente nos eixos 1 e 2 (as setas que estão para fora do círculo). O biplot 1 nos revela um gradiente por trás estruturando a comunidade, os locais são ordenados ao longo dos eixos de acordo com suas posições ao longo do gradiente. O biplot2 nos mostra a relação entre as espécies.  
 
-Cabe ressaltra que a PCA pode ser aplicado a dados binários de presença/ausência, sendo estes transformados pela transformação de Hellinger também.
+Cabe ressaltar que a PCA pode ser aplicada também a dados binários de presença/ausência após a transformação de Hellinger.
 
 
-# Material Extra:
+# Material Extra
 
 - Livro-manual que acompanha o pacote [biodiversityR](http://www.worldagroforestry.org/downloads/Publications/PDFS/b13695.pdf) 
 
@@ -699,7 +702,7 @@ Cabe ressaltra que a PCA pode ser aplicado a dados binários de presença/ausên
 
 - Roteiros sobre PCA no R, [aqui](http://www.dataperspective.info/2016/02/principal-component-analysis-using-r.html), [aqui](https://tgmstat.wordpress.com/2013/11/21/introduction-to-principal-component-analysis-pca/) e [aqui](https://tgmstat.wordpress.com/2013/11/28/computing-and-visualizing-pca-in-r/).
 
-- livro numerical ecology with R.
+- [Borcard et al. 2011. Numerical Ecology with R.](https://www.dropbox.com/s/btwmawmyewyzu80/Numerical%20ecology%20with%20R.pdf?dl=0)
 
 - [Gotelli & Colwell. 2001. Quantifying biodiversity: procedures and pitfalls in the measurement and comparison of species richness. ](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) 
 
