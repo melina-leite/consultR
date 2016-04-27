@@ -94,21 +94,22 @@ accumplot(Accum)
     
     + riqueza média por aleatorização (`method= rarefaction` or `method=random`)
 
-## Curva de rarefação - exact method
+## Curva de rarefação - exact method {.smaller}
 
 ```{r}
 (Accum.1 <- accumresult(dune, method='exact'))
 ```
 
 
-## Curva de rarefação - exact method
+## Curva de rarefação - exact method 
+
 <div align="center">
 ```{r, echo=F}
 accumplot(Accum.1)
 ```
 </div>
 
-## Curva de rarefação - random method
+## Curva de rarefação - random method {.smaller}
 
 ```{r}
 (Accum.2 <- accumresult(dune, method='random', permutations=1000))
@@ -117,7 +118,7 @@ accumplot(Accum.1)
 ## Curva de rarefação - random method
 
 <div align="center">
-```{r}
+```{r, echo=F}
 accumplot(Accum.2)
 ```
 </div>
@@ -136,7 +137,7 @@ accumplot(Accum.21)
   
 - útil para comparar locais com número de indivíduos diferente por amostra.
 
-## Curva baseada em indivíduo
+## Curva baseada em indivíduo  {.smaller}
 
 ```{r}
 # sabendo o total de indvíduos por local
@@ -411,7 +412,7 @@ renyiplot(Renyi.2, evenness=TRUE, legend=F)
 
 - Porém, não provém informação suficiente para ordenar locais da maior para menor diversidade. 
 
-- Perfil de Rényi  permite concluir se um local é mais diverso que o outro. 
+- Perfil de Rényi permite concluir se um local é mais diverso que o outro. 
 
 ## Comparando diversidade entre locais
 
@@ -419,23 +420,28 @@ renyiplot(Renyi.2, evenness=TRUE, legend=F)
 
 - Criar perfis com reamostragens aleatórias 
 
-```{r, results='hide'}
+```{r, results='hide', eval=F}
 Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
                      permutations = 100, legend = F)
 ```
 
 ## Rényi: comparando diversidade entre locais
+<div align="center">
 ```{r, echo=F}
 Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
                      permutations = 100, legend = F)
 ```
-
+</div>
 
 # Análises das diferenças na composição de espécies
 
 
+## Análises das diferenças na composição de espécies
 
-É importante ressaltar que as análises multivariadas podem ser divididas em dois tipos: análise de agrupamento e ordenação. **Análises de agrupamento** em geral tentam agrupar objetos (observações) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. Por outro lado, a **análise de ordenação** é uma operação pela qual os objetos são posicionados num espaço que contém menos dimensões que o conjunto de dados original; a posição dos objetos em relação aos outros também podem ser usadas para agrupá-los. Não veremos as análises de agrupamento neste roteiro, mas as medidas de distância ecológica tratadas abaixo também se aplicam a estas análises.
+
+- **Agrupamento**: agrupar objetos (locais) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. 
+
+- **Ordenação**: os objetos são posicionados num espaço que contém menos dimensões que o conjunto de dados original;
 
 
 ## Distância Ecológica
@@ -453,7 +459,7 @@ Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
 mat <- matrix(c(1,5,0,1,5,0,0,0,1), nrow=3,
               dimnames = list(c("A","B","C"), c("sp1","sp2","sp3")))
 ```
-```{r}
+```{r, echo=F}
 mat
 ```
 
@@ -471,7 +477,7 @@ lines3D(mat [ , 1], mat[ , 2], mat[ , 3], add = T, colkey = F)
 lines3D(mat[-2,1], mat[-2, 2], mat[-2, 3], add = T, colkey = F)
 ```
 
-## Distância Euclidiana
+## Distância Euclidiana {.columns-2}
 
 ```{r}
 mat
@@ -484,7 +490,7 @@ vegdist(mat, method="euclidean")
 
 ## Distância Euclidiana dados transformados
 
-- Usando a proporção de espécies em cada local: dividindo as abundâncias das espécies pela abundância total do local
+- Dividindo as abundâncias das espécies pela abundância total do local
 
 ```{r}
 #abundância total por local
@@ -494,17 +500,35 @@ abund.t <- apply(mat, 1, sum)
 mat2 <- mat /abund.t
 mat2
 
-#distância euclidiana
-dist(mat2)
 ```
 
+## Distância Euclidiana dados transformados 
 
+```{r, echo=F}
+
+#distância euclidiana
+dist(mat2)
+
+scatter3D(x = mat2[,1], y = mat2[,2], z = mat2[,3], 
+          xlim = c(0, 1), ylim = c(0, 1), zlim = c(0, 1),
+          xlab = "sp1", ylab = "sp2", zlab = "sp3", 
+          colkey = F, ticktype = "detailed", phi = 10, 
+          pch = 16, cex=2)
+text3D(x = mat2[1, 1] + 0.1, y = mat2[1, 2] + 0.1, 
+       z = mat2[1, 3] + 0.1, labels = c("A"), add=T)
+text3D(x = mat2[2, 1] + 0.1, y = mat2[2, 2] - 0.1, 
+       z = mat2[2, 3] + 0.2, labels = c("B"), add=T)
+text3D(x = mat2[3, 1] + 0.1, y = mat2[3, 2] + 0.1, 
+       z = mat2[3, 3] + 0.1, labels = c("C"), add=T)
+
+lines3D(mat2[ , 1], mat2[ , 2], mat2[ , 3], add = T, colkey = F)
+```
 
 ## Distância de Bray-Curtis
 
 - Valores de distância restritos entre 0 e 1
-
-- Distância zero: os dois locais são completamente similar. Distância 1: totalmente dissimilares (sem espécie em comum)
+    + 0: s dois locais são completamente similar (mesmas espécies)
+    + 1: totalmente dissimilares (sem espécie em comum)
 
 ```{r}
 vegdist(mat, method = 'bray')
@@ -517,7 +541,7 @@ vegdist(mat, method = 'bray')
 - Ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas.
 
 - Locais próximos no gráfico tem composição de espécies similar, locais afastados contém composição de espécies diferente. 
--Muito útil para analisar dados de comunidades ecológicas, que estão geralmente estruturadas em gradientes.
+- Muito útil para analisar dados de comunidades ecológicas, que estão geralmente estruturadas em gradientes.
 
 ## Passos da ordenação
 
@@ -525,7 +549,7 @@ vegdist(mat, method = 'bray')
 
 2. É construída uma matriz de distâncias entre os objetos (locais).
 
-3. O "programa" então arranja os objetos ao longo de um ou mais eixos que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas (ou espécies) que causaram os padrões nos dados. 
+3. O "programa" então arranja os objetos ao longo de um ou mais eixos que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas (ou gradientes) que causaram os padrões nos dados. 
 
 
 ## Escalonamento multidimensional não paramétrico (NMDS)
@@ -535,6 +559,9 @@ vegdist(mat, method = 'bray')
 - pode produzir a ordenação de objetos de qualquer matriz de distâncias
 
 
+## Dados de espécies em um gradiente de precipitação
+
+<div align="center">
 ```{r, echo=F}
 # dados fictícios
 tab <- matrix(c(9,0,0,0,4,0,8,6,2,0,0,10,
@@ -548,8 +575,9 @@ colnames(tab) <- c("spA", "spB", "spC", "spD", "spE","spF")
 tab
 
 # dados de precipitação
-prec <- c(270, 315, 200, 255, 190, 290, 150, 125, 230, 290, 240, 100)
+(prec <- c(270, 315, 200, 255, 190, 290, 150, 125, 230, 290, 240, 100))
 ```
+</div>
 
 
 ## NMDS
@@ -560,8 +588,11 @@ prec <- c(270, 315, 200, 255, 190, 290, 150, 125, 230, 290, 240, 100)
 
 - Ordenação dos objetos (locais), em relação aos atributos (espécies)
 
+
+## NMDS matriz de distância {.smaller}
+
 ```{r}
-distmatrix <- vegdist(tab, method = 'bray')
+(distmatrix <- vegdist(tab, method = 'bray'))
 ```
 
 
@@ -569,7 +600,7 @@ distmatrix <- vegdist(tab, method = 'bray')
 
 1. Escolha das dimensões (eixos) para descrever os dados: 2
 
-2. Ordenar dos locais nos eixos
+2. Ordenar os locais nos eixos
 
 3. Verificar o quanto as distâncias entre eles ficaram proporcionais às da matriz de distâncias original
 
@@ -587,17 +618,22 @@ model1 <- add.spec.scores(model1, tab, method='wa.scores')
 
 model1$stress
 #esses valor de stress está em % porcentagem
-
-
-#plotando o NMDS
-plot5 <- ordiplot(model1, type='text')
 ```
 
+## NMDS
+
+<div align="center">
+```{r, echo=F}
+#plotando o NMDS
+plot5 <- ordiplot(model1, type='text', cex=1.5)
+```
+</div>
 
 ## Comparando resultado do NMDS com gradiente de precipitação
 
 -  Ver se o eixo MDS1 foi capaz de capturar o padrão existente nos dados:
 
+<div align="center">
 ```{r, echo=F}
 # categorizando os dados de precipitação 
 prec.cat <- c("A","A","B","A","B","A",
@@ -609,21 +645,24 @@ text(x=model1$points[,1], y=model1$points[,2],
 text(x=model1$cproj[,1], y=model1$cproj[,2],
      labels=colnames(tab), col='red' )
 ```
+</div>
+
 
 ## Comparando resultado do NMDS com gradiente de precipitação
 
-- MDS1 foi capaz de representar bem o padrão da precipitação usando somente as distâncias entre os locais
+```{r}
+cor(prec, model1$points[,1])
+```
 
-- O eixo hipotético conseguiu predizer cerca de 67% (R²) da variação da precipitação.
-
+<div align="center">
 ```{r, echo=F}
 m<-lm(prec~model1$points[,1])
-summary(m)
+#summary(m)
 
 plot(x=model1$points[,1], y=prec)
 abline(m, col='red')
 ```
-
+</div>
 
 ## STRESS (Standard Residuals Sum of Squares)
 
@@ -635,7 +674,7 @@ abline(m, col='red')
 
 - stress < 0.2 ordenação razoável
 
-- stress >0.2 ordenação inviável (interpretação pode ficar comprometida)
+- stress > 0.2 ordenação inviável (interpretação pode ficar comprometida)
 
 
 ## Shepard Diagram
@@ -644,18 +683,18 @@ abline(m, col='red')
 
 ```{r, echo=F, results='hide'}
 # NMDS usando as funções do pacote vegan
-spe <- metaMDS(tab, distance = 'bray',k=2)
-spe
+spec <- metaMDS(tab, distance = 'bray',k=2)
+spec
 
-spe$stress
+spec$stress
 # esse valor de stress está entre 0 e 1
 
-plot6 <- ordiplot(spe, type='text')
+#plot6 <- ordiplot(spe, type='text')
 ```
 
 ```{r, echo=F}
 # Shepard diagram
-stressplot(spe)
+stressplot(spec)
 ```
 
 
@@ -699,16 +738,15 @@ stressplot(spe)
 
 ```{r, echo=F}
 spe <- read.csv("../data/DoubsSpe.csv", row.names=1)
-head(spe)
+spe[1:6,1:18]
 env <- read.csv("../data/DoubsEnv.csv", row.names=1)
-head(env)
+env[1:6,]
 ```
 
-## PCA variáveis ambientais (padronizadas)
+## PCA variáveis ambientais (padronizadas) {.smaller}
 
 ```{r, echo=F}
 pca1 <- rda(env, scale=TRUE)
-# o argumento scale=T padroniza os dados antes de fazer a análise
 
 summary(pca1)
 ```
@@ -741,7 +779,6 @@ summary(pca1)
     + X -   inertia total
     + N - número de eixos do PCA
     
-O próximo passo é selecionar quais são os eixos que foram os mais importantes, ou seja, aquele que resumem a maior quantitade de variação dos dados. A decisão pode ser arbitrária, por exemplo interpretar o número de eixos necessários para representar 75% da variação dos dados, ou seguindo algum método mais objetivo. Existem diversos métodos, porém vamos focar no chamado _Broken Stick_ que sugere considerar apenas os eixoes maiores que o valor predito pelo modelo de Broken Stick. Este modelo divide aleatoriamente um "bastão" em tantos pedaços quanto eixos do PCA, e depois ordena os pedaços em comprimente decrescente. Vejamos como fazer:
 
 ## Autovalores PCA
 ```{r}
@@ -756,15 +793,13 @@ PCAsignificance(pca1) # pacote BidiversityR
 
 ## Plotando os resultados da PCA
 
-Existem duas escalas usadas para plotar os gráficos da PCA:
-
 - escala 1 (_scaling 1_): ótima para observar as relações entre os objetos (locais). As distâncias entre os objetos no biplot são aproximações das distâncias euclidianas no espaço multidimensional.
 
 - escala 2 (_scaling 2_) ótima para observar as relações entre as variáveis. Os ângulos entre as variáveis no biplot reflete suas correlações. 
 
 
-## Plotando os resultados da PCA
-```{r, echo=F, results="hide"}
+## Plotando os resultados da PCA 
+```{r, echo=F, fig.show='hide', results='hide'}
 pcplot1 <- biplot(pca1, scaling=1, type="text")
 pcplot2 <- biplot(pca1, scaling=2, type="text")
 
@@ -772,7 +807,6 @@ pcplot1 <- ordiplot(pca1, scaling=1, type="text")
 ordiequilibriumcircle(pca1, pcplot1 , col='red')
 ```
 
-**OBS**: uma outra forma de fazer os plots acima em um só comando é usando a função `cleanplot.pca` disponível nesse [arquivo](https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0) (também retirada do livro "Numerical Ecology with R". Baixe o arquivo e coloque ele na pasta da sua área de trabalho:
 ```{r, echo=F}
 source("../data/cleanplot.pca.r")
 ```
@@ -784,7 +818,7 @@ cleanplot.pca(pca1)
 
 ## PCA em matriz de espécies
 
-- transformação de _Hellinger:
+- transformação de _Hellinger_:
 
     + dividir as abundâncias de cada espécie em um local pela abundância total do local (linhas) e a raiz quadrada 
     
@@ -809,7 +843,7 @@ points(bstick(spe.h.pca), col="red", type='o')
 
 ## PCA em matriz de espécies
 
-```{r}
+```{r, echo=F}
 cleanplot.pca(spe.h.pca)
 ```
 

@@ -448,7 +448,7 @@ As análises de ordenação sempre seguem os mesmos passos:
 
 2. É construída uma matriz de associação das distâncias entre os objetos (locais no nosso caso).
 
-3. O "programa" então arranja os objetos ao longo de um ou mais eixos (usualmente dois eixos ou duas dimensões) que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas (ou espécies) que causaram os padrões nos dados. 
+3. O "programa" então arranja os objetos ao longo de um ou mais eixos (usualmente dois eixos ou duas dimensões) que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas (ou gradientes) que causaram os padrões nos dados. 
 
 Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exemplificaremos o Escalonamento Multidimensional Não Paramétrico (NMDS) e a Análise de Componentes Principais, que são métodos não-restritivos (_'unconstrained'_ em inglês) que usa as distâncias ecológicas baseada apenas na matriz de espécies (ou apenas na matriz de variáveis ambientais para PCA com dados ambientais). 
 
