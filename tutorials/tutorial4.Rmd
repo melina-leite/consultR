@@ -1,5 +1,5 @@
 ---
-title: 'Roteiro 4 - Análises de Comunidades'
+title: 'Roteiro 4 - Analisando Comunidades'
 author: "Melina Leite"
 date: "Departamento de Ecologia IB-USP"
 output:
@@ -70,7 +70,7 @@ Curvas de acumulação de espécies, algumas vezes chamadas de **curva do coleto
 
 Dependendo do protocolo de amostragem usado para o levantamento da riqueza de espécies podemos criar uma curva **baseada em indivíduo**, ou **baseada em amostra**. Tendo como exemplo a amostragem de árvores numa floresta, na abordagem baseada em indivíduo, as árvores seriam amostrados aleatoriamente dentro de cada parcela e registrados sequencialmente. Na abordagem baseada em amostra, as parcelas teriam seu número de espécies e identidades registrados para toda a parcela e acumularíamos o número total de espécies a cada parcela amostrada. A chave da distinção das duas abordagens é a unidade de replicação: o indivíduo vs. uma amostra de indivíduos. 
 
-Para construir a curva do coletor vamos usar o pacote `BiodiversityR`, que além de poder ser usado diretamente no R, tem também uma interface amigável através do pacote `Rcmdr`. Veja o manual do pacote [aqui](http://www.worldagroforestry.org/downloads/Publications/PDFS/b13695.pdf). 
+Para construir a curva de acumulação de espécies vamos usar o pacote `BiodiversityR`, que além de poder ser usado diretamente no R, tem também uma interface amigável através do pacote `Rcmdr`. Veja o manual do pacote [aqui](http://www.worldagroforestry.org/downloads/Publications/PDFS/b13695.pdf). 
 
 Abaixo a curva do coletor **baseada em amostra** para os dados de vegetação das dunas:
 ```{r}
@@ -79,7 +79,7 @@ Accum
 accumplot(Accum)
 ```
 
-[Gotelli & Colwell (2001)](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) descrevem dois tipos de curva, a **curva de acumulação** e a **curva de rarefação**. A curva acima é curva de acumulação, onde a riqueza de espécies foi plotada de acordo com a ordem dos locais amostrados (argumento `method="collector"). 
+[Gotelli & Colwell (2001)](http://onlinelibrary.wiley.com/doi/10.1046/j.1461-0248.2001.00230.x/epdf) descrevem dois tipos de curva, a **curva do coletor** e a **curva de rarefação**. A curva acima é curva do coletor, onde a riqueza de espécies foi plotada de acordo com a ordem dos locais amostrados (argumento `method="collector"). 
 
 [Colwell & Coddington (1994)](http://staff.washington.edu/mchd/FISH513/Papers/Colwell_Coddington_94.pdf) sugeriram um método que consiste em montar várias curvas adicionando-se as amostras em uma ordem aleatória. Após construir várias curvas com este método, pode-se calcular uma curva do coletor média (baseada na riqueza média para cada número de amostra) e expressar a variação possível em torno dessa média. Isso pode ser feito de duas maneiras. A primeira é utilizando a riqueza média agrupada quando 1,2... todos os locais são combinados juntos. A razão para calcular a **riqueza agrupada média de espécies** é que diferentes combinações vão ter diferentes riquezas. Por exemplo, nestes dados o local 1 contém 5 espécies, enquanto que o local 2 e 3 contém 10 espécies. Em outras palavras, nao existe um valor único para a riqueza de espécies em UM local e por isso, o valor médio é calculado. 
 
@@ -343,7 +343,7 @@ De maneira similar às comparações de riqueza de espécies, precisamos ser cau
 
 Se queremos comparar a diversidade total de subgrupos nos dados, precisamos calcular a diversidade com mesmo tamanho amostral. Um procedimento similar àquele usado para curvas de acumulação de espécies pode ser usado. Isso envolve pegar subgrupos aleatórios dos dados e calcular o perfil de diversidade para  subgrupo. Pelas reamostragens aleatórias poderemos criar perfis de diversidade médias. 
 
-Para calcular a diversidade das diferentes categorias de manejo dos dados das dunas, precisamos comaprar a diversidade usando o número de amostras da categoria de menor tamanho amostral (no nosso caso HF - 3 amostras). 
+Para calcular a diversidade das diferentes categorias de manejo dos dados das dunas, precisamos comparar a diversidade usando o número de amostras da categoria de menor tamanho amostral (no nosso caso HF - 3 amostras). 
 
 Para comparar a diversidade entre subgrupos dos dados usando o perfil de Rényi:
 ```{r}
@@ -455,7 +455,7 @@ Vamos descrever a seguir duas das mais utilizadas análises de ordenação. Exem
 
 ## Escalonamento multidimensional não paramétrico (NMDS)
 
-O escalonamento multidimensional não paramétrico (NMDS) pode ser considerado uma análise indireta de gradiente, ou seja, útil para tentar se há padrões nos dados.
+O escalonamento multidimensional não paramétrico (NMDS) pode ser considerado uma análise indireta de gradiente, ou seja, útil para tentar descobrir se há padrões nos dados.
 
 Se a prioridade do pesquisador é representar tão bem quanto possível a relação ordenada entre os objetos (locais) e um número pequeno de eixos, o NMDS pode ser a solução. O NMDS pode produzir a ordenação de objetos de qualquer matriz de distâncias (ou seja usando qualquer medida de distância). 
 
@@ -501,7 +501,7 @@ model1$stress
 
 
 #plotando o NMDS
-plot5 <- ordiplot(spe, type='text')
+plot5 <- ordiplot(model1, type='text')
 ```
 
 Vejamos abaixo um gráfico do NMDS com os dados de precipitação categorizados (A - alta; B - baixa), para visualisarmos se o eixo MDS1 (primeira dimensão do NMDS) foi capaz de capturar o padrão existente nos dados:

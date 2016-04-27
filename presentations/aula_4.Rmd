@@ -1,0 +1,815 @@
+---
+title    :  "Analisando Comunidades"
+subtitle  : Aula 4
+author      : Melina Leite
+date        : "Departamento de Ecologia IB-USP"
+output      :
+      ioslides_presentation:
+         widescreen: yes
+mode: selfcontained
+logo: Rgiff.gif
+---
+
+```{r, echo=F, warning=FALSE, message=F}
+#setwd("./presentations")
+
+library(vegan)
+library(BiodiversityR)
+library(plot3D)
+```
+
+
+# Análises da riqueza de espécies
+
+## Pacotes e formatos de dados
+
+- `vegan`
+
+- `BiodiversityR`
+
+- matriz de espécies
+    + locais nas linhas
+    + espécies nas colunas
+    
+- matriz de variáveis ambientais
+    + locais nas linhas
+    + variáveis nas colunas
+    
+    
+## Vegetação em dunas - espécies
+
+```{r, echo=F}
+data("dune")
+```
+
+```{r}
+dim(dune)
+```
+
+```{r, echo=F}
+
+dune[1:10,1:8]
+```
+
+## Vegetação em dunas - ambiente 
+
+```{r, echo=F}
+data("dune.env")
+head(dune.env, 10L)
+```
+
+```{r, echo=F, results='hide'}
+str(dune.env)
+```
+
+## Curva de acumulação de espécies
+
+- Número acumulado de espécies registradas (S) em função do esforço amostral (n)
+
+- Unidade amostral:
+
+    - curva **baseada em indivíduo**
+
+    - curva **baseada em amostra**
+
+## Curva baseada em amostra
+```{r}
+(Accum <- accumresult(dune, method='collector'))
+```
+
+## Curva baseada em amostra
+<div align="center">
+```{r, echo=F}
+accumplot(Accum)
+```
+</div>
+
+## Curva do coletor x curva de rarefação
+
+- Coletor: plotando acumulação de acordo com a ordem de amostragem
+
+- Rarefação: 
+
+    + riqueza média por amostra (`method= exact`) 
+    
+    + riqueza média por aleatorização (`method= rarefaction` or `method=random`)
+
+## Curva de rarefação - exact method
+
+```{r}
+(Accum.1 <- accumresult(dune, method='exact'))
+```
+
+
+## Curva de rarefação - exact method
+<div align="center">
+```{r, echo=F}
+accumplot(Accum.1)
+```
+</div>
+
+## Curva de rarefação - random method
+
+```{r}
+(Accum.2 <- accumresult(dune, method='random', permutations=1000))
+```
+
+## Curva de rarefação - random method
+
+<div align="center">
+```{r}
+accumplot(Accum.2)
+```
+</div>
+
+```{r, echo=F, results='hide'}
+Accum.21 <- accumresult(dune, method='rarefaction')
+Accum.21
+accumplot(Accum.21)
+```
+
+## Curva baseada em indivíduo
+
+- usando método baseado em amostra:
+
+  - re-escalonar o eixo x para número de indivíduos baseado no tamanho médio de indivíduos por amostra
+  
+- útil para comparar locais com número de indivíduos diferente por amostra.
+
+## Curva baseada em indivíduo
+
+```{r}
+# sabendo o total de indvíduos por local
+dune.env$site.totals <- apply(dune,1,sum)
+
+(Accum.5 <- accumresult(dune, y=dune.env, scale='site.totals', method='rarefaction'))
+```
+
+## Curva baseada em indivíduo
+<div align="center">
+```{r, echo=F}
+accumplot(Accum.5, xlab='pooled individuals')
+```
+</div>
+
+## Método de rarefação
+
+- Comparar riqueza entre comunidades quando o tamanho amostral ou abundâncias diferem. 
+    + comparações baseadas na comunidade com menos amostras ou indivíduos 
+    + consistência taxonomica
+    + mesmas técnicas de coleta; 
+    + os tipos de hábitat semelhantes
+
+- é um método para estimar a riqueza de espécies em uma amostra menor 
+
+<div align="center">
+**Não pode ser usado para extrapolar e estimar riqueza!!**
+</div>
+
+## Curva de acumulação para comparar riquezas 
+
+<div align="center">
+```{r}
+Accum.6 <- accumcomp(dune, y = dune.env, factor = 'Management', method = 'exact', legend = F)
+```
+</div>
+
+
+## Estimando o número total de espécies
+
+- métodos de extrapolação 
+
+- métodos baseados em diferentes premissas de como as espécies se acumulam além da área amostrada
+
+- pesos maiores ou menores à espécies raras.
+
+## **Jackniffe 1 e 2**
+
+- Somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
+
+```{r}
+Diversity.5 <- diversityresult(dune, index='jack1')
+Diversity.5
+
+Diversity.6 <- diversityresult(dune, index='jack2')
+Diversity.6
+```
+
+## **Chao 1 e 2**
+
+- Baseados no número de espécies raras dentro de uma amostra. 
+
+- A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (_singletons_), dividido pelo dobro do número de espécies com apenas dois indivíduos (_doubletons_). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (_uniques_ e _duplicates_ - chao 2). 
+
+- Chao 1: abundância das espécies
+
+- Chao 2:  presença/ausência. 
+
+```{r}
+Diversity.7 <- diversityresult(dune, index='chao')
+Diversity.7
+```
+
+## **Bootstrap**
+
+- Utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. 
+
+- Soma a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies. 
+
+```{r}
+Diversity.8 <- diversityresult(dune, index='boot')
+Diversity.8
+```
+
+## Estimando o número total de espécies
+
+- Reportar a variação nos valores obtidos com os diferentes métodos e esperar que o valor total correto esteja dentro desse intervalo. 
+
+<div align="center">
+```{r, echo=F}
+accumplot(Accum.5, xlab='pooled individuals', ylim=c(0,35))
+points(x=685, y=Diversity.5, col='red')
+points(x=685, y=Diversity.6, col='blue')
+points(x=685, y=Diversity.7, col='green')
+points(x=685, y=Diversity.8, col='black')
+```
+</div>
+
+
+# Análises de diversidade em comunidades
+
+## Diversidade de espécies
+
+- Riqueza
+
+- Dominância e raridade
+
+Índices de diversidade:
+
+- Diversidade
+
+- Equabilidade
+
+## Diversidade
+
+<div align="center">
+Local | sp1 | sp2 | sp3 | sp4 | sp5
+------|-----|-----|-----|-----|-----
+A     | 1   | 1   | 1   | 0   | 0
+B     | 1   | 1   | 1   | 1   | 1
+C     | 4   | 2   | 1   | 0   | 0
+D     | 2   | 2   | 2   | 0   | 0
+</div>
+
+- Local B tem mais riqueza que local A - mesma equabilidade
+
+- Local C e D tem mesma riqueza - local D tem mais equabilidade.
+
+## Índice de Simpson
+
+- Mais simples, considerado robusto
+
+- Probabilidade de 2 indivíduos sorteados de uma comunidade pertencerem à mesma espécie
+
+<div align="center">
+$$ D_1 = 1 - \sum_{i=1}^S P_i^2 $$
+
+
+
+$$ D_2 = \frac{1}{\sum_{i=1}^S P_i^2} $$
+
+</div>
+
+- Para uma dada riqueza $S$, $D$ aumenta com a equabilidade, e para uma dada equabilidade, $D$ aumenta com a riqueza. 
+
+## Equabilidade de Simpson
+
+$D_{max} = S$ valor máximo do índice se todas as sps tivessem mesmo N indivíduos.
+
+$$ E = \frac{D} {D_{max}} = \frac{1}{\sum_{i=1}^S P_i^2} x \frac{1}{S}$$
+
+- Desvantagem: não dá muito peso à espécies raras
+
+## Índice de Simpson
+
+```{r}
+# Simpson 1-D
+(diversity.simp <- diversity(dune, index='simpson'))
+
+# todos locais agrupados
+(divers.all <- diversityresult(dune, index = "Simpson", method='all'))
+```
+
+## Índice de Simpson
+
+```{r}
+# inverso de simpson:
+(diversity.invsimp <- diversity(dune, index='invsimpson'))
+```
+
+
+## Índice de Shannon
+
+- Índice mais utilizado na literatura
+
+- Geralmente valores entre 1.5 e 3.5 (raramente acima de 5)
+
+- É sensível à espécies raras 
+
+- É sensível a variações nas abundâncias
+
+
+$$ H = -\sum_{i=1}^S P_i lnP_i $$
+</div>
+
+Equabilidade:
+
+<div align="center">
+$$J = \frac{H} {H_{max}} = \frac{-\sum_{i=1}^S P_i lnP_i} {lnS} $$
+</div>
+
+
+## Índice de Shannon
+
+```{r}
+diversity.sha2 <- diversityresult(dune, index='Shannon', method='s')
+diversity.sha2
+
+
+# Equabilidade de Shannon:
+diversity.shaE <- diversityresult(dune, index='Jevenness', method='s')
+diversity.shaE
+```
+
+
+## Índice de Dominância de Berger-Parker 
+
+Este índice é geralmente recomendado por ser intuitivamente simples e fácil de calcular e por significado biológico:
+
+<div align="center">
+$$ d = \frac{N_{max}}{N} $$
+</div>
+
+- $N_{max}$ número de indivíduos da espécie mais abundante
+
+- $N$ número total de indivíduos da comunidade.
+
+Porém é um índice problemático apra comunidades com poucas espécies (S<15 espécies). 
+
+## Berger-Parker
+
+```{r}
+diversity.ber <- diversityresult(dune, index='Berger', method='s')
+diversity.ber
+```
+
+
+## Perfil de diversidade de Rényi
+
+- Curvas que provém informação sobre a riqueza e equabilidade das espécies. 
+
+- Esta é uma técnica de ordenação da diversidade. 
+
+- Quanto menos horizontal um perfil é, menos equitativa é a distribuição das espécies. 
+
+- Perfis que iniciam em um alto nível tem maior riqueza.  
+
+- Vantagem: locais podem ser facilmente ordenados da maior para a menor diversidade.
+
+. Se o perfil de um local está sempre acima de outro, então este é mais diverso que o segundo. Mas se os perfis se cruzam, é provável que um local tenha mais riqueza, enquanto outro mais equabilidade. 
+
+
+
+## Perfil de Rényi
+```{r, results='hide'}
+(Renyi.1 <- renyiresult(dune))
+```
+
+```{r, echo=F}
+#gráfico do perfil de diversidade
+renyiplot(Renyi.1,legend=F)
+
+#gráfico do perfil de equitabilidade
+renyiplot(Renyi.1, evenness=TRUE, legend=F)
+```
+
+
+## Perfil de Rényi por local
+```{r,results='hide'}
+(Renyi.2 <- renyiresult(dune, method='s'))
+```
+
+```{r, echo=F}
+renyiplot(Renyi.2, legend=F)
+renyiplot(Renyi.2, evenness=TRUE, legend=F)
+```
+
+
+## Perfil de Rényi X índices de diversidade
+
+- índices de diversidade são mais compactos 
+
+- Porém, não provém informação suficiente para ordenar locais da maior para menor diversidade. 
+
+- Perfil de Rényi  permite concluir se um local é mais diverso que o outro. 
+
+## Comparando diversidade entre locais
+
+- Para comparar diversidade em locais com tamanhos amostrais diferentes, é preciso re-amostrar locais com menor número de amostras obtidas em um local.
+
+- Criar perfis com reamostragens aleatórias 
+
+```{r, results='hide'}
+Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
+                     permutations = 100, legend = F)
+```
+
+## Rényi: comparando diversidade entre locais
+```{r, echo=F}
+Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
+                     permutations = 100, legend = F)
+```
+
+
+# Análises das diferenças na composição de espécies
+
+
+
+É importante ressaltar que as análises multivariadas podem ser divididas em dois tipos: análise de agrupamento e ordenação. **Análises de agrupamento** em geral tentam agrupar objetos (observações) em grupos de maneira que objetos do mesmo grupo sejam mais semelhantes entre si do que objetos de outros grupos. Por outro lado, a **análise de ordenação** é uma operação pela qual os objetos são posicionados num espaço que contém menos dimensões que o conjunto de dados original; a posição dos objetos em relação aos outros também podem ser usadas para agrupá-los. Não veremos as análises de agrupamento neste roteiro, mas as medidas de distância ecológica tratadas abaixo também se aplicam a estas análises.
+
+
+## Distância Ecológica
+
+- Descreve a diferença na composição de espécies de forma que locais que compartilhem muitas espécies devem ter distância ecológica pequena.
+
+- Calculada a partir da matriz de espécies
+
+- Gera uma nova matriz - de distâncias!
+
+
+## Distância Euclidiana
+
+```{r, echo=F}
+mat <- matrix(c(1,5,0,1,5,0,0,0,1), nrow=3,
+              dimnames = list(c("A","B","C"), c("sp1","sp2","sp3")))
+```
+```{r}
+mat
+```
+
+```{r, echo=F}
+scatter3D(x = mat[,1], y = mat[,2], z = mat[,3], 
+          xlim = c(0, 6), ylim = c(0, 6), zlim = c(0, 4),
+          xlab = "sp1", ylab = "sp2", zlab = "sp3", 
+          colkey = F, ticktype = "detailed", phi = 10, 
+          pch = 16, cex=2)
+
+text3D(x = mat[ , 1] + 0.2, y = mat[ , 2] + 0.2, 
+       z = mat[ , 3] + 0.3, labels = c("A", "B", "C"), add = T)
+
+lines3D(mat [ , 1], mat[ , 2], mat[ , 3], add = T, colkey = F)
+lines3D(mat[-2,1], mat[-2, 2], mat[-2, 3], add = T, colkey = F)
+```
+
+## Distância Euclidiana
+
+```{r}
+mat
+vegdist(mat, method="euclidean")
+```
+
+- Não é uma boa distância ecológica para dados brutos da matriz de espécie, depende muito das abundâncias 
+
+- A e B estão distantes mas compartilham mesmas espécies
+
+## Distância Euclidiana dados transformados
+
+- Usando a proporção de espécies em cada local: dividindo as abundâncias das espécies pela abundância total do local
+
+```{r}
+#abundância total por local
+abund.t <- apply(mat, 1, sum)
+
+#matriz transformada para abundancias relativas
+mat2 <- mat /abund.t
+mat2
+
+#distância euclidiana
+dist(mat2)
+```
+
+
+
+## Distância de Bray-Curtis
+
+- Valores de distância restritos entre 0 e 1
+
+- Distância zero: os dois locais são completamente similar. Distância 1: totalmente dissimilares (sem espécie em comum)
+
+```{r}
+vegdist(mat, method = 'bray')
+```
+
+
+
+## Análise da distância ecológica por Ordenação
+
+- Ordenação arranjam as comunidades (locais) de forma que as distâncias entre elas no gráfico representem suas distâncias ecológicas.
+
+- Locais próximos no gráfico tem composição de espécies similar, locais afastados contém composição de espécies diferente. 
+-Muito útil para analisar dados de comunidades ecológicas, que estão geralmente estruturadas em gradientes.
+
+## Passos da ordenação
+
+1. Os dados podem ser transformados e o tipo de transformação depende da questão formulada e análise a ser realizada.
+
+2. É construída uma matriz de distâncias entre os objetos (locais).
+
+3. O "programa" então arranja os objetos ao longo de um ou mais eixos que melhor refletem os padrões encontrados nos dados. Estes eixos refletirão as variáveis ecológicas (ou espécies) que causaram os padrões nos dados. 
+
+
+## Escalonamento multidimensional não paramétrico (NMDS)
+
+- pode ser considerado uma análise indireta de gradiente, útil para ver se há padrões nos dados
+
+- pode produzir a ordenação de objetos de qualquer matriz de distâncias
+
+
+```{r, echo=F}
+# dados fictícios
+tab <- matrix(c(9,0,0,0,4,0,8,6,2,0,0,10,
+              1,1,0,2,0,1,0,0,0,2,0,0,
+              0,0,0,1,0,0,0,0,2,1,4,0,
+              0,0,0,1,0,0,0,0,2,1,4,0,
+              0,0,4,0,6,0,7,3,3,0,1,1,
+              0,1,0,2,0,0,0,0,1,1,0,0),
+              nrow=12)
+colnames(tab) <- c("spA", "spB", "spC", "spD", "spE","spF")
+tab
+
+# dados de precipitação
+prec <- c(270, 315, 200, 255, 190, 290, 150, 125, 230, 290, 240, 100)
+```
+
+
+## NMDS
+
+- Objetivo: descrever o padrão apresentado pelas seis espécies em menos dimensões
+
+- Cada espécie representa uma dimensão
+
+- Ordenação dos objetos (locais), em relação aos atributos (espécies)
+
+```{r}
+distmatrix <- vegdist(tab, method = 'bray')
+```
+
+
+## NMDS passos
+
+1. Escolha das dimensões (eixos) para descrever os dados: 2
+
+2. Ordenar dos locais nos eixos
+
+3. Verificar o quanto as distâncias entre eles ficaram proporcionais às da matriz de distâncias original
+
+4. Re-arranjar os locais e verificar se o resutado melhorou... até achar melhor resultado (menor STRESS)
+
+## NMDS 
+
+```{r}
+initNMS <- NMSrandom(distmatrix, perm=100, k=2)
+model1 <- postMDS(initNMS, distmatrix)
+
+# adicionando os escores das espécies no modelo 
+model1 <- add.spec.scores(model1, tab, method='wa.scores')
+# permite colocar a ordenação das espécies no mesmo gráfico
+
+model1$stress
+#esses valor de stress está em % porcentagem
+
+
+#plotando o NMDS
+plot5 <- ordiplot(model1, type='text')
+```
+
+
+## Comparando resultado do NMDS com gradiente de precipitação
+
+-  Ver se o eixo MDS1 foi capaz de capturar o padrão existente nos dados:
+
+```{r, echo=F}
+# categorizando os dados de precipitação 
+prec.cat <- c("A","A","B","A","B","A",
+              "B","B","B","A","A","B")
+
+plot6 <- ordiplot(model1, type='none')
+text(x=model1$points[,1], y=model1$points[,2],
+     labels=prec.cat)
+text(x=model1$cproj[,1], y=model1$cproj[,2],
+     labels=colnames(tab), col='red' )
+```
+
+## Comparando resultado do NMDS com gradiente de precipitação
+
+- MDS1 foi capaz de representar bem o padrão da precipitação usando somente as distâncias entre os locais
+
+- O eixo hipotético conseguiu predizer cerca de 67% (R²) da variação da precipitação.
+
+```{r, echo=F}
+m<-lm(prec~model1$points[,1])
+summary(m)
+
+plot(x=model1$points[,1], y=prec)
+abline(m, col='red')
+```
+
+
+## STRESS (Standard Residuals Sum of Squares)
+
+- medida do quanto as posições de objetos e uma configuração tridimensional desviam-se das distâncias originais 
+
+- stress < 0.05 representação excelente;
+
+- stress <0.01 boa ordenação
+
+- stress < 0.2 ordenação razoável
+
+- stress >0.2 ordenação inviável (interpretação pode ficar comprometida)
+
+
+## Shepard Diagram
+
+- Para acessar a adequação da análise: comparar as distâncias entre objetos na ordenação com as distâncias originais
+
+```{r, echo=F, results='hide'}
+# NMDS usando as funções do pacote vegan
+spe <- metaMDS(tab, distance = 'bray',k=2)
+spe
+
+spe$stress
+# esse valor de stress está entre 0 e 1
+
+plot6 <- ordiplot(spe, type='text')
+```
+
+```{r, echo=F}
+# Shepard diagram
+stressplot(spe)
+```
+
+
+## Análise de componentes principais (PCA)
+
+- Usada para: 
+    + reduzir a dimensionalidade dos dados
+    + verificar como as amostras se relacionam
+    
+- Só é possível usar a distância euclidiana
+
+- Principal aplicação em ecologia é a ordenação dos locais com base nas variáveis ambientais quantitativas
+
+- mais recentemente usada para análise de dados da comunidade (após transformação).
+
+## PCA
+
+- Vantagem:  
+    + retirar a multicolinearidade das variáveis
+    + permite transformar um conjunto de variáveis originais intercorrelacionadas em um novo conjunto de variáveis não correlacionadas (os componentes principais). 
+
+- Desvantagem:
+    + somente distância euclidiana
+    + somente dados quantitativos
+    + premissa de normalidade multidimensional
+    
+
+## PCA passos
+
+- padronização dos dados - adimensinonalidade
+
+- Extrair matriz de distância euclidiana
+
+- Rodar a PCA
+
+- Escolher o número de eixos significativos
+
+- Interpretar os resultados
+
+## Dados abundância de peixes em rios
+
+```{r, echo=F}
+spe <- read.csv("../data/DoubsSpe.csv", row.names=1)
+head(spe)
+env <- read.csv("../data/DoubsEnv.csv", row.names=1)
+head(env)
+```
+
+## PCA variáveis ambientais (padronizadas)
+
+```{r, echo=F}
+pca1 <- rda(env, scale=TRUE)
+# o argumento scale=T padroniza os dados antes de fazer a análise
+
+summary(pca1)
+```
+
+
+## PCA resultados 
+
+- **Componentes principais**: são as combinações lineares das variáveis, eixos ortogonais (independentes) que resumem (explicam) a variação dos objetos
+
+- **Autovalores (eigenvalues)**: medida de importância (variância) dos componentes principais (eixos) e traz a porcentagem de explicação de cada eixo.
+
+- **Autovetores (eigenvectors)**: coeficientes de combinação linear, medem a importância de uma variável em cada eixo.
+
+- **Escores (Z1, Z2, Zn)**: posição das unidades amostrais ao longo de um eixo de ordenação, pode se referir tanto à unidades amostrais quanto à variáveis. Escores são fornecidos pela substituição dos valores assumidos pelas variáveis originais nas combinações lineares. São utilizados para ordenar as unidades amostrais em um diagrama uni, bi ou tridimensional.
+
+
+
+## Summary PCA
+
+- **Species scores**: coordenadas das pontas das setas das variáveis. Por razões históricas, as variáveis resposta são sempre chamadas de 'species' no `vegan` , não importando o que representam (nesse caso as variáveis ambientais).
+
+- **Site scores**: coordenadas dos locais no diagrama de ordenação. Os objetos são sempre chamados de 'sites' no `vegan`, e nesse caso são os locais mesmo (mas poderiam ser outras coisas).
+
+## Autovalores PCA
+
+- selecionando os eixos mais importantes
+
+- método **Broken Stick**:
+    + quebrar um bastão de comprimento X em N pedaços aleatóriamente
+    + X -   inertia total
+    + N - número de eixos do PCA
+    
+O próximo passo é selecionar quais são os eixos que foram os mais importantes, ou seja, aquele que resumem a maior quantitade de variação dos dados. A decisão pode ser arbitrária, por exemplo interpretar o número de eixos necessários para representar 75% da variação dos dados, ou seguindo algum método mais objetivo. Existem diversos métodos, porém vamos focar no chamado _Broken Stick_ que sugere considerar apenas os eixoes maiores que o valor predito pelo modelo de Broken Stick. Este modelo divide aleatoriamente um "bastão" em tantos pedaços quanto eixos do PCA, e depois ordena os pedaços em comprimente decrescente. Vejamos como fazer:
+
+## Autovalores PCA
+```{r}
+screeplot(pca1)
+points(bstick(pca1), col="red", type='o')
+
+# também compara os eixos com o bstick
+PCAsignificance(pca1) # pacote BidiversityR
+```
+
+
+
+## Plotando os resultados da PCA
+
+Existem duas escalas usadas para plotar os gráficos da PCA:
+
+- escala 1 (_scaling 1_): ótima para observar as relações entre os objetos (locais). As distâncias entre os objetos no biplot são aproximações das distâncias euclidianas no espaço multidimensional.
+
+- escala 2 (_scaling 2_) ótima para observar as relações entre as variáveis. Os ângulos entre as variáveis no biplot reflete suas correlações. 
+
+
+## Plotando os resultados da PCA
+```{r, echo=F, results="hide"}
+pcplot1 <- biplot(pca1, scaling=1, type="text")
+pcplot2 <- biplot(pca1, scaling=2, type="text")
+
+pcplot1 <- ordiplot(pca1, scaling=1, type="text")
+ordiequilibriumcircle(pca1, pcplot1 , col='red')
+```
+
+**OBS**: uma outra forma de fazer os plots acima em um só comando é usando a função `cleanplot.pca` disponível nesse [arquivo](https://www.dropbox.com/s/v15zq2mtsjjs6b1/cleanplot.pca.R?dl=0) (também retirada do livro "Numerical Ecology with R". Baixe o arquivo e coloque ele na pasta da sua área de trabalho:
+```{r, echo=F}
+source("../data/cleanplot.pca.r")
+```
+
+```{r, echo=F}
+cleanplot.pca(pca1)
+```
+
+
+## PCA em matriz de espécies
+
+- transformação de _Hellinger:
+
+    + dividir as abundâncias de cada espécie em um local pela abundância total do local (linhas) e a raiz quadrada 
+    
+    + reduz o a importância de grandes abundâncias na distância euclidiana.
+
+- Pode ser usada também para dados binários presença/ausência
+
+## PCA em matriz de espécies {.columns-2}
+```{r}
+# Transformando os dados
+spe.h <- decostand(spe, "hellinger")
+
+spe.h.pca <- rda(spe.h)
+
+summary(spe.h.pca)
+
+screeplot(spe.h.pca)
+points(bstick(spe.h.pca), col="red", type='o')
+
+```
+
+
+## PCA em matriz de espécies
+
+```{r}
+cleanplot.pca(spe.h.pca)
+```
+
