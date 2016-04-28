@@ -74,7 +74,7 @@ str(dune.env)
 
 ## Curva baseada em amostra
 ```{r}
-(Accum <- accumresult(dune, method='collector'))
+(Accum <- accumresult(dune, method = 'collector'))
 ```
 
 ## Curva baseada em amostra
@@ -90,9 +90,9 @@ accumplot(Accum)
 
 - Rarefação: 
 
-    + riqueza média por amostra (`method= exact`) 
+    + riqueza média por amostra (`method = exact`) 
     
-    + riqueza média por aleatorização (`method= rarefaction` or `method=random`)
+    + riqueza média por aleatorização (`method = rarefaction` or `method = random`)
 
 ## Curva de rarefação - exact method {.smaller}
 
@@ -184,39 +184,65 @@ Accum.6 <- accumcomp(dune, y = dune.env, factor = 'Management', method = 'exact'
 
 - pesos maiores ou menores à espécies raras.
 
-## **Jackniffe 1 e 2**
+## Jackniffe 1 e 2
 
-- Somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
+- Somando a riqueza obsevada a um parâmetro calculado a partir do número de **espécies raras** e do **número de amostras**. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
+
+$$  S_{jack} = S_{obs} + Q_1\frac{m-1}{m} $$
+
+$$ S_{jack} = S_{obs} + Q_1\frac{2m-3} {m} - Q_2\frac{(m-2)^2} {m(m-1)} $$
+
+- $Q_j$: número de espécies que ocorrem em j amostras;
+
+- $m$: número de amostras;
+
+
+## Jackniffe 1 e 2
 
 ```{r}
-Diversity.5 <- diversityresult(dune, index='jack1')
-Diversity.5
+(Diversity.5 <- diversityresult(dune, index='jack1'))
 
-Diversity.6 <- diversityresult(dune, index='jack2')
-Diversity.6
+(Diversity.6 <- diversityresult(dune, index='jack2'))
 ```
 
-## **Chao 1 e 2**
+## Chao
 
-- Baseados no número de espécies raras dentro de uma amostra. 
+- Baseados no número de espécies raras dentro de uma amostra.
 
-- A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (_singletons_), dividido pelo dobro do número de espécies com apenas dois indivíduos (_doubletons_). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (_uniques_ e _duplicates_ - chao 2). 
+    + Número espécies representadas por apenas um indivíduo (**_singletons_**)  ou que ocorre em apenas uma amostra (**_uniques_**)
+    
+    + Número de espécies com apenas dois indivíduos (**_doubletons_**) ou que ocorrem respectivamente em uma ou em duas unidades amostrais (**_duplicates_**).
+
+
+$$ S_{chao} = S_{obs} + \frac{F_1^2} {2F_2^2} $$
+
+- $F_j$: número de espécies que tem exatamente j indivíduos em todas amostras juntas ou que ocorrem em exatamente j amostras
+
+
+## Chao 1 e 2
 
 - Chao 1: abundância das espécies
 
-- Chao 2:  presença/ausência. 
+- Chao 2:  presença/ausência 
 
 ```{r}
 Diversity.7 <- diversityresult(dune, index='chao')
 Diversity.7
 ```
 
-## **Bootstrap**
+## Bootstrap
 
-- Utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. 
+- Utilizar dados de **todas as espécies coletadas** para estimar a riqueza total, não se restringindo às espécies raras. 
 
 - Soma a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies. 
 
+$$ S_{boot} = S_{obs} + \sum_{k=1}^{S_{obs}}(1-p_k)^m $$
+
+- $p_k$: proporção de amostras que contém a espécie k;
+
+- $m$: número de amostras;
+
+## Bootstrap
 ```{r}
 Diversity.8 <- diversityresult(dune, index='boot')
 Diversity.8
@@ -270,18 +296,32 @@ D     | 2   | 2   | 2   | 0   | 0
 
 - Mais simples, considerado robusto
 
-- Probabilidade de 2 indivíduos sorteados de uma comunidade pertencerem à mesma espécie
+- $D$ Probabilidade de 2 indivíduos sorteados de uma comunidade pertencerem à mesma espécie
 
 <div align="center">
 $$ D_1 = 1 - \sum_{i=1}^S P_i^2 $$
-
-
 
 $$ D_2 = \frac{1}{\sum_{i=1}^S P_i^2} $$
 
 </div>
 
 - Para uma dada riqueza $S$, $D$ aumenta com a equabilidade, e para uma dada equabilidade, $D$ aumenta com a riqueza. 
+
+##  Índice de Simpson {.columns-2}
+
+- N = 100; S = 10
+
+```{r, echo=F}
+ni=c(91,1,1,1,1,1,1,1,1,1)
+sim <- data.frame(ni=ni,pi=ni/100, pi2 = (ni/100)^2)
+sim 
+```
+```{r}
+(D = sum(sim$pi2))
+(D1 = 1-D)
+(D2 = 1/D)
+```
+
 
 ## Equabilidade de Simpson
 
@@ -290,6 +330,13 @@ $D_{max} = S$ valor máximo do índice se todas as sps tivessem mesmo N indivíd
 $$ E = \frac{D} {D_{max}} = \frac{1}{\sum_{i=1}^S P_i^2} x \frac{1}{S}$$
 
 - Desvantagem: não dá muito peso à espécies raras
+
+```{r}
+(Dmax = 10*(0.10^2))
+
+(E = D/Dmax)
+```
+
 
 ## Índice de Simpson
 
@@ -360,8 +407,7 @@ Porém é um índice problemático apra comunidades com poucas espécies (S<15 e
 ## Berger-Parker
 
 ```{r}
-diversity.ber <- diversityresult(dune, index='Berger', method='s')
-diversity.ber
+(diversity.ber <- diversityresult(dune, index='Berger', method='s'))
 ```
 
 
@@ -650,16 +696,12 @@ text(x=model1$cproj[,1], y=model1$cproj[,2],
 
 ## Comparando resultado do NMDS com gradiente de precipitação
 
-```{r}
-cor(prec, model1$points[,1])
-```
-
 <div align="center">
 ```{r, echo=F}
 m<-lm(prec~model1$points[,1])
 #summary(m)
 
-plot(x=model1$points[,1], y=prec)
+plot(x=model1$points[,1], y=prec, main=paste("R²=",round(RsquareAdj(m)[[1]],2)))
 abline(m, col='red')
 ```
 </div>
@@ -692,11 +734,12 @@ spec$stress
 #plot6 <- ordiplot(spe, type='text')
 ```
 
+<div align="center">
 ```{r, echo=F}
 # Shepard diagram
 stressplot(spec)
 ```
-
+</div>
 
 ## Análise de componentes principais (PCA)
 
@@ -778,24 +821,26 @@ summary(pca1)
     + quebrar um bastão de comprimento X em N pedaços aleatóriamente
     + X -   inertia total
     + N - número de eixos do PCA
-    
+
+<div align="center">
+![](./images/broken_stick.jpg) 
+</div>
 
 ## Autovalores PCA
+
+<div align="center">
 ```{r}
 screeplot(pca1)
 points(bstick(pca1), col="red", type='o')
-
-# também compara os eixos com o bstick
-PCAsignificance(pca1) # pacote BidiversityR
 ```
-
+<div>
 
 
 ## Plotando os resultados da PCA
 
-- escala 1 (_scaling 1_): ótima para observar as relações entre os objetos (locais). As distâncias entre os objetos no biplot são aproximações das distâncias euclidianas no espaço multidimensional.
+- escala 1 (_scaling 1_): ótima para observar as relações entre os **objetos (locais)**. As distâncias entre os objetos no biplot são aproximações das distâncias euclidianas no espaço multidimensional.
 
-- escala 2 (_scaling 2_) ótima para observar as relações entre as variáveis. Os ângulos entre as variáveis no biplot reflete suas correlações. 
+- escala 2 (_scaling 2_) ótima para observar as relações entre as **variáveis**. Os ângulos entre as variáveis no biplot reflete suas correlações. 
 
 
 ## Plotando os resultados da PCA 
@@ -810,11 +855,11 @@ ordiequilibriumcircle(pca1, pcplot1 , col='red')
 ```{r, echo=F}
 source("../data/cleanplot.pca.r")
 ```
-
+<div align="center">
 ```{r, echo=F}
 cleanplot.pca(pca1)
 ```
-
+</div>
 
 ## PCA em matriz de espécies
 
@@ -826,24 +871,25 @@ cleanplot.pca(pca1)
 
 - Pode ser usada também para dados binários presença/ausência
 
-## PCA em matriz de espécies {.columns-2}
+## PCA em matriz de espécies
 ```{r}
 # Transformando os dados
 spe.h <- decostand(spe, "hellinger")
-
 spe.h.pca <- rda(spe.h)
-
 summary(spe.h.pca)
+```
 
+##  PCA em matriz de espécies
+```{r, echo=F}
 screeplot(spe.h.pca)
 points(bstick(spe.h.pca), col="red", type='o')
-
 ```
 
 
 ## PCA em matriz de espécies
 
+<div align="center">
 ```{r, echo=F}
 cleanplot.pca(spe.h.pca)
 ```
-
+</div>
