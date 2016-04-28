@@ -165,9 +165,28 @@ Vejamos as propriedades de alguns estimadores (para mais detalhes ver [Santos 20
 
 - **Jackniffe 1 e 2**: estimam a riqueza total somando a riqueza obsevada a um parâmetro calculado a partir do número de espécies raras e do número de amostras. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
 
+
+$$  S_{jack1} = S_{obs} + Q_1\frac{m-1}{m} $$
+
+$$ S_{jack2} = S_{obs} + Q_1\frac{2m-3} {m} - Q_2\frac{(m-2)^2} {m(m-1)} $$
+
+
+> $S_{obs}$: número de espécies observadas;  
+> $Q_j$: número de espécies que ocorrem em j amostras;  
+> $m$: número de amostras;
+
 - **Chao 1 e 2**: estimadores baseados no número de espécies raras dentro de uma amostra. A riqueza estimada pelo chao 1 é igual à riqueza observada, somada ao quadrado do número de espécies representadas por apenas um indivíduo (_singletons_), dividido pelo dobro do número de espécies com apenas dois indivíduos (_doubletons_). A mesma equação foi adaptada para utilizar o número de espécies que ocorrem respectivamente em uma ou em duas unidades amostrais (_uniques_ e _duplicates_ - chao 2). Chao 1 requer dados de abundância das espécies, enquanto chao 2 trabalha com dados de presença/ausência. 
 
+$$ S_{chao} = S_{obs} + \frac{F_1^2} {2F_2^2} $$
+
+> $F_j$: número de espécies que tem exatamente j indivíduos em todas amostras juntas (chao1) ou que ocorrem em exatamente j amostras (chao2)
+
+
 - **Bootstrap**: se difere dos demais por utilizar dados de todas as espécies coletadas para estimar a riqueza total, não se restringindo às espécies raras. É calculada somando-se a riqueza observada à soma do inverso da proporção de amostras em que ocorre cada espécies. 
+
+$$ S_{boot} = S_{obs} + \sum_{k=1}^{S_{obs}}(1-p_k)^m $$
+
+> $p_k$: proporção de amostras que contém a espécie k;
 
 Se queremos fazer esta extrapolação, então a melhor abordagem é reportar a variação nos valores obtidos com os diferentes métodos e esperar que o valor total correto esteja dentro desse intervalo. 
 

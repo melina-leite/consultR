@@ -188,9 +188,9 @@ Accum.6 <- accumcomp(dune, y = dune.env, factor = 'Management', method = 'exact'
 
 - Somando a riqueza obsevada a um parâmetro calculado a partir do número de **espécies raras** e do **número de amostras**. As duas equações diferem basicamente em relação ao critério pelo qual se consideram uma espécie como rara. 
 
-$$  S_{jack} = S_{obs} + Q_1\frac{m-1}{m} $$
+$$  S_{jack1} = S_{obs} + Q_1\frac{m-1}{m} $$
 
-$$ S_{jack} = S_{obs} + Q_1\frac{2m-3} {m} - Q_2\frac{(m-2)^2} {m(m-1)} $$
+$$ S_{jack2} = S_{obs} + Q_1\frac{2m-3} {m} - Q_2\frac{(m-2)^2} {m(m-1)} $$
 
 - $Q_j$: número de espécies que ocorrem em j amostras;
 
@@ -267,9 +267,7 @@ points(x=685, y=Diversity.8, col='black')
 
 ## Diversidade de espécies
 
-- Riqueza
-
-- Dominância e raridade
+- Leva em consideraçaõ **Riqueza**, **Dominância** e **Raridade**
 
 Índices de diversidade:
 
@@ -294,7 +292,7 @@ D     | 2   | 2   | 2   | 0   | 0
 
 ## Índice de Simpson
 
-- Mais simples, considerado robusto
+- Mais simples, robusto
 
 - $D$ Probabilidade de 2 indivíduos sorteados de uma comunidade pertencerem à mesma espécie
 
@@ -325,16 +323,16 @@ sim
 
 ## Equabilidade de Simpson
 
-$D_{max} = S$ valor máximo do índice se todas as sps tivessem mesmo N indivíduos.
+$D2_{max} = S$ valor máximo do índice se todas as sps tivessem mesmo N indivíduos.
 
-$$ E = \frac{D} {D_{max}} = \frac{1}{\sum_{i=1}^S P_i^2} x \frac{1}{S}$$
+$$ E = \frac{D2} {D2_{max}} = \frac{1}{\sum_{i=1}^S P_i^2} x \frac{1}{S}$$
 
 - Desvantagem: não dá muito peso à espécies raras
 
 ```{r}
-(Dmax = 10*(0.10^2))
+(D2max = 10)
 
-(E = D/Dmax)
+(E = D2/D2max)
 ```
 
 
@@ -376,6 +374,17 @@ Equabilidade:
 $$J = \frac{H} {H_{max}} = \frac{-\sum_{i=1}^S P_i lnP_i} {lnS} $$
 </div>
 
+## Índice de Shannon
+
+```{r}
+sim
+
+(shan <- -(sum(sim$pi*log(sim$pi))))
+
+(Hmax = log(10))
+(Hshan <- shan/Hmax)
+```
+
 
 ## Índice de Shannon
 
@@ -405,6 +414,12 @@ $$ d = \frac{N_{max}}{N} $$
 Porém é um índice problemático apra comunidades com poucas espécies (S<15 espécies). 
 
 ## Berger-Parker
+
+```{r}
+sim
+(berger <- 91/100)
+```
+
 
 ```{r}
 (diversity.ber <- diversityresult(dune, index='Berger', method='s'))
