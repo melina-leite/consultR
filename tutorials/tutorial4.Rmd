@@ -228,6 +228,7 @@ C     | 4   | 2   | 1   | 0   | 0
 D     | 2   | 2   | 2   | 0   | 0
 </div>
 
+
 ## Índice de Simpson
 
 A medida mais simples para caracterizar a comunidade, e que leva em consideração tanto o padrão de abundância quanto a riqueza de espécies é o **Índice de diversidade de Simpson**. Ele é calculado obtendo-se para casa espécie a proporção de indivíduos em relação ao total da amostra, ou seja, a proporção $P_i$ para a _i_-ésima espécie. Pode ser calculado de duas formas:
@@ -340,7 +341,38 @@ Para obter mais detalhes de como o perfi de Rényi é calculado veja o Capítulo
 
 Os índices de diversidade são um método mais compacto de comparar diversidades. Porém, um índice de diversidade frequentemente não irá prover a informação suficiente para ordenar locais da maior para menor diversidade. Apenas técnicas de ordenação da diversidade, como o perfil de Rényi, nos permitirá concluir que um local é mais diverso que o outro. 
 
-Calculando o perfil de diversidade de Rényi para os dados da vegetação de dunas:
+Vamos ver o perfil de Rényi para os dados das comunidades hipotéticas descritas na tabela acima
+```{r}
+abcd <- matrix(c(1,1,4,2,1,1,2,2,1,1,1,2,0,1,0,0,0,1,0,0), nrow=4, 
+               dimnames=list(c("A", "B","C","D"), c("sp1","sp2","sp3","sp4","sp5")))
+abcd
+
+reu <- renyiresult(abcd, method='s')
+renyiplot(reu, legend=F)
+```
+
+Com este perfil podemos ver que três locais tem perfis horizontais, o que indica que as espécies estão igualmente distribuiídas por local (equabilidade máxima). O local C tem a curva declinando da esquerda para a direita indicando que a distribuição das espécies nesse local é desigual (possui dominância). O perfil que começa mais alto no gráfico indica maior riqueza de espécies. Concluimos que a ordem de diversidade nos locais é $B > A = D > C$.  
+
+Dado que a forma do perfil de diversidade de Rényi é influenciado pela equabilidade, podemos comparar a equabilidade entre os locais olhando para a forma das curvas. o **Pefil de equabilidade de Rényi)** é um método mais direto de comparar equabilidade. Vejamos o gráfico do exemplo acima:
+```{r}
+renyiplot(reu, legend=F, evenness = T)
+```
+
+A forma de interpretar o perfil de equabilidade é igual à do perfil de diversidade. Um local de maior equabilidade terá um perfil acima das áreas de menor equabilidade. Pefils que se cruzam indicam que não há uma ordenação de equabilidade possível para estas comunidades.
+
+#### Interpretando os valores do perfil de Rényi
+
+Cada valor do perfil de Rényi é basead em um parâmetro 'alfa'. 
+
+Os valores do perfil (H-alfa) quando **alfa = 0** provém informação da riqueza de espécies. O valor é o logarítimo da riqueza de espécies. Por exemplo, para o local B, a riqueza é 5, log(5) = 1.609 (valor expresso no eixo y do gráfico). Para os locais A, C e D, a riqueza é 3, log(3) = 1.09. 
+
+O valor do perfil quando **alfa = infinito** provém informação da proporção da espécie mais abundante. Por exemplo, para local C, o valor quando alfa=infinito é 0.55, quando tiramos o anti-logarítmo do valor recíproco, obtemos a proporção da espécies dominante, que neste caso é (sp1) 4/7 =  0.57. Vemos que 4/7 = 1/exp(0.55). Perfis que tem maior alpha=infinito, tem menor proporção da espécie dominante, ou seja são mais equitativas.
+
+O valor do perfil quando **alfa = 1** é o Índice de **diversidade de Shannon**, e o valor do perfil quando **alpha = 2** é o logarítmo do Índice de **diversidade de Simpson** (1/D).
+
+#### Comparando locais com tamanhos amostrais diferentes
+
+Primeiro vamos calcular o perfil de diversidade de Rényi para os dados da vegetação de dunas:
 ```{r}
 Renyi.1 <- renyiresult(dune)
 Renyi.1
@@ -368,6 +400,7 @@ Para comparar a diversidade entre subgrupos dos dados usando o perfil de Rényi:
 ```{r}
 Renyi.3 <- renyicomp(dune, y = dune.env, factor = 'Management',
                      permutations = 100, legend = F)
+
 Renyi.3
 ```
 

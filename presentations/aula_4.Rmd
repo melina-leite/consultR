@@ -430,7 +430,7 @@ sim
 
 - Curvas que provém informação sobre a riqueza e equabilidade das espécies. 
 
-- Esta é uma técnica de ordenação da diversidade. 
+- Técnica de ordenação da diversidade. 
 
 - Quanto menos horizontal um perfil é, menos equitativa é a distribuição das espécies. 
 
@@ -438,33 +438,67 @@ sim
 
 - Vantagem: locais podem ser facilmente ordenados da maior para a menor diversidade.
 
-. Se o perfil de um local está sempre acima de outro, então este é mais diverso que o segundo. Mas se os perfis se cruzam, é provável que um local tenha mais riqueza, enquanto outro mais equabilidade. 
+- Se o perfil de um local está sempre acima de outro, então este é mais diverso que o segundo. Mas se os perfis se cruzam, é provável que um local tenha mais riqueza, enquanto outro mais equabilidade. 
 
-
-
-## Perfil de Rényi
-```{r, results='hide'}
-(Renyi.1 <- renyiresult(dune))
-```
+## Perfil de Rényi - diversidade
 
 ```{r, echo=F}
-#gráfico do perfil de diversidade
-renyiplot(Renyi.1,legend=F)
+abcd <- matrix(c(1,1,4,2,1,1,2,2,1,1,1,2,0,1,0,0,0,1,0,0), nrow=4, 
+               dimnames=list(c("A", "B","C","D"), c("sp1","sp2","sp3","sp4","sp5")))
+abcd
+reu <- renyiresult(abcd, method='s')
+```
+<div align="center">
+```{r, echo=F}
+renyiplot(reu, legend=F)
+```
+</div>
 
-#gráfico do perfil de equitabilidade
+## Pefil de Rényi - equabilidade
+<div align="center">
+```{r, echo=F}
+renyiplot(reu, legend=F, evenness = T)
+```
+</div>
+
+## Perfil de Rényi - alfa
+
+- **alfa = 0** log da riqueza de espécies
+
+- **alfa = infinito** 1/log(proporção da espécie mais abundante)
+
+- **alfa = 1** é o Índice de **diversidade de Shannon**
+
+- **alpha = 2** é o logarítmo do Índice de **diversidade de Simpson** (1/D).
+
+
+## Perfil de Rényi - Diversidade
+<div align="center">
+```{r, echo=F}
+Renyi.1 <- renyiresult(dune)
+
+renyiplot(Renyi.1,legend=F)
+```
+</div>
+
+## Perfi de Rényi - equabilidade
+<div align="center">
+```{r, echo=F}
 renyiplot(Renyi.1, evenness=TRUE, legend=F)
 ```
-
+</div>
 
 ## Perfil de Rényi por local
-```{r,results='hide'}
-(Renyi.2 <- renyiresult(dune, method='s'))
+```{r,echo=F}
+Renyi.2 <- renyiresult(dune, method='s')
 ```
 
+<div align="center">
 ```{r, echo=F}
 renyiplot(Renyi.2, legend=F)
-renyiplot(Renyi.2, evenness=TRUE, legend=F)
+#renyiplot(Renyi.2, evenness=TRUE, legend=F)
 ```
+</div>
 
 
 ## Perfil de Rényi X índices de diversidade
@@ -746,7 +780,7 @@ spec
 spec$stress
 # esse valor de stress está entre 0 e 1
 
-#plot6 <- ordiplot(spe, type='text')
+#plot6 <- ordiplot(spec, type='text')
 ```
 
 <div align="center">
