@@ -360,7 +360,7 @@ $$ E = \frac{D2} {D2_{max}} = \frac{1}{\sum_{i=1}^S P_i^2} x \frac{1}{S}$$
 
 - Geralmente valores entre 1.5 e 3.5 (raramente acima de 5)
 
-- É sensível à espécies raras 
+- É sensível a espécies raras 
 
 - É sensível a variações nas abundâncias
 
@@ -649,12 +649,12 @@ vegdist(mat, method = 'bray')
 
 ## Escalonamento multidimensional não paramétrico (NMDS)
 
-- pode ser considerado uma análise indireta de gradiente, útil para ver se há padrões nos dados
+- **análise indireta de gradiente**, útil para ver se há padrões nos dados
 
 - pode produzir a ordenação de objetos de qualquer matriz de distâncias
 
 
-## Dados de espécies em um gradiente de precipitação
+## Espécies em um gradiente de precipitação
 
 <div align="center">
 ```{r, echo=F}
