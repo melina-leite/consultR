@@ -4,6 +4,7 @@
 # Por: Melina Leite
 # maio 2016
 
+#install.packages(c("vegan", "BiodiversityR", 'plot3D' ))
 # pacotes usados
 library(vegan)
 library(BiodiversityR)
@@ -58,6 +59,7 @@ Accum.6 <- accumcomp(dune, y = dune.env, factor = 'Management', method = 'exact'
 ## Jackniffe 1 e 2
 (Diversity.5 <- diversityresult(dune, index='jack1'))
 (Diversity.6 <- diversityresult(dune, index='jack2'))
+
 
 ## Chao
 Diversity.7 <- diversityresult(dune, index='chao')
@@ -249,6 +251,8 @@ model1 <- add.spec.scores(model1, tab, method='wa.scores')
 
 model1$stress #esses valor de stress está em % porcentagem
 
+
+
 #plotando o NMDS
 plot5 <- ordiplot(model1, type='text', cex=1.5)
 
@@ -312,6 +316,7 @@ pcplot2 <- biplot(pca1, scaling=2, type="text")
 
 pcplot1 <- ordiplot(pca1, scaling=1, type="text")
 ordiequilibriumcircle(pca1, pcplot1 , col='red')
+
 
 # outra funca gráfica 
 source("cleanplot.pca.r") #carregando a função do arquivo no workspace
