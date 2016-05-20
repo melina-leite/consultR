@@ -1,6 +1,6 @@
 {
   "name": "Introdução ao R para Análise de Dados em Consultoria Ambiental",
   "tagline": "Melina de Souza Leite",
-  "body": "### Material do Curso\r\n\r\n#### Atividade Preparatórias\r\n* [[tutorials/tutorial0_ativ_prep.html|Roteiro de atividades preparatórias]]\r\n\r\n#### Módulo I - Introdução ao R\r\n* [[presentations/aula_1.html|Aula 1 Apresentação]]\r\n* Script Aula 1\r\n* Roteiro 1\r\n* Arquivos de dados\r\n\r\n\r\n#### Módulo II - Análises Exploratórias de Dados e Gráficos\r\n\r\n#### Módulo III - Modelos Lineares\r\n\r\n#### Módulo IV - Análises de Comunidades\r\n\r\n\r\n\r\n",
+  "body": "### Material do Curso\r\n\r\n#### Atividade Preparatórias\r\n* [[tutorials/tutorial0_ativ_prep.html|Roteiro de atividades preparatórias]]\r\n\r\n#### Módulo I - Introdução ao R\r\n* [[Aula 1 Apresentação|presentations/aula_1.html]]\r\n* Script Aula 1\r\n* Roteiro 1\r\n* Arquivos de dados\r\n\r\n\r\n#### Módulo II - Análises Exploratórias de Dados e Gráficos\r\n\r\n#### Módulo III - Modelos Lineares\r\n\r\n#### Módulo IV - Análises de Comunidades\r\n\r\n\r\n\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
