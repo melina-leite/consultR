@@ -1,0 +1,860 @@
+---
+title: 'Roteiro 2'
+author: "Melina Leite"
+date: "Departamento de Ecologia IB-USP"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+---
+
+```{r setup, echo = F, message = F, cache = F}
+knitr::opts_chunk$set(comment = NA, results = 'hide', message = FALSE, eval=FALSE, cache=FALSE, warning=FALSE)
+
+#global options que vieram no rmdformats de html
+library(knitr)
+library(rmdformats)
+options(max.print="75")
+opts_knit$set(width=75)
+```
+
+```{r, echo=F}
+#setwd("/Users/melinatarituba/git-meme/consultR/tutorials")
+```
+
+Neste roteiro passaremos novamente em alguns tópicos de leitura, manipulação e transformação de dados. Logo após, trataremos de estatísticas descritivas e gráficos exploratórios.  Por fim, veremos algumas formas de elaborar gráficos para apresentação de resultados.
+
+# Importando e verificando os dados
+
+Baixe os arquivos de dados [ilhas](https://www.dropbox.com/s/mz0omdb3qhfv282/ilhas.csv?dl=0) e [sps](https://www.dropbox.com/s/3jupvtct55827vx/sps.csv?dl=0) e faça a leitura deles no R:
+```{r, echo=F}
+# para testar os comandos do roteiro rodando no computador
+ilhas <- read.csv2("../data/ilhas.csv",header=T,row.names = 1)
+ilhas <- as.matrix(ilhas)
+sps <- read.csv2("../data/sps.csv",header=T, dec=".")
+```
+
+```{r, }
+ilhas <- read.csv2("ilhas.csv",header=T,row.names = 1)
+ilhas <- as.matrix(ilhas)
+sps <- read.csv2("sps.csv",header=T, dec=".")
+```
+
+A tabela `ilhas` é uma matriz da abundância de espécies (linhas) em diferentes ilhas (colunas). Quando importamos dados com as funções da família `read.table`, os objetos criados são sempre da classe `data frame`, por isso a necessidade de transformar o objeto em matriz.
+
+A tabela `sps` é um data frame contendo as informações de atributos das mesmas espécies presentes em `ilhas`.
+
+## Verificação dos dados
+
+Após a importação precisamos verifica se a tabela foi importada corretamente, e se há erros na tabela. Em data frames costumamos utilizar a função `str` para ver a estrutura do objeto, mas em matrizes esta função não é tão útil.
+```{r}
+str(sps)
+str(ilhas) #função não muito útil para matrizes
+```
+
+Se algo não parece correto quando você olha a tabela importada, é muito provável que tenha havido um erro de importação. Verifique novamente a sua tabela de dados e os argumentos da função de leitura de dados, principalmente `sep`, `header`, `dec` e `rown.names`.
+
+A função `summary` também é bem útil em dada frames para verificação de dados.
+```{r}
+summary(sps)
+```
+
+Percebemos que existe um erro de digitação em `dieta`, há uma linha em que o nível `frutos` está escrito sem plural `fruto`. Abaixo veremos como consertar este erro.
+
+
+## Corrigindo erros em data frames 
+
+Há diferentes formas de se corrigir erros em vetores, data frames e matrizes. Abaixo, veremos um exemplo de como consertar erros de digitação em variáveis categóricas (fatores ou caracteres) usando indexação de data frames.
+
+Primeiro vamos descobrir onde está o erro na variável `dieta` do data frame `sps`:
+```{r}
+# descobrindo em qual linha o nível de frutos está errado:
+sps[ sps$dieta == "fruto" , ] # linha 9
+
+# atribuindo à linha 9, coluna 4 a palavra frutos (correta)
+sps[9, 4] <- "frutos"
+
+#verificando a correção:
+sps[9, ]
+
+# podemos fazer os passos acima de maneira mais direta:
+sps[ sps$dieta == "fruto" , 4] <- "frutos"
+```
+
+Vejamos o que aconteceu com a variável `dieta`:
+```{r}
+sps$dieta #classe de fatores 4 níveis
+
+# contando quantos dados de cada nível
+table(sps$dieta)
+# veremos a função table mais abaixo
+```
+
+Como `dieta` é um fator, o nível "errado" `fruto` permanece na contagem dos fatores. Uma forma de re-arranjar a variável para conter apenas os 3 níveis corretos é transformar a variável em classe `character` e depois retransformar em `factor`:
+
+```{r}
+sps$dieta<- as.character(sps$dieta)
+sps$dieta<- as.factor(sps$dieta)
+sps$dieta
+```
+
+
+## Organizando data frames: `sort`, `order`, `rank`
+
+ As três funções `sort`, `order` e `rank`são relacionadas, porém fazem coisas diferentes e é preciso prestar atenção. Baixe o arquivo [houses.txt](https://www.dropbox.com/s/cxk4fg6xr023jpn/houses.txt?dl=0) e carregue ele no R. Vamos ver a diferença entre as funções na prática:
+
+```{r, echo=F}
+houses<-read.table("./data/houses.txt",header=T)
+```
+
+
+```{r}
+houses<-read.table("houses.txt",header=T)
+houses
+
+ranks <- rank(houses$Price)
+sorted <- sort(houses$Price)
+ordered <- order(houses$Price)
+
+view <- data.frame(houses$Price,ranks,sorted,ordered)
+view
+```
+
+A função `rank` retorna a posição do ranking que aquele preço está. Como o vetor `Price` tem 12 números, o preço mais alto (325) vai ter o maior valor (12), e o preço mais baixo (95) o menor valor, 1. Os rankings fracionados indicam empate, por exemplo existem dois preços de 188, seus rankings seriam 8 e 9, como estão empatados a função atribuiu 8.5 a ambos.
+
+A função `sort` é a mais intuitiva, ela ordena os preços do menor para o maior, ou do maior para o menor se você usar o argumento `decreasing=TRUE`. Porém, pode ser uma função perigosa, porque se você a usa em uma coluna de um data frame, ela poderá desacoplar a coluna sendo ordenada das demais colunas. Ou seja, você só mudará a coluna em questão deixando todo o data frame inalterado, o que fará perder a conexão entre os dados das linhas e as variáveis nas colunas.
+
+A função `order` pode ser considerada a mais importante e um pouco menos intuitiva. Veja os números na coluna `odered`, eles também estão numerados de 1 a 12 como em `ranks`, porém eles querer dizer algo bem diferente. O primeiro valor (9) é número da linha em que o menor valor (95) se encontra. O segundo valor (6) é o número da linha em que o segundo menor valor (101) se encontra, e assim por diante. Observe novamente o objeto `view` e tente entender a lógica de `order`.
+
+A função `order` é particularmente útil na ordenação de data frames inteiros através da indexação. Veja o exemplo:
+```{r}
+#ordenando houses em função do preço, perceba que a coluna Location também muda
+houses[order(houses$Price), ]
+
+# veja a diferença se eu usar a função sort
+houses$Price <- sort(houses$Price)
+houses 
+# OPS! bagunçou o data frame!
+```
+
+Se você quiser ordenar o data frame por uma coluna de maneira decrescente, utilize o argumento `decreasing=TRUE` da função `order`. Essa função é relativamente boa quando queremos exportar uma tabela de dados/resultados para apresentar em relatórios/apresentações/artigos. Assim, você ordena o data frame pela coluna que você achar mais importante na hora de apresentar seus dados/resultados.
+
+
+# Análise exploratória de dados
+
+Podemos pensar a análise exploratória de dados de duas maneiras;
+
+* Análise numérica: computando as estatísticas descritivas dos dados
+
+* Análise gráfica: explorando o comportamento e a relação entre as variáveis através de gráficos.
+
+Ambas são MUITO importantes para que possamos entender nosso dados, conhecer suas características e podermos faze as análises estatísticas mais apropriadas em um segundo passo. É nesta fase que estudamos a distribuição dos dados, observamos as premissas de normalidade e homogeneidade, encontramos possíveis dados atípicos (_outliers_), e analisamos graficamente a relação entre as nossas variáveis de interesse.
+
+## Estatísticas descritivas
+
+Como vimos no roteiro 1, listamos as principais estatísticas de resumo dos dados e suas funções no R. Vejamos os exemplos com os dados de `sps`:
+
+```{r}
+max(sps$compr.asa) # máximo
+min(sps$compr.corpo) # mínimo
+
+range(sps$peso) # máximo e mínimo
+
+mean(sps$peso) # média
+sd(sps$peso) # desvio padrão
+var(sps$peso) # variância
+
+median(sps$peso) # mediana
+quantile(sps$peso) # quantil
+```
+
+Muitas das funções acima estão reunidas na função `summary`:
+```{r}
+summary(sps$peso) # sumário
+```
+
+### Quantis
+Muitas das estatísticas acima são conhecidas de vocês, mas uma que geralmente é mais difícil de interpretar e entender é o **quantil**. A **mediana** é um quantil que divide o conjunto de dados em 50%. Ou seja, 50% dos teus dados estão para a esquerda e 50% para a direita daquele valor. Vejamos um exemplo:  
+
+Suponha que tenhamos os seguintes valores de uma variável:
+```{r}
+valores <- c(15,5,3,8,10,2,7,11,12)
+```
+
+Primeiro vamos odernar este vetor em ordem crescente:
+```{r}
+valores.ord<- valores[order(valores)]
+valores.ord
+```
+
+Se dividirmos os dados na metade, teremos a mediana, que neste caso é o quinto valor no vetor ordenado (8).  
+```{r}
+length(valores) # para saber qual o tamanho do vetor
+valores.ord[5]
+
+median(valores) #conferindo o valor da mediana
+```
+
+Assim, podemos dividir os dados em quantas porcentagens quisermos. Por exemplo, se eu quero saber qual o valor em que 10% dos meus dados se encontram:
+```{r}
+quantile(valores, probs=0.1)
+```
+
+O padrão da função `quantile` são os quartis, ou seja, são os valores das probabilidades em 25%, 50% e 75% (que é o mesmo retornado na função `summary`). Mas podemos mudar para qualquer quantil desejado. Vemos que o argumento `probs` nos permite escolher qual em quais valores de probabilidade (0-1) queremos dividir nossos dados:
+```{r}
+quantile(valores)
+quantile(valores, probs = seq(from = 0, to = 1, by = 0.1))
+```
+
+
+## Descrevendo as observações - Contagens
+
+A forma mais simples de descrever quantitativamente observações qualitativas é agrupá-las em categorias e contar quantas observações pertence a cada categoria.
+
+No R a forma mais direta de obter contagens (frequências) é através da função `table.` Tomando como exemplo o data frame `sps`, podemos nos perguntar quantas espécies existem por dieta:
+
+```{r}
+table(sps$dieta)
+```
+
+A função `table` muito é útil para **variáveis categóricas** (classe de fatores ou caracteres). Vamos ver agora quantas espécies existem em uma combinação de dieta e cor:
+
+```{r}
+table(sps$dieta,sps$cor)
+```
+
+## Funções tapply e aggregate
+
+Em `data frames`, quando temos uma variavel categórica (fator) e uma numérica, as funções `aggregate` e `tapply` são muito úteis. Estas funções aplicam uma função qualquer a uma variável quantitativa para cada classe de variável categórica.
+
+A função `tapply` vai criar uma tabela com os resultados da função que você aplicou ao seu `data frame`. Por exemplo, queremos saber o comprimento médio do corpo das espécies por dieta, pois achamos que os bichos que tem uma dieta nectarívora sejam menores:
+
+```{r}
+#Comprimento médio do corpo por dieta
+tapply(X = sps$compr.corpo, INDEX = sps$dieta, FUN = mean)
+```
+
+Entendendo os argumentos da função:  
+- em `X` colocamos a variável quantitativa que estamos interessados em saber  
+- em `INDEX` colocamos a(s) variável(is) qualitativa(s) que queremos resumir  
+- em `FUN` colocamos a função que queremos aplicar na variável quantitativa, por exemplo `mean`, `max`, `min`, `var`.
+  
+Experimente este outro exemplo que separa o peso máximo das espécies por cor e dieta:
+```{r}
+tapply(sps$peso, list(sps$cor, sps$dieta), max)
+```
+
+Qual é a classe do objeto que resulta da função `apply`?
+
+A função `aggregate` é o equivalente das tabelas dinâmicas das planilhas eletrônicas. Por exemplo, para obter do objeto `sps` um `data frame` com a abundância média das espécies por dieta e cor você executa o comando: 
+
+```{r}
+aggregate(formula = abund ~ cor + dieta, data = sps, FUN = mean)
+```
+
+Na função `aggregate` você pode inserir as variáveis através de fórmula ou como na função `tapply` indicando a variável quantitataiva a ser analisada e a variável categórica de interesse. A fórmula permite visualizar mais facilmente o que estamos fazendo. No exemplo acima queremos ver o sumário da abundância média das espécies por cor e dieta.
+
+Em `aggregate` podemos também escolher mais de uma variável quantitativa como resultado. Veja o exemplo abaixo:
+
+```{r}
+# Abundância e peso médio por cor e dieta
+aggregate(cbind(abund, peso) ~ cor+ dieta, sps, mean)
+```
+
+**OBS** Certifique-se que você entende a diferença entre as funções `aggregate` e `tapply` principalmente em relação ao tipo de saída (resultado) da função. Pense em quais situações seria melhor usar cada uma destas funções.
+
+## Função `apply`
+
+A função `apply` é utilizada matrizes, tem o objetivo de aplicar uma função nas linhas ou colunas da matriz. Por exemplo, na matriz `ilhas` queremos saber quantos bichos foram coletados por ilha:
+```{r}
+apply(X=ilhas, MARGIN=2,FUN=sum)
+```
+
+Ou então queremos saber qual a abundância média das espécies em cada ilha:
+```{r}
+apply(X=ilhas, MARGIN=1,FUN=mean)
+```
+
+O argumento `MARGIN` é quem diz se você aplicará a função por linha (1) ou coluna (2). 
+
+
+# Gráficos exploratórios
+
+O R é um ambiente de trabalho onde a análise gráfica de dados é de fácil execução. Entretanto, é necessário diferenciar dois tipos de gráficos:
+
+- **Gráficos para análise de dados**: são gráficos simples que permitam visualizar o mais claro possível padrões presentes nos dados. Esses gráficos são construídos rapidamente no R e as formas de construí-los permitem inúmeras interações com os elementos de informação nos gráficos.  
+- **Gráficos prontos para apresentação**: são construídos para inclusão em documentos e trabalhos técnicos e científicos, como forma de ilustrar resultados e conclusões. Gráficos de apresentação são mais elaborados. Sua construção no R exige mais tempo e conhecimento, pois o R não oferece recursos interativos para manipular os elementos pictoriais dos gráficos. Veremos sobre estes gráficos mais adiante no roteiro.  
+
+Analisar um gráfico é uma maneira rápida e concisa de visualizar certas informações contidas em um conjunto de observações. O gráfico certo a ser utilizado em cada situação depende da informação que queremos visualizar e do tipo de variável que estamos trabalhando. Um gráfico mal elaborado muitas vezes falha em trazer com clareza a informação que queremos visualizar e, em alguns casos, pode levar a falsas evidências.
+
+
+## O quarteto de Anscombe
+
+Para ilustrar a importância de se fazer a análise  visual dos seus dados, colocamos um exemplo clássico de conjunto de dados com características completamente distintas, mas que resultam nos mesmos resultados de análises estatísticas - o [**Quarteto de Anscombe**](https://pt.wikipedia.org/wiki/Quarteto_de_Anscombe). Se não olhássemos a "cara" dos dados antes de analisar, poderíamos tirar conclusões errôneas baseadas apenas nos resultados das análises.  
+Abaixo estão os 4 conjutos de dados:
+
+```{r}
+# o R já possui em seu pacote base os dados:
+help("anscombe")
+
+# para carregá-lo em sua área de trabalho:
+data(anscombe)
+```
+
+Esse objeto é composto de 4 pares de variáveis: x1 a x4 (variáveis independentes ou preditoras) e y1 a y4 (variáveis depententes ou resposta).
+
+```{r}
+#média das colunas
+media <-apply(ans, 2, mean)
+media
+# desvio padrão das colunas
+desv.pad <-apply(ans, 2, sd)
+desv.pad
+```
+
+Todos os quatro conjunto de dados são idênticos quanto às suas propriedades estatísticas (média, variância, correlação, coeficientes de regressão), mas variam consideravelmente quando graficados.
+
+```{r}
+#plotando os gráficos das relações entre x e y
+par(mfrow=c(2,2) ,pch=16) # parâmetro gráfico
+
+# conjunto dados 1
+plot(anscombe$y1~anscombe$x1, col="red", xlab="x1", ylab="y1")
+abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") # valores da regressão linear
+
+# conjunto dados 2
+plot(anscombe$y2~anscombe$x2,col="red",xlab="x2", ylab="y2")
+abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") 
+
+#conjunto dados 3
+plot(anscombe$y3~anscombe$x3,col="red", xlab="x3", ylab="y3")
+abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") 
+
+#conjunto dados 4
+plot(anscombe$y4~anscombe$x4, col="red",xlab="x4", ylab="y4")
+abline(a=3,b=0.5,col="blue")
+title("Regressão: y=3+0.5x") 
+par(mfrow=c(1,1)) #voltando para a definição de 1 plot
+```
+
+## Encontrando valores atípicos (outliers)
+
+Chamamos de valores atípicos, em inglês _outliers_ aquela observação nos dados que é ou muito grande ou muito pequena se comparada ao conjunto total dos dados. Tais _outliers_ podem dominar os resultados de uma análise estatística. Uma simples obsevação pod determinar se a variável é significativa ou não em um modelo de regressão, ou dominar os eixoes em uma análise multivariada, como a Análise de Componentes Principais (PCA).  
+Veja o exemplo do conjunto de dados 4 do quarteto de Anscombe, existe um único valor extremo à direita do gráfico que "puxa" toda a reta da regressão para ele. Esta observação é claramente um outlier.  
+Os outliers podem ser fruto de um erro na mensuração da variável ou na digitação do valor. E assim, podem ser consertados, medidos novamente ou até mesmo excluídos do conjunto de dados. Entretanto, valores extremos genuinamente coletados, ou seja, que são fruto da variabilidade da variável em si, não devem ser excluídos da amostra. Logo, sendo valores incorretos ou corretos, primeiro é preciso saber que eles estão presentes (identificá-los) e entender seus efeitos no resultados das análises para depois decidir o que fazer com os outliers.  
+Os métodos gráficos são a principal maneira de se detectar outliers, tanto em uma dimensão (uma variável), quanto em outliers em duas ou mais dimensões.**Boxplots** e **Cleveland dotplots** são particularmente interessantes para isso.
+
+
+## Gráficos: Uma variável
+
+O primeiro passo da análise gráfica dos dados é fazer gráficos para cada variável separadamente. Neste gráficos podemos analisar a distribuição das variáveis quantitativas, verificar a presença de _outliers_ (dados atípicos), e também observar a distribuição de frequência das variáveis qualitativas (categóricas). 
+
+
+
+### Gráficos de barra
+
+Gráficos de barras são geralmente utilizados para representar as quantitades de alguma variáveis qualitativas (categóricas), ou seja, para variáveis das classes fatore ou caracteres. Nestes gráficos, geralmente obsevamos a quantitade de vezes que o fator ocorre nos dados (sua frequência absoluta) ou suas frequências relativas (a porcentagem).
+
+
+```{r}
+# observar as frequências dos tipos de dieta nos dados de sps
+# primeiro descobre as frequências:
+t.dieta <- table(sps$dieta)
+
+barplot(t.dieta, ylab="número de espécies", main="Dieta das espécies")
+```
+
+### Gráficos de pontos
+
+Os gráficos **Cleveland Dotplot** são muito usados para ver a abrangência dos dados de acordo com a ordem com que foram coletados. Ou seja, o número da linha de uma observação é plotado contra o valor da observação.
+É útil para encontrar *outliers* em uma variável:
+
+```{r}
+dotchart(houses$Price, ylab="Ordem dos dados", xlab="valores", main="preços de casas $")
+```
+
+
+### Histogramas
+
+Os histogramas são gráficos que representam a distribuição de frequências dos valores de uma variável quantitativa, servem para vermos a forma da distribuição dos dados.
+Baixe o conjunto de dados [Sparrows](https://www.dropbox.com/s/e5xrbjh5s687pp6/Sparrows.txt?dl=0), para fazer os histogramas abaixo:
+
+```{r, echo=F}
+pardais <- read.table("./data/Sparrows.txt",header=T)
+```
+
+
+```{r}
+pardais <- read.table("Sparrows.txt",header=T)
+
+#histograma de peso dos animais:
+hist(pardais$Wt)
+hist(pardais$Tarsus)
+
+hist(pardais$Head, main="Pardais", xlab="Head (cm)")
+```
+
+Podemos também fazer vários histogramas condicionando os dados a algum fator (variável categórica, com diferentes níveis). Para isso usaremos o pacote `lattice`, que vem junto com o Rbase. Esse pacote é muito útil para fazer gráficos exploratórios multipainéis.
+
+```{r}
+#lembre-se de carregar o pacote!
+library(lattice)
+
+#histograma dos pesos em função do sexo
+histogram(~Wt|Sex,
+          data= pardais)
+
+#histograma do peso em função do observador
+histogram(~Wt|factor(Observer), 
+          data = pardais,
+          layout = c(1,7),
+          strip=F,
+          strip.left=T)
+```
+
+**OBS:** Para ver mais exemplos da funcionalidade do pacote `lattice`, utilize o comando `demo(lattice)`!
+
+
+### Boxplots
+
+Os boxplots são uma maneira muito útil de sintetizar as informações básicas dos dados em apenas um gráfico. São também muito usados para identificação de _outliers_.  
+Um boxplot visualiza o centro e o espalhamento dos dados, assim com seus extremos. A informação essencial em um boxplot é dada por cinco valores: o minimo, os quartis 25%, 50% (mediana), 75% e o máximo. A "caixa" formada pela figura do boxplot contém 50% das observações centrais dos dados.  
+Veja uns exemplos:
+
+```{r}
+boxplot(pardais$Wingcrd, main="tamanho de asa de pardais")
+boxplot(sps$peso, main="peso das espécies")
+boxplot(pardais$Tarsus)
+```
+
+Observe nestes boxplot os pontos que ficam para fora da "caixa". Estes são os valores extremos, que deveriam ser investigados como "ponteciais outliers" pelo pesquisador.  
+
+O formato do boxplot, assim como a presença ou não de valores fora da "caixa", são bons indicadores da distribuição dos dados. Por exemplo, se o boxplot não contém valores extremos, e a linha interna da caixa (mediana) estiver em uma posição central, ou seja não assimétrica para baixo ou para cima, é um indicativo de uma distribuição simétrica como a Normal.
+
+Fazer boxplots condicionados à variáveis categóricas também é muito útil e já aponta para possíveis diferenças entre os níveis desta variável.
+
+```{r}
+boxplot(Wt~Sex, data=pardais)
+```
+
+
+### Gráficos quantil-quantil
+
+A **distribuição normal** (gaussiana) é uma premissa em muitos dos métodos estatísticos utilizados atualmente. A premissa da normalidade significa que a variável resposta (dependente) é normalmente distribuída em cada valor da variável preditora (independente).  
+A normalidade dos dados contínuos é geralmente visualizada em histogramas e plots de densidade e gráficos quantil-quantil.  
+Um gráfico quantil-quantil plota os quantis de duas distribuições. Pontos que se aproximam de uma linha reta indicam que as duas distribuições são similares.  Com isso, podemos plotar os quantis dos dados brutos (ou resíduos) contra os quantis teóricos de uma distribuição normal padronizada (distribuição Z), para ver se a distribuição dos dados se parece com a distribuição normal.
+
+Vejamos os gráficos dos exemplos abaixo:
+```{r}
+qqnorm(pardais$Culmen)
+qqline(pardais$Culmen)
+```
+
+A função `qqnorm` plota os quantis da amostra (dos dados) em comparação com os quantis teóricos da distribuição normal, e a função `qqline` desenha a linha onde os quantis são similares. Os desvios para longe dessa linha indicam os desvios da normalidade dos dados, ou seja, quanto mais próximo à reta estão s pontos do gráfico, mais confiança temos de que a distribuição dos dados pode ser considerada normal.
+
+```{r}
+#simulando dados normais
+normais <- rnorm(n=101,mean = 50, sd = 2)
+
+qqnorm(normais)
+qqline(normais)
+```
+
+
+## Gráficos: Duas variáveis
+
+
+### Gráficos de dispersão
+
+Os gráficos de dispersão são usados para observar a relação entre duas variáveis contínuas. Ou seja serve para inspecionar visualmente se duas variáveis são associadas.
+
+```{r}
+plot(pardais$Tarsus, pardais$Wingcrd)
+
+# fazendo a associaçao entre as varáveis usando formato de fórmula:
+plot(pardais$Wt~pardais$Head)
+
+# fazendo graficos separadaos para variável observador 
+# pacote lattice
+xyplot(Wt~Head|as.factor(Observer), data=pardais)
+
+# cores diferentes para variável sexo
+plot(Wt~Head, data=subset(pardais,Sex=="Female"), 
+     xlim=c(29,37), ylim=c(15,28))
+par(new=T) #adicionando o grafico abaixo no de cima
+plot(Wt~Head, data=subset(pardais,Sex=="Male"), col="red", 
+     xlim=c(29,37), ylim=c(15,28))
+# ou
+cores <- ifelse(pardais$Sex=="Male", "red", "black") #criando vetor com cores
+plot(Wt~Head, data=pardais, col=cores)
+```
+
+
+### Pairs - correlações
+
+`Pairs` é uma função no R que faz um painel de gráficos de dispersão muito interessante para vermos as correlações entre as variáveis quantitativas.  
+Essa função é particularmente importante para vermos de uma só vez as correlações entre a variável dependente e as variáveis independentes, assim como as correlações entre as variáveis independentes.  
+As funções abaixo serão usada na função `pairs` para fazer histogramas na diagonal e os valores da correlação nos painéis superiores (retiradas do help da função):
+```{r}
+## colocar histogramas de frequência na diagonal do plot
+panel.hist <- function(x, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+```
+```{r}
+## colocar os valores das correlações com tamanho proporcional à correlação
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+```
+
+Plotando o gráfico:
+```{r}
+pairs(pardais[ ,3:8], upper.panel = panel.cor, diag.panel = panel.hist)
+```
+
+
+# Edição de gráficos
+
+Nesta parte iremos aprender a editar vários parâmetros gráficos no R para que fiquem mais adequados à publicações e relatórios. Editar gráficos no R não é fácil, pode demorar um tanto, mas no R podemos mudar quase todos os parâmetros dentro de um gráfico, o que nos dá liberdade para "desenha-lo" da maneira que quisermos. 
+
+As funções gráficas como `plot`, `boxplot` e `hist` já mostram os gráficos com a formatação padrão no R. É nesta formatação que vamos trabalhar:
+
+Ex. gráfico de dispersão:
+
+```{r}
+riqueza <- c(15,18,22,24,25,30,31,34,37,39,41,45)
+area <- c(2,4.5,6,10,30,34,50,56,60,77.5,80,85)
+local <- rep(c("lago1", "lago2"), each=6)
+
+plot(riqueza~area)
+```
+
+Existem duas maneiras de se mudar os parâmetros gráficos. A primeira é usando os argumentos da própria função do gráfico. A segunda forma é utilizando a função `par` e seus argumentos antes de plotar o gráfico. Alguns argumentos só podem ser chamados exclusivamente por uma destas maneiras. Por exemplo, `ylab` e `xlab` modificam o nome (label) dos eixos e só podem ser chamadas por dentro do gráfico, já outras funções só podem ser chamadas pelo `par()`, como por exemplo, `mar` que controla o tamanho das margens do gráfico e `mfrow` que controla quantos gráficos serão mostrados no mesmo dispositivo. 
+A página de help do `par` é uma das mais procuradas por todos que estão fazendo gráficos no R, e por isso é importante que se gaste um tempo para aprender qual tipo de informação ela fornece, onde está a informação, e como mudar os parâmetros do R.  
+
+**Recomendação:** recomendamos imprimir ou deixar sempre aberto o help da função `par` para consulta na hora que estiver fazendo os gráficos. Existem inúmeros argumentos muito úteis que certamente serão sempre consultados. O [R-reference Card](https://cran.r-project.org/doc/contrib/Short-refcard.pdf) também é muito útil na hora de fazer gráficos pois ele tem os argumentos e funções mais utilizados.
+
+### Aumentando os tamanhos de eixos e pontos:
+```{r}
+par(cex=2)
+plot(riqueza~area)
+par(cex=1) # para voltar ao tamanho padrão
+```
+
+O argumento `cex` se aplica ao tamanho de fonte das legendas, título, pontos, de uma forma geral no gráfico. Veja o help para os argumentos `cex.lab`, `cex.axis`, e outros tipos de argumentos que trabalham o tamanho dos elementos gráficos.
+
+Experimente colocar o `cex` como argumento do `plot`:
+```{r}
+plot(riqueza~area, cex=2)
+```
+
+Neste caso, qual a diferença entre o `cex` usando em `par` e o `cex` usado em `plot`? E se usarmos o cex nas duas funções?
+
+```{r}
+par(cex=2)
+plot(riqueza~area, cex=2)
+par(cex=1)
+```
+
+Estas diferenças ocorrem pois `par(cex=2)` tem a função geral de aumentar todas as fontes e pontos, enquanto que no `plot(cex=2)` tem a função de aumentar só o pontos. Neste caso, as duas informações se multiplicam para gerar o último gráfico. 
+
+É importante ressaltar que quando o dispositivo gráfico está "aberto", uma vez que utilizamos a função `par` ela vai estar funcionando para todos os gráficos subsequentes. Se você quiser "limpar" os parâmetros do `par` para fazer um novo gráfico, você deve fechar os dispositivos gráficos (símbolo de vassoura no painel gráfico no Rstudio) e rodar o comando do gráfico novamente. Ou então, usar a função `dev.off()` sem nenhum argumento dentro para fechar os dispositivos gráficos (janelas). Outra opção (como no código acima), é voltar com o parâmetro gráfico padrão (default).
+
+
+#### Mudando a cor e o formato dos pontos do gráfico:
+```{r}
+plot(riqueza~area, pch=4, col="blue")
+```
+
+Dê o comando `demo(colors)` para ter uma noção da quantidade de cores possíveis a serem chamadas por nome. Existem diferentes paletas de cores formas de defini-las.
+
+
+#### Mudando nome de eixos e títulos dos gráficos
+```{r}
+plot(riqueza~area, xlab = "Área", ylab="Número de Espécies", 
+     main= "relação espécies-área")
+
+
+# área em metros quadrados
+plot(riqueza~area, xlab = expression("Área (m"^2*")"), 
+     ylab="Número de Espécies", main= "Borboletas do Parque")
+```
+
+#### Dois gráficos num mesmo plot
+
+Para colocar dois gráficos numa mesma figura no R, vc precisa usar o argumento `par(mfrow=c( , ))` para controlar “quantas figuras” serão desenhadas. O vetor contido dentro da função mfrow=() controla o numero de gráficos que serão desenhados no eixo x (1° número) e no eixo y (2° número).
+
+Outro arguemtno importante de `par` é o `par(mar=c())` que  controla o “tamanho das margens” do gráfico e como a figura ficará disposta dentro do dispositivo. O vetor contido dentro da função `mar=()`, controla as posições das margens, sendo que o 1° numero controla a margem da parte de baixo do gráfico, o 2° controla a margem do lado esquerdo, o 3° numero controla a parte de cima e o 4° numero controla o tamanho da margem do lado direito do gráfico. 
+
+```{r}
+par(mfrow=c(1,2))
+plot(riqueza~area)
+boxplot(riqueza~local)
+
+par(mfrow=c(2,1))
+plot(riqueza~area)
+boxplot(riqueza~local)
+
+par(mar=c(4,14,2,6))
+plot(riqueza~area)
+boxplot(riqueza~local)
+
+dev.off() # para fechar os dispositivos gráficos. e "zerar" o par()
+```
+
+### Diferenças entre os tipos de gráficos
+
+Às vezes, a forma como se muda argumentos do `plot()`, `boxplot()` e `barplot()` não é a mesma, ou seja, comandos que funcionam perfeitamente para o `plot()` podem não produzir efeito algum no `boxplot()`, e vice-versa. Isso atrapalha um pouco, mas assim que se acostuma fica mais fácil. Há duas dicas para resolver este problema: (i) tente sempre jogar os argumentos para o `par()` pois às vezes eles podem não funcionar se chamadas por dentro do `plot()`, `boxplot()`, etc, mas irão funcionar pelo `par()`; (ii) descubra o nome em inglês do parâmetro que se quer mudar (_label, tick, legend_) e jogue no Google “legend boxplot”. Com certeza, alguém já teve este mesmo problema, e entrando dentro da lista do R (as diversas que existem) ou em aulas disponibilizadas na internet, com certeza se acha uma solução.  
+
+
+### Inserindo mais informações em gráficos
+
+Existem diversas informações que se pode incluir em um gráfico. Pode-se colocar uma letra para mostrar que este é o painel “a” e ao lado é o painel ”b”; pode-se colocar asteriscos para mostrar quais relações são significativas; pode-se desenhar flechas, outros pontos, uma infinidade de coisas. Tudo isto pode ser feito, mas requer funções comandos separados daqueles já passados pelo `par()` e `plot()`, `boxplot()` ou `barplot()`. Estas funções que acrescentam "coisas" ao gráficos são chamadas de funções de nivel inferior (**low-level plotting commands**), pois elas dependem que a função do plot seja "chamada". Dentre as várias funções existentes para se inserir informações em gráficos, existem sete que são bastante úteis
+
+#### `lines()`
+Para inserir linhas retas ou curvas não paramétricas:
+
+```{r}
+plot(riqueza~area)
+lines(area, riqueza)
+lines(lowess(area,riqueza))
+```
+
+#### `abline()`
+
+Para inserir linhas de tendência criadas a partir de um modelo linear. Para isso é primeiro necessário criar o modelo, para depois criar a linha. 
+
+```{r}
+model <-lm(riqueza~area)
+plot(riqueza~area)
+abline(model)
+```
+
+Ou então, você pode dar os valores dos parâmetros para a função
+```{r}
+# colocando um intercepto e uma inclinação à reta:
+abline(a=15, b=0.30, col="red")
+```
+
+Esta função também serve para inserir linhas verticais ou horizontais no gráfico
+```{r}
+abline(v=40, lty=2, col="darkgreen")
+abline(h=30, lty=4, col="purple")
+```
+
+#### `text()` e `mtext()`
+
+A função `text` acrescenta texto dentro do gráfico. 
+```{r}
+plot(riqueza~area)
+text(x=10,y=43, "texto aqui")
+```
+
+Já a função `mtext` acrescenta texto nas margens do gráfico ou da janela gráfica. Seu uso mais comum é inserir legendas nos eixos (quando a gente omite a legenda padrão da função plot).
+
+```{r}
+#omitindo legenda no eixo x
+plot(riqueza~area, xlab="")
+
+#inserindo texto no local
+mtext(side=1, "área do lago", line=3, cex=2)
+```
+
+#### `axis()`
+
+Muitas vezes o que a gente quer é inserir um eixo novo no gráfico, ou sobrescrever o eixo plotado de forma diferente do eixo do plot. Para isso usamos a função `axis` que desenha o eixo de acordo com as especificações dadas:
+
+```{r}
+#omitindo o eixo x:
+plot(riqueza~area, xaxt="n")
+
+# desenhando outro eixo para x:
+axis(1, at=seq(0,80,20), labels=c("zero", "vinte", "quarenta", "sessenta", "oitenta"))
+```
+
+
+### sobrepondo outro gráfico
+
+As vezes nós queremos colocar mais de uma informação em um gráfico, e para isso nós sobrepomos um novo gráfico em cima do já existente. Por exemplo, nós queremos incluir os dados de umidade dos locais no eixo Y2.
+
+```{r}
+umidade <- c(82,91,78,57,48,45,35,38,21,15,24,33)
+
+#dando mais espaço para a margem direita
+par(mar=c(5,4,4,4))
+
+#plotando o grafico principal
+plot(riqueza~area)
+
+par(new=T) # para permitir sobrescrever o gráfico
+
+#plotando a nova variável Y2, mas sem desenhar o eixo
+plot(umidade~area, yaxt="n", ylab="",type="l") 
+
+# desenhando o eixo de Y2
+axis(4)
+mtext("Umidade (%)",4, line = 2)
+```
+
+Outro exemplo seria se quiséssemos colocar cores diferente para os locais amostrados usando a função de nível inferior `points`:
+
+```{r}
+#separando os dados por local
+riq.lago1 <- riqueza[local=="lago1"]
+area.lago1 <- area[local=="lago1"]
+
+riq.lago2 <- riqueza[local=="lago2"]
+area.lago2 <- area[local=="lago2"]
+
+# plotando o lago 1 primeiro
+plot(riq.lago1~area.lago1, xlim=c(0,85), ylim=c(15,45), 
+     col="orange", pch=16, xlab = "Área", ylab= "Riqueza",
+     las=1, bty="l", cex=2)
+
+# incluindo os pontos do lago 2
+points(riq.lago2~area.lago2, pch=16, col="purple", cex=2)
+```
+
+#### Incluindo legendas
+
+Vamos colocar a legenda do plot acima para sabermos qual cor corresponde a qual local:
+```{r}
+legend("topleft", legend= c("lago 1", "lago 2"), pch=16, col=c("orange", "purple"), bty="n")
+```
+
+
+
+
+## Salvando gráficos
+
+Após ter feitos todos os gráficos desejados, é possível salvá-los em vários formatos, como jpeg, png, postscript, pdf. Consulte a ajuda do pacote `grDevices` para a lista completa e mais informações.
+
+Após chegar ao gráfico final, ajustando todos os parâmetros desejados, você pode usar a função do R para criar o arquivo no formato desejado. Há funções para cada formato de arquivo, todas elas com o primeiro argumento `filename`, que especifica o nome do arquivo a salvar.
+
+O primeiro comando é usar a função para o formato de arquivo que você quer salvar, colocar o nome do arquivo e alguns parâmetros gráficos como altura (`heigh`) e largura (`width`) da figura. Depois disso vem o código da figura, este código será enviado para o arquivo sendo montado. Por fim, você usa a função `dev.off`, que fecha o gráfico para se salvo:
+ 
+```{r}
+jpeg(filename = "Algumnome.jpg", width = 480, height = 480)
+plot(riqueza~area)
+dev.off()
+```
+
+Importante:
+
+- Seu arquivo de figura só terá os parâmetros desejados se você executar todo o código após abrir o arquivo da figura, incluindo todos os comandos par().  
+- Seu arquivo de figura só será salvo quando você executar o comando dev.off(). Até que isso aconteça, todos os resultados de comandos gráficos continuarão a ser enviados para este arquivo.  
+- Por isso, se você criar dois gráficos, o segundo substituirá o primeiro.  
+- Ao executar o comando dev.off(), o arquivo será gravado no diretório de trabalho. Se você quiser gravá-lo em outro lugar, terá que especificar o caminho completo no comando de criação do arquivo, no argumento filename.  
+
+No **Rstudio** existe um caminho manual para você salvar o gráfico sendo exibido na aba Plots. No botão Export você pode salvar como arquivo de imagem ou pdf, ajustar o tamanho desejado e salvar. Essa forma é mais fácil, porém cada vez que você quiser salvar terá de fazê-lo através de cliques, o que não garante que os gráficos salvos tenham os mesmos parâmetros, por exemplo a altura e largura. 
+
+**OBS:** outro fato importante de mencionar no **Rstudio** é que se o seu painel de plot estiver muito pequeno em relação ao tamanho do gráfico, ao rodar a função do gráfico, vai aparecer uma mensagem de erro dizendo que as margens do painel são muito pequenas para o plot. Para resolver isso você pode aumentar o espaço do painel de plot ou então abrir uma janela de dispositivo gráfico à parte com a função `x11()` (para Windows):
+
+```{r}
+# abrindo uma janela para fazer o gráfico, à parte do Rstudio
+x11()
+# fazendo o plot
+plot(riqueza~area)
+
+# o plot será enviado diretamente para a janela aberta.
+```
+
+
+
+# Material de Apoio
+
+- Muitos dos exemplos desta aula foram tirados dos roteiros e exercícios do site da [disciplina de R do IB-USP](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:02_tutoriais:tutorial4:start). Vale a pena conferir na íntegra os roteiros 4 e 5.
+
+- Capítulo 6 da Apostila de R da disciplina da USP, sobre [gráficos avançados](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:10-graficos02)
+
+- Exercícios sobre [parâmetros gráficos](http://r-exercises.com/2016/03/24/graphics-parameters-exercises/) 
+
+- O pacote [ggplot2](http://ggplot2.org/) é uma nova forma de fazer gráficos seguindo uma sintaxe um tanto diferente do pacote base. Vale a pena conferir e testar alguns exemplos!
+
+- Recomendo ler o Capítulo 5 do livro "The R Book" do Crawley sobre gráficos. Se ainda não baixo o livro, [baixe aqui!]((http://gen.lib.rus.ec/book/index.php?md5=e09db860b99f0710ec5746796c101d59)) 
+
+- Artigo sobre como explorar dados e evitar problemas estatísticos comuns: [Zuur et al. 2010](https://www.dropbox.com/s/72bws84hemahlum/zuur%20et%20al%202010%20protocol%20data%20exploration%20to%20avoid%20common%20statistical%20problems.pdf?dl=0)
+
+- Mais dois livros bem interessantes sobre análises de dados ecológicos e R:  
+    - Zuur et al. 2009. [Analysing Ecological Data](https://www.dropbox.com/s/zato5f7nnai7h8g/Zuur%2C%20Ieno%2C%20Smith_2007_Analysing%20ecological%20data.pdf?dl=0). Capítulo 4 fala sobre análise exploratória e gráficos  
+    - Zuur et al. 2009. [A beginner's guide to R](https://www.dropbox.com/s/g0hn0w9f5rn3i91/Zuur%2C%20Ieno%2C%20Meesters_2009_A%20Beginner%27s%20Guide%20to%20R.pdf?dl=0). Capitulos 5 e 7 sobre gráficos.  
+  
+
+
+# Exercícios!
+
+### 1. Para gerar uma amostra de 10.000 números de uma distribuição Normal com média 30 e desvio padrão 7, utilize o comando:
+```{r}
+vnormal = rnorm(10000, 30, 7)
+```
+
+- Qual o somatório das observações no vetor 'vnormal' que são maiores que 44? E maiores que 51?  
+- Como você excluiria a maior observação do vetor 'vnormal'?  
+
+### 2. Aninhamento de comunidades
+O termo “aninhamento” (nesting) é usado para a situação em que comunidades mais pobres em espécies são um subconjunto das comunidades mais ricas. Uma análise exploratória rápida de aninhamento é ordenar as linhas e as colunas de uma matriz binária de ocorrência das espécies por comunidades.
+
+1. Crie um objeto da classe `matrix` com a matriz de ocorrência de mamíferos em topos de [montanhas](https://www.dropbox.com/s/pxiiwcj4yukbfgl/gbmam93.csv?dl=0). (DICA: a função `read.table` retorna um data frame. Use a função `as.matrix` para mudar a classe para matriz.) 
+
+2. Use o ordenamento por indexação para criar uma matriz com as comunidades por ordem decrescente de espécies, e as espécies por ordem decrescente de frequência de ocorrência. (OUTRA DICA: lembre-se da função apply!).  
+
+3. A matriz resultante tem sinais de aninhamento? Por que?  
+
+```{r , echo=FALSE}
+mont <- read.csv2("montanha.csv",dec=".",header = T,row.names = 1)
+mont <-as.matrix(mont)
+tot.sp <- apply(mont,1,sum)
+tot.loc <- apply(mont,2,sum)
+mont[order(tot.sp, decreasing = T) , order(tot.loc, decreasing =T)]
+```
+ 
+### 3. Eucaliptos
+
+Neste exercício, use o conjunto de dados [Inventário em Florestas Plantadas de Eucalyptus grandis](https://www.dropbox.com/s/uemq45p7moveodx/egrandis.csv?dl=0).  
+
+1. Utilize o gráfico boxplot para analisar o DAP de árvores de _E. grandis_ em função das variáveis região (regiao) e rotação (rotacao).  
+
+2. Avalie a normalidade da altura (ht) do conjunto total de árvores com um gráfico quantil-quantil contra a distribuição normal.
+
+```{r, echo=F}
+egrandis <- read.table("../data/egrandis.csv", header=T, sep=";")
+
+boxplot(dap~regiao, data=egrandis)
+boxplot(dap~rotacao, data=egrandis)
+boxplot(dap~regiao+rotacao, data=egrandis)
+
+
+qqnorm(egrandis$ht)
+qqline(egrandis$ht)
+```
+
+### 4. Eucaliptos 2
+
+Crie um gráfico de dispersão entre “dap”1) e “ht”2) com:
+
+1. Legendas dos eixos com nomes das variáveis e suas unidades  
+2. Marcações do eixos (ticks) para dentro da área do gráfico  
+3. Apenas dois eixos (formato “L”)  
+4. Título informativo  
+5. Tamanho das fontes maiores que o padrão  
+
+

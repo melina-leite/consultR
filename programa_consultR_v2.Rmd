@@ -1,0 +1,70 @@
+---
+title: "Curso: Introdução ao R para Análises de Dados em Consultoria Ambiental"
+author: "Melina de Souza Leite"
+output:
+  pdf_document: default
+  html_document:
+    theme: cerulean
+---
+
+**Público-alvo**: Consultores ambientais sem conhecimento de R e com conhecimento básico em estatística.  
+ 
+**Objetivo**: Introduzir o R como linguagem para análises de dados voltados para consultoria ambiental. Exemplos utilizando dados mais comuns coletados. Análises estatísticas aplicadas em consultoria ambiental. Ao final, espera-se que o participante seja capaz de ler e executar um código pronto e criar o próprio código para análisar de seus dados.
+
+**Forma de execução**: 4 aulas de 3h cada. Ao final de cada módulo serão passados roteiros de fixação e estudo do conteúdo abordado, assim como informações (pdfs, linques) adicionais para aprofundamento. Todo o material do curso (apresentações e roteiros) será disponibilizado aos participantes. Este material estará disponível no site http://melinatarituba.github.io/consultR_curso em formato HTML e também em código (.R e .Rmd).
+
+
+**Data**:  31 de março, 7, 14 e 28 de abril. Das 18h às 21h.
+
+
+
+### Programação:  
+
+#### Aula 1  
+* Introdução ao R
+    +	Instalação do R e RStudio
+    +	Primeiros passos
+    +	Funções do R e suas aplicações
+*	Leitura e manipulação de dados  
+    +	Estrutura de dados
+    +	Entrada e importação de dados
+    +	Transformação de dados
+    +	Operações vetoriais e matriciais
+    +	Indexação  
+
+#### Aula 2  
+*	Análises exploratórias dos dados
+    +	Estatísticas descritivas
+        +   tipos de variáveis e distribuições de frequência
+        +   Medidas resumo: média, mediana, variância, desvio padrão
+    +	Gráficos exploratórios
+        +   histograma, barplot, boxplot, gráfico de dispersão
+*	Criação e edição de gráficos
+    + Parâmetros gráficos
+    + Exportação de gráficos
+
+#### Aula 3 
+*	Inferência estatística
+    +	objetivo
+    + teste de hipóteses
+        + erros
+        + intervalo de confiança
+    + valor P
+*	Modelos lineares:
+    +	Regressão linear simples e múltipla
+    +	Análise de variância e covariância
+*   Modelos lineares generalizados
+    +   distribuição binomial
+    +   distribuição Poisson
+
+#### Aula 4  
+* Análises de composição e diversidade em comunidades
+    +	Índices de diversidade
+    +	Curva do coletor
+    + Rarefação
+    + Estimadores de riqueza
+    
+* Análises multivariadas  
+    + Análise de componentes principais (PCA)  
+    + Escalonamento multidimensional não paramétrico (NMDS)  
+    
