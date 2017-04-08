@@ -1,0 +1,8 @@
+title: Introdução ao R para Análise de Dados em Consultoria Ambiental
+description: Melina de Souza Leite
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
