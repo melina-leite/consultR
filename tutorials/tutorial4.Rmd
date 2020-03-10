@@ -638,7 +638,7 @@ Antes de partir para as análises vejamos alguns conceitos importantes:
 - **Loadings (coeficiente de estrutura)**: correlação de Pearson entre os escores e as variáveis.
 
 
-Vamos utilizar os dados de abundância de peixes e das variáveis ambientais em 30 pontos no rio Doubs (Europa). Esses dados foram tirados do material do livro "**Numerical Ecology with R**" (link para o pdf em Material Extra) A matriz de peixes possuim 27 espécies e a de variáveis ambientais 11 variáveis. 
+Vamos utilizar os dados de abundância de peixes e das variáveis ambientais em 30 pontos no rio Doubs (Europa). Esses dados foram tirados do material do livro "**Numerical Ecology with R**" (link para o pdf em Material Extra). A matriz de peixes possuim 27 espécies e a de variáveis ambientais 11 variáveis. 
 ```{r, echo=F}
 spe <- read.csv("../data/DoubsSpe.csv", row.names=1)
 env <- read.csv("../data/DoubsEnv.csv", row.names=1)
